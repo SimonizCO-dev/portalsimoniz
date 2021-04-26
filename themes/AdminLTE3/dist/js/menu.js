@@ -6,7 +6,7 @@
 //funcion para cargar y mostrar las opciones de menu
 $.ajax({ 
   type: "POST",
-  url: "/simoniz/index.php?r=menu/loadmenu", 
+  url: "/portalsimoniz/index.php?r=menu/loadmenu", 
   dataType: 'json',
   success: function(data){
     if (data.length > 0) {
