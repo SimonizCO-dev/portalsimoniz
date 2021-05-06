@@ -107,16 +107,17 @@ class UsuarioController extends Controller
 				}
 
 				if(isset($_POST['Usuario']['bodegas'])){
-					if(!empty($model->bodegas)){
-						//se administran las bodegas con las que puede trabajar el usuario
-						UtilidadesUsuario::adminbodegausuario($model->Id_Usuario, $_POST['Usuario']['bodegas']);
-					}
+					//se administran las bodegas con las que puede trabajar el usuario
+					UtilidadesUsuario::adminbodegausuario($model->Id_Usuario, $_POST['Usuario']['bodegas']);
+				}else{
+					UtilidadesUsuario::adminbodegausuario($model->Id_Usuario, array());	
 				}
+
 				if(isset($_POST['Usuario']['tipos_docto'])){
-					if(!empty($model->tipos_docto)){
-						//se administran los tipos de documento con los que puede trabajar el usuario
-						UtilidadesUsuario::admintipodoctousuario($model->Id_Usuario, $_POST['Usuario']['tipos_docto']);
-					}
+					//se administran los tipos de documento con los que puede trabajar el usuario
+					UtilidadesUsuario::admintipodoctousuario($model->Id_Usuario, $_POST['Usuario']['tipos_docto']);
+				}else{
+					UtilidadesUsuario::admintipodoctousuario($model->Id_Usuario, array());	
 				}
 
 				$model->Password = sha1($model->Password);
@@ -236,17 +237,25 @@ class UsuarioController extends Controller
 					UtilidadesUsuario::adminsubareausuario($model->Id_Usuario, array());	
 				}
 
-				if(isset($_POST['Usuario']['bodegas'])){
-					if(!empty($model->bodegas)){
-						//se administran las bodegas con las que puede trabajar el usuario
-						UtilidadesUsuario::adminbodegausuario($model->Id_Usuario, $_POST['Usuario']['bodegas']);
-					}
+				if(isset($_POST['Usuario']['subareas'])){
+					//se administran las subareas relacionadas al usuario
+					UtilidadesUsuario::adminsubareausuario($model->Id_Usuario, $_POST['Usuario']['subareas']);
+				}else{
+					UtilidadesUsuario::adminsubareausuario($model->Id_Usuario, array());	
 				}
+
+				if(isset($_POST['Usuario']['bodegas'])){
+					//se administran las bodegas con las que puede trabajar el usuario
+					UtilidadesUsuario::adminbodegausuario($model->Id_Usuario, $_POST['Usuario']['bodegas']);
+				}else{
+					UtilidadesUsuario::adminbodegausuario($model->Id_Usuario, array());	
+				}
+
 				if(isset($_POST['Usuario']['tipos_docto'])){
-					if(!empty($model->tipos_docto)){
-						//se administran los tipos de documento con los que puede trabajar el usuario
-						UtilidadesUsuario::admintipodoctousuario($model->Id_Usuario, $_POST['Usuario']['tipos_docto']);
-					}
+					//se administran los tipos de documento con los que puede trabajar el usuario
+					UtilidadesUsuario::admintipodoctousuario($model->Id_Usuario, $_POST['Usuario']['tipos_docto']);
+				}else{
+					UtilidadesUsuario::admintipodoctousuario($model->Id_Usuario, array());	
 				}
 
 				Yii::app()->user->setFlash('success', "Usuario actualizado correctamente.");

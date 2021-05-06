@@ -3,60 +3,293 @@
 //clase creada para funciones relacionadas con el modelo de reportes Th
 
 class UtilidadesReportesTh {
-  
-  public static function empleadosactivospantalla($fecha_inicial_cont, $fecha_final_cont, $empresa) {
-    
-    $condicion = "WHERE HP.Id_M_Retiro IS NULL AND P.Estado = 1";
 
-    if($empresa != null){
-      $empresa = implode(",", $empresa);
-      $condicion .= " AND HP.Id_Empresa IN (".$empresa.")";
-    }else{
-      $array_empresas = (Yii::app()->user->getState('array_empresas'));
-      $empresa = implode(",",$array_empresas);
-      $condicion .= " AND HP.Id_Empresa IN (".$empresa.")";
+  public static function ausenciaspantalla($motivo_ausencia, $fecha_inicial, $fecha_final, $empresa, $id_empleado) {
+
+    if($fecha_inicial == "" && $fecha_final != ""){
+      $fecha_inicial = $fecha_final;
     }
 
-    if($fecha_inicial_cont != null && $fecha_final_cont != null){
-      $condicion .= " AND HP.Fecha_Ingreso BETWEEN '".$fecha_inicial_cont."' AND '".$fecha_final_cont."'";
-    }else{
-      if($fecha_inicial_cont != null && $fecha_final_cont == null){
-        $condicion .= " AND HP.Fecha_Ingreso = '".$fecha_inicial_cont."'";
-      }
+    if($fecha_inicial != "" && $fecha_final == ""){
+      $fecha_final = $fecha_inicial;
+    }
+
+    if($id_empleado == "" && $fecha_inicial != "" && $fecha_final != "" && $motivo_ausencia == "" && $empresa != ""){
+      $o = 1;
+    }
+
+    if($id_empleado != "" && $fecha_inicial != "" && $fecha_final != "" && $motivo_ausencia == "" && $empresa != ""){
+      $o = 2;
+    }
+
+    if($id_empleado != "" && $fecha_inicial != "" && $fecha_final != "" && $motivo_ausencia != "" && $empresa != ""){
+      $o = 3;
+    }
+
+    if($id_empleado == "" && $fecha_inicial != "" && $fecha_final != "" && $motivo_ausencia != "" && $empresa != ""){
+      $o = 4;
+    }
+
+    $empresa = implode(",", $empresa);
+    
+    if($motivo_ausencia != null){
+      $motivo_ausencia = implode(",", $motivo_ausencia);
+    }
+
+    $FechaM1 = str_replace("-","",$fecha_inicial);
+    $FechaM2 = str_replace("-","",$fecha_final);
+
+    $query ="
+      SET NOCOUNT ON
+      EXEC P_PR_GH_AUSENCIAS
+      @OPT = ".$o.",
+      @Id_Emp = '".$id_empleado."',
+      @Fecha_Ini = N'".$FechaM1."',
+      @Fecha_Fin = N'".$FechaM2."',
+      @Motivo = '".$motivo_ausencia."',
+      @Empresa = '".$empresa."'
+    ";
+
+    UtilidadesVarias::log($query);
+
+    $tabla = '
+      <table class="table table-sm table-hover">
+              <thead>
+                <tr>
+                <th>Tipo identificación</th>
+                <th>No. identificación</th>
+                <th>Empleado</th>
+                <th>Empresa</th>
+                <th>Motivo</th>
+                <th>Fecha inicial</th>
+                <th>Fecha final</th>
+                <th>Días</th>
+                <th>Horas</th>
+                <th>Cod. soporte</th>
+                <th>Descontar</th>
+                <th>Descontar FDS</th>
+                <th>Observaciones</th>
+                <th>Notas</th>
+                </tr>
+              </thead>
+          <tbody>';
+
+        $query1 = Yii::app()->db->createCommand($query)->queryAll();
+
+        $i = 1;
+
+        if(!empty($query1)){
+          foreach ($query1 as $reg1) {
+
+            $tipo_ident       = $reg1['Tipo_Identificacion']; 
+            $ident            = $reg1['Identificacion'];  
+            $empleado         = $reg1['Apellido'].' '.$reg1['Nombre'];
+            $empresa          = $reg1['Empresa'];
+            $motivo           = $reg1['Motivo']; 
+            $fecha_inicial    = $reg1['Fecha_Inicial']; 
+            $fecha_final      = $reg1['Fecha_Final']; 
+            $dias             = $reg1['Dias']; 
+            
+            if($reg1['Horas'] == 0.0){
+              $horas = 0;
+            }else{
+              $horas = $reg1['Horas'];
+            }
+
+            $cod_soporte = $reg1['Cod_Soporte']; 
+            $descontar = $reg1['Descontar'];
+            $descontar_FDS = $reg1['Descontar_FDS'];
+            
+            
+            if($reg1['Observacion'] != ""){
+              $observaciones = $reg1['Observacion']; 
+            }else{
+              $observaciones = "-";
+            }
+
+            if($reg1['Nota'] != ""){
+              $notas = $reg1['Nota']; 
+            }else{
+              $notas = "-";
+            }
+
+            if ($i % 2 == 0){
+              $clase = 'odd'; 
+            }else{
+              $clase = 'even'; 
+            }
+
+            $tabla .= '    
+            <tr class="'.$clase.'">
+                <td>'.$tipo_ident.'</td>
+                <td>'.$ident.'</td>
+                <td>'.$empleado.'</td>
+                <td>'.$empresa.'</td>
+                <td>'.$motivo.'</td>
+                <td>'.$fecha_inicial.'</td>
+                <td>'.$fecha_final.'</td>
+                <td>'.$dias.'</td>
+                <td>'.$horas.'</td>
+                <td>'.$cod_soporte.'</td>
+                <td>'.$descontar.'</td>
+                <td>'.$descontar_FDS.'</td>
+                <td>'.$observaciones.'</td>
+                <td>'.$notas.'</td>
+            </tr>';
+
+            $i++;
+
+          }
+        }else{
+          $tabla .= ' 
+          <tr><td colspan="14" class="empty"><span class="empty">No se encontraron resultados.</span></td></tr>
+          ';
+        }
+
+        $tabla .= '  </tbody>
+        </table>';
+
+    return $tabla;
+  }
+
+  public static function hijospantalla($genero, $edad_inicial, $edad_final, $empresa) {
+    
+    $empresa = implode(",", $empresa);
+
+    if($edad_inicial == "" && $edad_final != ""){
+      $edad_inicial = $edad_final;
+    }
+
+    if($edad_inicial != "" && $edad_final == ""){
+      $edad_final = $edad_inicial;
+    }
+
+    if(($edad_inicial != "" && $edad_inicial != "" && $genero == "" && $empresa != "") ){
+      $o = 1;
+    }
+
+    if(($edad_inicial == "" && $edad_inicial == "" && $genero != "" && $empresa != "") ){
+      $o = 2;
+    }
+
+    if(($edad_inicial == "" && $edad_inicial == "" && $genero == "" && $empresa != "") ){
+      $o = 3;
+    }
+
+    if(($edad_inicial != "" && $edad_inicial != "" && $genero != "" && $empresa != "") ){
+      $o = 4;
     }
 
     $query ="
-    SELECT 
-    TI.Dominio AS Tipo_Ident, 
-    P.Identificacion, 
-    CONCAT (P.Apellido, ' ', P.Nombre) AS Empleado, 
-    GE.Dominio AS Gen, 
-    P.Fecha_Nacimiento, 
-    P.Correo,
-    P.Telefono,
-    GRES.Dominio AS Gr_Esc,
-    P.Persona_Contacto,
-    P.Tel_Persona_Contacto,
-    E.Descripcion AS Empresa,  
-    UG.Unidad_Gerencia,
-    A.Area,
-    S.Subarea,
-    C.Cargo, 
-    HP.Salario,
-    HP.Fecha_Ingreso 
-    FROM T_PR_CONTRATO_EMPLEADO HP 
-    LEFT JOIN T_PR_EMPLEADO P ON HP.Id_Empleado = P.Id_Empleado 
-    LEFT JOIN T_PR_DOMINIO TI ON P.Id_Tipo_Ident = TI.Id_Dominio 
-    LEFT JOIN T_PR_DOMINIO GE ON P.Id_Genero = GE.Id_Dominio
-    LEFT JOIN T_PR_DOMINIO GRES ON P.Id_Grado_Esc = GRES.Id_Dominio  
-    LEFT JOIN T_PR_EMPRESA E ON HP.Id_Empresa = E.Id_Empresa 
-    LEFT JOIN T_PR_UNIDAD_GERENCIA UG ON HP.Id_Unidad_Gerencia = UG.Id_Unidad_Gerencia 
-    LEFT JOIN T_PR_AREA A ON HP.Id_Area = A.Id_Area
-    LEFT JOIN T_PR_SUBAREA S ON HP.Id_Subarea = S.Id_Subarea
-    LEFT JOIN T_PR_CARGO C ON HP.Id_Cargo = C.Id_Cargo 
-    ".$condicion."
-    ORDER BY 7,8,9,10,11,3 ASC
+      SET NOCOUNT ON
+      EXEC P_PR_GH_HIJOS
+      @OPT = ".$o.",
+      @Edad_Ini = '".$edad_inicial."',
+      @Edad_Fin = '".$edad_final."',
+      @Genero = '".$genero."',
+      @Empresa = '".$empresa."'
     ";
+
+    UtilidadesVarias::log($query);
+
+    $tabla = '
+      <table class="table table-sm table-hover">
+              <thead>
+                <tr>
+                <th>Tipo identificación</th
+                ><th>No. identificación</th>
+                <th>Empleado</th>
+                <th>Empresa</th>
+                <th>Hijo</th>
+                <th>Fecha de nacimiento</th>
+                <th>Edad</th>
+                <th>Género</th>
+                </tr>
+              </thead>
+          <tbody>';
+
+        $query1 = Yii::app()->db->createCommand($query)->queryAll();
+
+        $i = 1;
+
+        if(!empty($query1)){
+          foreach ($query1 as $reg1) {
+            
+            $tipo_ident       = $reg1 ['Tipo_Ident']; 
+            $ident            = $reg1 ['Identificacion'];  
+            $empleado         = $reg1 ['Apellido'].' '.$reg1 ['Nombre'];
+            $empresa          = $reg1 ['Empresa']; 
+            $hijo             = $reg1 ['Hijo']; 
+            $fecha_nacimiento = $reg1 ['Fecha_Nacimiento']; 
+            $edad             = $reg1 ['Edad']; 
+            $genero           = $reg1 ['Genero']; 
+
+            if ($i % 2 == 0){
+              $clase = 'odd'; 
+            }else{
+              $clase = 'even'; 
+            }
+
+            $tabla .= '    
+            <tr class="'.$clase.'">
+                  <td>'.$tipo_ident.'</td>
+                  <td>'.$ident.'</td>
+                  <td>'.$empleado.'</td>
+                  <td>'.$empresa.'</td>
+                  <td>'.$hijo.'</td>
+                  <td>'.$fecha_nacimiento.'</td>
+                  <td>'.$edad.'</td>
+                  <td>'.$genero.'</td>
+              </tr>';
+
+            $i++;
+
+          }
+        }else{
+          $tabla .= ' 
+          <tr><td colspan="8" class="empty"><span class="empty">No se encontraron resultados.</span></td></tr>
+          ';
+        }
+
+        $tabla .= '  </tbody>
+        </table>';
+
+    return $tabla;
+  }
+
+  public static function empleadosactivospantalla($fecha_inicial_cont, $fecha_final_cont, $empresa) {
+    
+    $empresa = implode(",", $empresa);
+
+    if($fecha_inicial_cont == "" && $fecha_final_cont != ""){
+      $fecha_inicial_cont = $fecha_final_cont;
+    }
+
+    if($fecha_inicial_cont != "" && $fecha_final_cont == ""){
+      $fecha_final_cont = $fecha_inicial_cont;
+    }
+
+    if(($fecha_inicial_cont != "" && $fecha_final_cont != "" && $empresa != "")){
+      $o = 1;
+    }
+
+    if(($fecha_inicial_cont == "" && $fecha_final_cont == "" && $empresa != "")){
+      $o = 2;
+    }
+
+    $FechaM1 = str_replace("-","",$fecha_inicial_cont);
+    $FechaM2 = str_replace("-","",$fecha_final_cont);
+
+    $query ="
+      SET NOCOUNT ON
+      EXEC P_PR_GH_EMPLEADO_ACT
+      @OPT = ".$o.",
+      @Fecha_Ini = '".$FechaM1."',
+      @Fecha_Fin = '".$FechaM2."',
+      @Empresa = '".$empresa."'
+    ";
+
+    UtilidadesVarias::log($query);
 
     $tabla = '
       <table class="table table-sm table-hover">
@@ -90,10 +323,10 @@ class UtilidadesReportesTh {
         if(!empty($query1)){
           foreach ($query1 as $reg1) {
 
-            $tipo_ident          = $reg1 ['Tipo_Ident']; 
+            $tipo_ident          = $reg1 ['Tipo_Identificacion']; 
             $ident               = $reg1 ['Identificacion']; 
-            $empleado            = $reg1 ['Empleado']; 
-            $genero              = $reg1 ['Gen']; 
+            $empleado            = $reg1 ['Apellido'].' '.$reg1 ['Nombre']; 
+            $genero              = $reg1 ['Genero']; 
             $fecha_nacimiento    = $reg1 ['Fecha_Nacimiento'];
             
             if($reg1 ['Correo'] != ""){
@@ -122,8 +355,8 @@ class UtilidadesReportesTh {
 
             $empresa = $reg1 ['Empresa'];
 
-            if($reg1 ['Gr_Esc'] != ""){
-              $gr_es = $reg1 ['Gr_Esc']; 
+            if($reg1 ['Grado_Escolaridad'] != ""){
+              $gr_es = $reg1 ['Grado_Escolaridad']; 
             }else{
               $gr_es = "-";
             }
@@ -197,69 +430,66 @@ class UtilidadesReportesTh {
   }
 
   public static function contratosfinalizadospantalla($motivo_retiro, $liquidado, $fecha_inicial_fin, $fecha_final_fin, $empresa) {
+        
+    $empresa = implode(",", $empresa);
     
-    $condicion = "WHERE HP.Id_M_Retiro IS NOT NULL";
-
-    if($empresa != null){
-      $empresa = implode(",", $empresa);
-      $condicion .= " AND HP.Id_Empresa IN (".$empresa.")";
-    }else{
-      $array_empresas = (Yii::app()->user->getState('array_empresas'));
-      $empresa = implode(",",$array_empresas);
-      $condicion .= " AND HP.Id_Empresa IN (".$empresa.")";
-    }
-
     if($motivo_retiro != null){
       $motivo_retiro = implode(",", $motivo_retiro);
-      $condicion .= " AND HP.Id_Retiro IN (".$motivo_retiro.")";
     }
 
-    if($fecha_inicial_fin != null && $fecha_final_fin != null){
-      $condicion .= " AND HP.Fecha_Retiro BETWEEN '".$fecha_inicial_fin."' AND '".$fecha_final_fin."'";
-    }else{
-      if($fecha_inicial_fin != null && $fecha_final_fin == null){
-        $condicion .= " AND HP.Fecha_Retiro = '".$fecha_inicial_fin."'";
-      } 
+    if($fecha_inicial_fin == "" && $fecha_final_fin != ""){
+      $fecha_inicial_fin = $fecha_final_fin;
     }
 
-    if($liquidado != null){
-      if($liquidado == 1){
-        $condicion .= " AND HP.Fecha_Liquidacion IS NOT NULL"; 
-      }else{
-        $condicion .= " AND HP.Fecha_Liquidacion IS NULL";
-      }
+    if($fecha_inicial_fin != "" && $fecha_final_fin == ""){
+      $fecha_final_fin = $fecha_inicial_fin;
     }
 
-   $query ="
-    SELECT  
-    TI.Dominio AS Tipo_Ident, 
-    P.Identificacion, 
-    CONCAT (P.Apellido, ' ', P.Nombre) AS Empleado, 
-    E.Descripcion AS Empresa,
-    UG.Unidad_Gerencia,
-    A.Area,
-    S.Subarea,
-    C.Cargo,
-    CIU.Ciudad,
-    HP.Fecha_Ingreso, 
-    HP.Fecha_Retiro,
-    MO.Dominio AS Motivo,  
-    CASE WHEN HP.Fecha_Liquidacion IS NULL THEN 'NO'
-    ELSE CONCAT('SI - ', HP.Fecha_Liquidacion )                                       
-    END AS Liquidado
-    FROM T_PR_CONTRATO_EMPLEADO HP 
-    LEFT JOIN T_PR_EMPLEADO P ON HP.Id_Empleado = P.Id_Empleado 
-    LEFT JOIN T_PR_DOMINIO TI ON P.Id_Tipo_Ident = TI.Id_Dominio
-    LEFT JOIN T_PR_CIUDAD CIU ON P.Id_Ciudad_Labor = CIU.Id_Ciudad  
-    LEFT JOIN T_PR_DOMINIO MO ON HP.Id_M_Retiro = MO.Id_Dominio 
-    LEFT JOIN T_PR_EMPRESA E ON HP.Id_Empresa = E.Id_Empresa
-    LEFT JOIN T_PR_UNIDAD_GERENCIA UG ON HP.Id_Unidad_Gerencia = UG.Id_Unidad_Gerencia 
-    LEFT JOIN T_PR_AREA A ON HP.Id_Area = A.Id_Area
-    LEFT JOIN T_PR_SUBAREA S ON HP.Id_Subarea = S.Id_Subarea
-    LEFT JOIN T_PR_CARGO C ON HP.Id_Cargo = C.Id_Cargo 
-    ".$condicion." 
-    ORDER BY 4,5,6,7,8,3,11 ASC
+    if(($fecha_inicial_fin != "" && $fecha_final_fin != "" && $liquidado == "" && $motivo_retiro == "" && $empresa != "") ){
+      $o = 1;
+    }
+
+    if(($fecha_inicial_fin == "" && $fecha_final_fin == "" && $liquidado == "" && $motivo_retiro == "" && $empresa != "") ){
+      $o = 2;
+    }
+
+    if(($fecha_inicial_fin != "" && $fecha_final_fin != "" && $liquidado == "" && $motivo_retiro != "" && $empresa != "") ){
+      $o = 3;
+    }
+
+    if(($fecha_inicial_fin != "" && $fecha_final_fin != "" && $liquidado != "" && $motivo_retiro == "" && $empresa != "") ){
+      $o = 4;
+    }
+
+    if(($fecha_inicial_fin == "" && $fecha_final_fin == "" && $liquidado != "" && $motivo_retiro != "" && $empresa != "") ){
+      $o = 5;
+    }
+
+    if(($fecha_inicial_fin == "" && $fecha_final_fin == "" && $liquidado != "" && $motivo_retiro == "" && $empresa != "") ){
+      $o = 6;
+    }
+
+    if(($fecha_inicial_fin != "" && $fecha_final_fin != "" && $liquidado != "" && $motivo_retiro != "" && $empresa != "") ){
+      $o = 7;
+    }
+
+    /*inicio configuración array de datos*/
+
+    $FechaM1 = str_replace("-","",$fecha_inicial_fin);
+    $FechaM2 = str_replace("-","",$fecha_final_fin);
+
+    $query ="
+      SET NOCOUNT ON
+      EXEC P_PR_GH_EMPLEADO_INACT
+      @OPT = ".$o.",
+      @Fecha_Ini = '".$FechaM1."',
+      @Fecha_Fin = '".$FechaM2."',
+      @Empresa = '".$empresa."',
+      @Motivo = '".$motivo_retiro."',
+      @Liquidado = '".$liquidado."'
     ";
+
+    UtilidadesVarias::log($query);
 
     $tabla = '
         <table class="table table-sm table-hover">
@@ -273,7 +503,6 @@ class UtilidadesReportesTh {
                 <th>Área</th>
                 <th>Subárea</th>
                 <th>Cargo</th>
-                <th>Dpto - municipio labor</th>
                 <th>Fecha ingreso</th>
                 <th>Fecha retiro</th>
                 <th>Motivo</th>
@@ -289,9 +518,9 @@ class UtilidadesReportesTh {
         if(!empty($query1)){
           foreach ($query1 as $reg1) {
 
-            $tipo_ident       = $reg1 ['Tipo_Ident']; 
+            $tipo_ident       = $reg1 ['Tipo_Identificacion']; 
             $ident            = $reg1 ['Identificacion']; 
-            $empleado         = $reg1 ['Empleado']; 
+            $empleado         = $reg1 ['Apellido'].' '.$reg1 ['Nombre']; 
             $empresa          = $reg1 ['Empresa']; 
 
             if($reg1 ['Unidad_Gerencia'] != ""){
@@ -318,15 +547,9 @@ class UtilidadesReportesTh {
               $cargo = "-";
             }
 
-            if($reg1 ['Ciudad'] != ""){
-              $ciudad_labor = $reg1 ['Ciudad']; 
-            }else{
-              $ciudad_labor = "-";
-            }
-
             $fecha_ingreso    = $reg1 ['Fecha_Ingreso']; 
             $fecha_retiro     = $reg1 ['Fecha_Retiro'];
-            $motivo           = $reg1 ['Motivo'];
+            $motivo           = $reg1 ['M_Retiro'];
 
             $liquidado        = $reg1 ['Liquidado'];
 
@@ -346,7 +569,6 @@ class UtilidadesReportesTh {
                   <td>'.$area.'</td>
                   <td>'.$subarea.'</td>
                   <td>'.$cargo.'</td>
-                  <td>'.$ciudad_labor.'</td>
                   <td>'.$fecha_ingreso.'</td>
                   <td>'.$fecha_retiro.'</td>
                   <td>'.$motivo.'</td>
@@ -358,7 +580,7 @@ class UtilidadesReportesTh {
           }
         }else{
           $tabla .= ' 
-          <tr><td colspan="13" class="empty"><span class="empty">No se encontraron resultados.</span></td></tr>
+          <tr><td colspan="12" class="empty"><span class="empty">No se encontraron resultados.</span></td></tr>
           ';
         }
 
@@ -368,323 +590,53 @@ class UtilidadesReportesTh {
     return $tabla;
   }
 
-  public static function hijospantalla($genero, $edad_inicial, $edad_final, $empresa) {
+  public static function disciplinariospantalla($motivo, $fecha_inicial, $fecha_final, $empresa, $id_empleado) {
+
+    if($fecha_inicial == "" && $fecha_final != ""){
+      $fecha_inicial = $fecha_final;
+    }
+
+    if($fecha_inicial != "" && $fecha_final == ""){
+      $fecha_final = $fecha_inicial;
+    }
+
+    if($id_empleado == "" && $fecha_inicial != "" && $fecha_final != "" && $motivo == "" && $empresa != ""){
+      $o = 1;
+    }
+
+    if($id_empleado != "" && $fecha_inicial != "" && $fecha_final != "" && $motivo == "" && $empresa != ""){
+      $o = 2;
+    }
+
+    if($id_empleado != "" && $fecha_inicial != "" && $fecha_final != "" && $motivo != "" && $empresa != ""){
+      $o = 3;
+    }
+
+    if($id_empleado == "" && $fecha_inicial != "" && $fecha_final != "" && $motivo != "" && $empresa != ""){
+      $o = 4;
+    }
+
+    $empresa = implode(",", $empresa);
     
-    $condicion = "WHERE Id_Parentesco = ".Yii::app()->params->parentesco_hijo.' AND P.Estado = 1';
-
-    if($empresa != null){
-      $empresa = implode(",", $empresa);
-      $condicion .= " AND P.Id_Empresa IN (".$empresa.")";
-    }else{
-      $array_empresas = (Yii::app()->user->getState('array_empresas'));
-      $empresa = implode(",",$array_empresas);
-      $condicion .= " AND P.Id_Empresa IN (".$empresa.")";
-    }
-
-    if($genero != null){
-      $condicion .= " AND H.Id_Genero = ".$genero;
-    }
-
-    if($edad_inicial != null && $edad_final != null){
-      $condicion .= " AND DATEDIFF (yy, H.Fecha_Nacimiento, GETDATE()) BETWEEN ".$edad_inicial." AND ".$edad_final;
-    }
-
-    $query ="
-    SELECT
-    TI.Dominio AS Tipo_Ident, 
-    P.Identificacion, 
-    CONCAT (P.Apellido, ' ', P.Nombre) AS Empleado,
-    E.Descripcion AS Empresa,
-    H.Nombre_Apellido AS Hijo, 
-    H.Fecha_Nacimiento, 
-    DATEDIFF (yy, H.Fecha_Nacimiento, GETDATE()) AS Edad,
-    D.Dominio as Genero
-    FROM T_PR_NUCLEO_EMPLEADO H
-    LEFT JOIN T_PR_EMPLEADO P ON H.Id_Empleado = P.Id_Empleado
-    LEFT JOIN T_PR_DOMINIO TI ON P.Id_Tipo_Ident = TI.Id_Dominio 
-    LEFT JOIN T_PR_DOMINIO D ON H.Id_Genero = D.Id_Dominio
-    LEFT JOIN T_PR_EMPRESA E ON P.Id_Empresa = E.Id_Empresa
-    ".$condicion."
-    ORDER BY 4,3,6,7 ASC
-    ";
-
-    $tabla = '
-      <table class="table table-sm table-hover">
-              <thead>
-                <tr>
-                <th>Tipo identificación</th
-                ><th>No. identificación</th>
-                <th>Empleado</th>
-                <th>Empresa</th>
-                <th>Hijo</th>
-                <th>Fecha de nacimiento</th>
-                <th>Edad</th>
-                <th>Género</th>
-                </tr>
-              </thead>
-          <tbody>';
-
-        $query1 = Yii::app()->db->createCommand($query)->queryAll();
-
-        $i = 1;
-
-        if(!empty($query1)){
-          foreach ($query1 as $reg1) {
-            
-            $tipo_ident       = $reg1 ['Tipo_Ident']; 
-            $ident            = $reg1 ['Identificacion'];  
-            $empleado         = $reg1 ['Empleado'];
-            $empresa          = $reg1 ['Empresa']; 
-            $hijo             = $reg1 ['Hijo']; 
-            $fecha_nacimiento = $reg1 ['Fecha_Nacimiento']; 
-            $edad             = $reg1 ['Edad']; 
-            $genero           = $reg1 ['Genero']; 
-
-            if ($i % 2 == 0){
-              $clase = 'odd'; 
-            }else{
-              $clase = 'even'; 
-            }
-
-            $tabla .= '    
-            <tr class="'.$clase.'">
-                  <td>'.$tipo_ident.'</td>
-                  <td>'.$ident.'</td>
-                  <td>'.$empleado.'</td>
-                  <td>'.$empresa.'</td>
-                  <td>'.$hijo.'</td>
-                  <td>'.$fecha_nacimiento.'</td>
-                  <td>'.$edad.'</td>
-                  <td>'.$genero.'</td>
-              </tr>';
-
-            $i++;
-
-          }
-        }else{
-          $tabla .= ' 
-          <tr><td colspan="8" class="empty"><span class="empty">No se encontraron resultados.</span></td></tr>
-          ';
-        }
-
-        $tabla .= '  </tbody>
-        </table>';
-
-    return $tabla;
-  }
-
-  public static function ausenciaspantalla($motivo_ausencia, $fecha_inicial, $fecha_final, $empresa, $fecha_inicial_reg, $fecha_final_reg, $id_empleado) {
-    
-    $condicion = "WHERE 1 = 1";
-
-    if($empresa != null){
-      $empresa = implode(",", $empresa);
-      $condicion .= " AND HP.Id_Empresa IN (".$empresa.")";
-    }else{
-      $array_empresas = (Yii::app()->user->getState('array_empresas'));
-      $empresa = implode(",",$array_empresas);
-      $condicion .= " AND HP.Id_Empresa IN (".$empresa.")";
-    }
-
-    if($motivo_ausencia != null){
-      $motivo_ausencia = implode(",", $motivo_ausencia);
-      $condicion .= " AND A.Id_M_Ausencia IN (".$motivo_ausencia.")";
-    }
-
-    if($fecha_inicial != null && $fecha_final != null){
-      $condicion .= " AND A.Fecha_Inicial BETWEEN '".$fecha_inicial."' AND '".$fecha_final."'";
-    }else{
-      if($fecha_inicial != null && $fecha_final == null){
-        $condicion .= " AND A.Fecha_Inicial = '".$fecha_inicial."'";
-      } 
-    }
-
-    if($fecha_inicial_reg != null && $fecha_final_reg != null){
-      $condicion .= " AND A.Fecha_Creacion BETWEEN '".$fecha_inicial_reg." 00:00:00' AND '".$fecha_final_reg." 23:59:59'";
-    }else{
-      if($fecha_inicial_reg != null && $fecha_final_reg == null){
-        $condicion .= " AND A.Fecha_Creacion BETWEEN '".$fecha_inicial_reg." 00:00:00' AND '".$fecha_inicial_reg." 23:59:59'";
-      }
-    }
-
-    if($id_empleado != null){
-      $condicion .= " AND A.Id_Empleado = ".$id_empleado."";
-    }
-
-    $query ="
-    SELECT
-    A.Id_Ausencia,
-    A.Fecha_Inicial
-    FROM T_PR_AUSENCIA_EMPLEADO A
-    INNER JOIN T_PR_CONTRATO_EMPLEADO HP ON A.Id_Empleado = HP.Id_Empleado
-    INNER JOIN T_PR_EMPRESA E ON HP.Id_Empresa = E.Id_Empresa
-    ".$condicion."
-    GROUP BY A.Id_Ausencia, A.Fecha_Inicial
-    ORDER BY 2 DESC
-    ";
-
-
-    $tabla = '
-      <table class="table table-sm table-hover">
-              <thead>
-                <tr>
-                <th>Tipo identificación</th>
-                <th>No. identificación</th>
-                <th>Empleado</th>
-                <th>Empresa</th>
-                <th>Motivo</th>
-                <th>Fecha inicial</th>
-                <th>Fecha final</th>
-                <th>Días</th>
-                <th>Horas</th>
-                <th>Cod. soporte</th>
-                <th>Descontar</th>
-                <th>Descontar FDS</th>
-                <th>Observaciones</th>
-                <th>Notas</th>
-                </tr>
-              </thead>
-          <tbody>';
-
-        $query1 = Yii::app()->db->createCommand($query)->queryAll();
-
-        $i = 1;
-
-        if(!empty($query1)){
-          foreach ($query1 as $reg1) {
-
-            $modeloausencia = AusenciaEmpleado::model()->findByPk($reg1['Id_Ausencia']);
- 
-            $tipo_ident       = $modeloausencia->idempleado->idtipoident->Dominio; 
-            $ident            = $modeloausencia->idempleado->Identificacion;  
-            $empleado         = UtilidadesEmpleado::nombreempleado($modeloausencia->Id_Empleado);
-            $empresa          = $modeloausencia->idcontrato->idempresa->Descripcion;
-            $motivo           = $modeloausencia->idmausencia->Dominio; 
-            $fecha_inicial    = $modeloausencia->Fecha_Inicial; 
-            $fecha_final      = $modeloausencia->Fecha_Final; 
-            $dias             = $modeloausencia->Dias;
-            
-            if($modeloausencia->Horas == 0.0){
-              $horas = 0;
-            }else{
-              $horas = $modeloausencia->Horas;
-            }
-
-            $cod_soporte      = $modeloausencia->Cod_Soporte; 
-            
-            if($modeloausencia->Descontar == 1){
-              $descontar = 'SI';
-            }else{
-              $descontar = 'NO';
-            }
-
-            if($modeloausencia->Descontar_FDS == 1){
-              $descontar_FDS = 'SI';
-            }else{
-              $descontar_FDS = 'NO';
-            }  
-            
-            if($modeloausencia->Observacion != ""){
-              $observaciones = $modeloausencia->Observacion; 
-            }else{
-              $observaciones = "-";
-            }
-
-            if($modeloausencia->Nota != ""){
-              $notas = $modeloausencia->Nota; 
-            }else{
-              $notas = "-";
-            }
-
-            if ($i % 2 == 0){
-              $clase = 'odd'; 
-            }else{
-              $clase = 'even'; 
-            }
-
-            $tabla .= '    
-            <tr class="'.$clase.'">
-                <td>'.$tipo_ident.'</td>
-                <td>'.$ident.'</td>
-                <td>'.$empleado.'</td>
-                <td>'.$empresa.'</td>
-                <td>'.$motivo.'</td>
-                <td>'.$fecha_inicial.'</td>
-                <td>'.$fecha_final.'</td>
-                <td>'.$dias.'</td>
-                <td>'.$horas.'</td>
-                <td>'.$cod_soporte.'</td>
-                <td>'.$descontar.'</td>
-                <td>'.$descontar_FDS.'</td>
-                <td>'.$observaciones.'</td>
-                <td>'.$notas.'</td>
-            </tr>';
-
-            $i++;
-
-          }
-        }else{
-          $tabla .= ' 
-          <tr><td colspan="14" class="empty"><span class="empty">No se encontraron resultados.</span></td></tr>
-          ';
-        }
-
-        $tabla .= '  </tbody>
-        </table>';
-
-    return $tabla;
-  }
-
-  public static function llamatencpantalla($motivo, $fecha_inicial, $fecha_final, $empresa, $fecha_inicial_reg, $fecha_final_reg, $id_empleado) {
-    
-    $condicion = "WHERE D.Id_Padre IN (".Yii::app()->params->motivos_d_llamado_atencion.")";
-
-    if($empresa != null){
-      $empresa = implode(",", $empresa);
-      $condicion .= " AND HP.Id_Empresa IN (".$empresa.")";
-    }else{
-      $array_empresas = (Yii::app()->user->getState('array_empresas'));
-      $empresa = implode(",",$array_empresas);
-      $condicion .= " AND HP.Id_Empresa IN (".$empresa.")";
-    }
-
     if($motivo != null){
       $motivo = implode(",", $motivo);
-      $condicion .= " AND EV.Id_M_Disciplinario IN (".$motivo.")";
     }
 
-    if($fecha_inicial != null && $fecha_final != null){
-      $condicion .= " AND EV.Fecha BETWEEN '".$fecha_inicial."' AND '".$fecha_final."'";
-    }else{
-      if($fecha_inicial != null && $fecha_final == null){
-        $condicion .= " AND EV.Fecha = '".$fecha_inicial."'";
-      } 
-    }
-
-    if($fecha_inicial_reg != null && $fecha_final_reg != null){
-      $condicion .= " AND EV.Fecha_Creacion BETWEEN '".$fecha_inicial_reg." 00:00:00' AND '".$fecha_final_reg." 23:59:59'";
-    }else{
-      if($fecha_inicial_reg != null && $fecha_final_reg == null){
-        $condicion .= " AND EV.Fecha_Creacion BETWEEN '".$fecha_inicial_reg." 00:00:00' AND '".$fecha_inicial_reg." 23:59:59'";
-      }
-    }
-
-    if($id_empleado != null){
-      $condicion .= " AND EV.Id_Empleado = ".$id_empleado."";
-    }
+    $FechaM1 = str_replace("-","",$fecha_inicial);
+    $FechaM2 = str_replace("-","",$fecha_final);
 
     $query ="
-    SELECT
-    EV.Id_Disciplinario,
-    EV.Fecha
-    FROM T_PR_DISCIPLINARIO_EMPLEADO EV
-    INNER JOIN T_PR_CONTRATO_EMPLEADO HP ON EV.Id_Empleado = HP.Id_Empleado
-    INNER JOIN T_PR_EMPRESA E ON HP.Id_Empresa = E.Id_Empresa
-    LEFT JOIN T_PR_DOMINIO D ON EV.Id_M_Disciplinario = D.Id_Dominio
-    ".$condicion."
-    GROUP BY EV.Id_Disciplinario, EV.Fecha 
-    ORDER BY 2 DESC
+      SET NOCOUNT ON
+      EXEC P_PR_GH_DISCIPLINARIO
+      @OPT = ".$o.",
+      @Id_Emp = '".$id_empleado."',
+      @Fecha_Ini = N'".$FechaM1."',
+      @Fecha_Fin = N'".$FechaM2."',
+      @Motivo = '".$motivo."',
+      @Empresa = '".$empresa."'
     ";
+
+    UtilidadesVarias::log($query);
 
     $tabla = '
       <table class="table table-sm table-hover">
@@ -694,6 +646,7 @@ class UtilidadesReportesTh {
             <th>No. identificación</th>
             <th>Empleado</th>
             <th>Empresa</th>
+            <th>Evento</th>
             <th>Motivo</th>
             <th>Fecha</th>
             <th>Impuesto Por</th>
@@ -710,22 +663,16 @@ class UtilidadesReportesTh {
         if(!empty($query1)){
           foreach ($query1 as $reg1) {
 
-            $modelodisciplinario = DisciplinarioEmpleado::model()->findByPk($reg1['Id_Disciplinario']);
-
-            $tipo_ident       = $modelodisciplinario->idempleado->idtipoident->Dominio; 
-            $ident            = $modelodisciplinario->idempleado->Identificacion;  
-            $empleado         = UtilidadesEmpleado::nombreempleado($modelodisciplinario->Id_Empleado);
-            $empresa          = $modelodisciplinario->idcontrato->idempresa->Descripcion;
-            $motivo           = $modelodisciplinario->idmdisciplinario->Dominio; 
-            $fecha_evento     = $modelodisciplinario->Fecha; 
-            $persona_imp      = UtilidadesEmpleado::nombreempleado($modelodisciplinario->Id_Empleado_Imp);
-            $orden            = $modelodisciplinario->Orden_No;
-
-            if($modelodisciplinario->Observacion != ""){
-              $observaciones = $modelodisciplinario->Observacion; 
-            }else{
-              $observaciones = "-";
-            }
+            $tipo_ident       = $reg1['Tipo_Identificacion']; 
+            $ident            = $reg1['Identificacion'];  
+            $empleado         = $reg1['Empleado'];
+            $empresa          = $reg1['Empresa'];
+            $disciplinario    = $reg1['Disciplinario'];
+            $motivo           = $reg1['Motivo']; 
+            $fecha_evento     = $reg1['Fecha']; 
+            $persona_imp      = $reg1['Imp']; 
+            $orden            = $reg1['Orden_No'];
+            $observaciones    = $reg1['Observacion']; 
 
             if ($i % 2 == 0){
               $clase = 'odd'; 
@@ -739,6 +686,7 @@ class UtilidadesReportesTh {
                 <td>'.$ident.'</td>
                 <td>'.$empleado.'</td>
                 <td>'.$empresa.'</td>
+                <td>'.$disciplinario.'</td>
                 <td>'.$motivo.'</td>
                 <td>'.$fecha_evento.'</td>
                 <td>'.$persona_imp.'</td>
@@ -751,7 +699,7 @@ class UtilidadesReportesTh {
           }
         }else{
           $tabla .= ' 
-          <tr><td colspan="9" class="empty"><span class="empty">No se encontraron resultados.</span></td></tr>
+          <tr><td colspan="10" class="empty"><span class="empty">No se encontraron resultados.</span></td></tr>
           ';
         }
 
@@ -761,465 +709,7 @@ class UtilidadesReportesTh {
     return $tabla;
   }
 
-  public static function sancionespantalla($motivo, $fecha_inicial, $fecha_final, $empresa, $fecha_inicial_reg, $fecha_final_reg, $id_empleado) {
-    
-    $condicion = "WHERE D.Id_Padre IN (".Yii::app()->params->motivos_d_sancion.")";
-
-    if($empresa != null){
-      $empresa = implode(",", $empresa);
-      $condicion .= " AND HP.Id_Empresa IN (".$empresa.")";
-    }else{
-      $array_empresas = (Yii::app()->user->getState('array_empresas'));
-      $empresa = implode(",",$array_empresas);
-      $condicion .= " AND HP.Id_Empresa IN (".$empresa.")";
-    }
-
-    if($motivo != null){
-      $motivo = implode(",", $motivo);
-      $condicion .= " AND EV.Id_M_Disciplinario IN (".$motivo.")";
-    }
-
-    if($fecha_inicial != null && $fecha_final != null){
-      $condicion .= " AND EV.Fecha BETWEEN '".$fecha_inicial."' AND '".$fecha_final."'";
-    }else{
-      if($fecha_inicial != null && $fecha_final == null){
-        $condicion .= " AND EV.Fecha = '".$fecha_inicial."'";
-      } 
-    }
-
-    if($fecha_inicial_reg != null && $fecha_final_reg != null){
-      $condicion .= " AND EV.Fecha_Creacion BETWEEN '".$fecha_inicial_reg." 00:00:00' AND '".$fecha_final_reg." 23:59:59'";
-    }else{
-      if($fecha_inicial_reg != null && $fecha_final_reg == null){
-        $condicion .= " AND EV.Fecha_Creacion BETWEEN '".$fecha_inicial_reg." 00:00:00' AND '".$fecha_inicial_reg." 23:59:59'";
-      }
-    }
-
-    if($id_empleado != null){
-      $condicion .= " AND EV.Id_Empleado = ".$id_empleado."";
-    }
-
-    $query ="
-    SELECT
-    EV.Id_Disciplinario,
-    EV.Fecha
-    FROM T_PR_DISCIPLINARIO_EMPLEADO EV
-    INNER JOIN T_PR_CONTRATO_EMPLEADO HP ON EV.Id_Empleado = HP.Id_Empleado
-    INNER JOIN T_PR_EMPRESA E ON HP.Id_Empresa = E.Id_Empresa
-    LEFT JOIN T_PR_DOMINIO D ON EV.Id_M_Disciplinario = D.Id_Dominio
-    ".$condicion."
-    GROUP BY EV.Id_Disciplinario, EV.Fecha 
-    ORDER BY 2 DESC
-    ";
-
-    $tabla = '
-      <table class="table table-sm table-hover">
-          <thead>
-            <tr>
-            <th>Tipo identificación</th>
-            <th>No. identificación</th>
-            <th>Empleado</th>
-            <th>Empresa</th>
-            <th>Motivo</th>
-            <th>Fecha</th>
-            <th>Impuesto Por</th>
-            <th>Orden No.</th>
-            <th>Observaciones</th>
-            </tr>
-          </thead>
-          <tbody>';
-
-        $query1 = Yii::app()->db->createCommand($query)->queryAll();
-
-        $i = 1;
-
-        if(!empty($query1)){
-          foreach ($query1 as $reg1) {
-
-            $modelodisciplinario = DisciplinarioEmpleado::model()->findByPk($reg1['Id_Disciplinario']);
-
-            $tipo_ident       = $modelodisciplinario->idempleado->idtipoident->Dominio; 
-            $ident            = $modelodisciplinario->idempleado->Identificacion;  
-            $empleado         = UtilidadesEmpleado::nombreempleado($modelodisciplinario->Id_Empleado);
-            $empresa          = $modelodisciplinario->idcontrato->idempresa->Descripcion;
-            $motivo           = $modelodisciplinario->idmdisciplinario->Dominio; 
-            $fecha_evento     = $modelodisciplinario->Fecha; 
-            $persona_imp      = UtilidadesEmpleado::nombreempleado($modelodisciplinario->Id_Empleado_Imp);
-            $orden            = $modelodisciplinario->Orden_No;
-
-            if($modelodisciplinario->Observacion != ""){
-              $observaciones = $modelodisciplinario->Observacion; 
-            }else{
-              $observaciones = "-";
-            }
-
-            if ($i % 2 == 0){
-              $clase = 'odd'; 
-            }else{
-              $clase = 'even'; 
-            }
-
-            $tabla .= '    
-            <tr class="'.$clase.'">
-                <td>'.$tipo_ident.'</td>
-                <td>'.$ident.'</td>
-                <td>'.$empleado.'</td>
-                <td>'.$empresa.'</td>
-                <td>'.$motivo.'</td>
-                <td>'.$fecha_evento.'</td>
-                <td>'.$persona_imp.'</td>
-                <td>'.$orden.'</td>
-                <td>'.$observaciones.'</td>
-            </tr>';
-
-            $i++;
-
-          }
-        }else{
-          $tabla .= ' 
-          <tr><td colspan="9" class="empty"><span class="empty">No se encontraron resultados.</span></td></tr>
-          ';
-        }
-
-        $tabla .= '</tbody>
-        </table>';
-
-    return $tabla;
-  }
-
-  public static function comparendospantalla($motivo, $fecha_inicial, $fecha_final, $empresa, $fecha_inicial_reg, $fecha_final_reg, $id_empleado) {
-    
-    $condicion = "WHERE D.Id_Padre IN (".Yii::app()->params->motivos_d_comparendo.")";
-
-    if($empresa != null){
-      $empresa = implode(",", $empresa);
-      $condicion .= " AND HP.Id_Empresa IN (".$empresa.")";
-    }else{
-      $array_empresas = (Yii::app()->user->getState('array_empresas'));
-      $empresa = implode(",",$array_empresas);
-      $condicion .= " AND HP.Id_Empresa IN (".$empresa.")";
-    }
-
-    if($motivo != null){
-      $motivo = implode(",", $motivo);
-      $condicion .= " AND EV.Id_M_Disciplinario IN (".$motivo.")";
-    }
-
-    if($fecha_inicial != null && $fecha_final != null){
-      $condicion .= " AND EV.Fecha BETWEEN '".$fecha_inicial."' AND '".$fecha_final."'";
-    }else{
-      if($fecha_inicial != null && $fecha_final == null){
-        $condicion .= " AND EV.Fecha = '".$fecha_inicial."'";
-      } 
-    }
-
-    if($fecha_inicial_reg != null && $fecha_final_reg != null){
-      $condicion .= " AND EV.Fecha_Creacion BETWEEN '".$fecha_inicial_reg." 00:00:00' AND '".$fecha_final_reg." 23:59:59'";
-    }else{
-      if($fecha_inicial_reg != null && $fecha_final_reg == null){
-        $condicion .= " AND EV.Fecha_Creacion BETWEEN '".$fecha_inicial_reg." 00:00:00' AND '".$fecha_inicial_reg." 23:59:59'";
-      }
-    }
-
-    if($id_empleado != null){
-      $condicion .= " AND EV.Id_Empleado = ".$id_empleado."";
-    }
-
-    $query ="
-    SELECT
-    EV.Id_Disciplinario,
-    EV.Fecha
-    FROM T_PR_DISCIPLINARIO_EMPLEADO EV
-    INNER JOIN T_PR_CONTRATO_EMPLEADO HP ON EV.Id_Empleado = HP.Id_Empleado
-    INNER JOIN T_PR_EMPRESA E ON HP.Id_Empresa = E.Id_Empresa
-    LEFT JOIN T_PR_DOMINIO D ON EV.Id_M_Disciplinario = D.Id_Dominio
-    ".$condicion."
-    GROUP BY EV.Id_Disciplinario, EV.Fecha 
-    ORDER BY 2 DESC
-    ";
-
-    $tabla = '
-      <table class="table table-sm table-hover">
-          <thead>
-            <tr>
-            <th>Tipo identificación</th>
-            <th>No. identificación</th>
-            <th>Empleado</th>
-            <th>Empresa</th>
-            <th>Motivo</th>
-            <th>Fecha</th>
-            <th>Impuesto Por</th>
-            <th>Orden No.</th>
-            <th>Observaciones</th>
-            </tr>
-          </thead>
-          <tbody>';
-
-        $query1 = Yii::app()->db->createCommand($query)->queryAll();
-
-        $i = 1;
-
-        if(!empty($query1)){
-          foreach ($query1 as $reg1) {
-
-            $modelodisciplinario = DisciplinarioEmpleado::model()->findByPk($reg1['Id_Disciplinario']);
-
-            $tipo_ident       = $modelodisciplinario->idempleado->idtipoident->Dominio; 
-            $ident            = $modelodisciplinario->idempleado->Identificacion;  
-            $empleado         = UtilidadesEmpleado::nombreempleado($modelodisciplinario->Id_Empleado);
-            $empresa          = $modelodisciplinario->idcontrato->idempresa->Descripcion;
-            $motivo           = $modelodisciplinario->idmdisciplinario->Dominio; 
-            $fecha_evento     = $modelodisciplinario->Fecha; 
-            $persona_imp      = UtilidadesEmpleado::nombreempleado($modelodisciplinario->Id_Empleado_Imp);
-            $orden            = $modelodisciplinario->Orden_No;
-
-            if($modelodisciplinario->Observacion != ""){
-              $observaciones = $modelodisciplinario->Observacion; 
-            }else{
-              $observaciones = "-";
-            }
-
-            if ($i % 2 == 0){
-              $clase = 'odd'; 
-            }else{
-              $clase = 'even'; 
-            }
-
-            $tabla .= '    
-            <tr class="'.$clase.'">
-                <td>'.$tipo_ident.'</td>
-                <td>'.$ident.'</td>
-                <td>'.$empleado.'</td>
-                <td>'.$empresa.'</td>
-                <td>'.$motivo.'</td>
-                <td>'.$fecha_evento.'</td>
-                <td>'.$persona_imp.'</td>
-                <td>'.$orden.'</td>
-                <td>'.$observaciones.'</td>
-            </tr>';
-
-            $i++;
-
-          }
-        }else{
-          $tabla .= ' 
-          <tr><td colspan="9" class="empty"><span class="empty">No se encontraron resultados.</span></td></tr>
-          ';
-        }
-
-        $tabla .= '</tbody>
-        </table>';
-
-    return $tabla;
-  }
-
-  public static function tallajeempleadospantalla($fecha_inicial_cont, $fecha_final_cont, $empresa) {
-    
-    $condicion = "WHERE CE.Id_M_Retiro IS NULL";
-
-    if($empresa != null){
-      $empresa = implode(",", $empresa);
-      $condicion .= " AND CE.Id_Empresa IN (".$empresa.")";
-    }else{
-      $array_empresas = (Yii::app()->user->getState('array_empresas'));
-      $empresa = implode(",",$array_empresas);
-      $condicion .= " AND CE.Id_Empresa IN (".$empresa.")";
-    }
-
-    if($fecha_inicial_cont != null && $fecha_final_cont != null){
-      $condicion .= " AND CE.Fecha_Ingreso BETWEEN '".$fecha_inicial_cont."' AND '".$fecha_final_cont."'";
-    }else{
-      if($fecha_inicial_cont != null && $fecha_final_cont == null){
-        $condicion .= " AND CE.Fecha_Ingreso = '".$fecha_inicial_cont."'";
-      }
-    }
-
-    $query = "
-    SELECT 
-    TI.Dominio AS Tipo_Ident, 
-    EMP.Identificacion AS Identificacion, 
-    CONCAT (EMP.Apellido,' ',EMP.Nombre) AS Empleado, 
-    GEN.Dominio AS Genero, 
-    EM.Descripcion AS Empresa, 
-    CE.Fecha_Ingreso AS Fecha_Ingreso, 
-    UN.Unidad_Gerencia AS UN, 
-    A.Area AS Area, S.Subarea AS Subarea, 
-    C.Cargo AS Cargo,  
-    EMP.Talla_Camisa, 
-    EMP.Talla_Pantalon, 
-    EMP.Talla_Zapato, 
-    EMP.Talla_Overol, 
-    EMP.Talla_Bata,
-    CE.Id_Contrato 
-    FROM T_PR_EMPLEADO E
-    LEFT JOIN T_PR_CONTRATO_EMPLEADO CE ON CE.Id_Empleado = E.Id_Empleado 
-    LEFT JOIN T_PR_EMPRESA EM ON EM.Id_Empresa = CE.Id_Empresa 
-    LEFT JOIN T_PR_UNIDAD_GERENCIA UN ON UN.Id_Unidad_Gerencia = CE.Id_Unidad_Gerencia 
-    LEFT JOIN T_PR_AREA A ON A.Id_Area = CE.Id_Area 
-    LEFT JOIN T_PR_SUBAREA S ON S.Id_Subarea = CE.Id_Subarea 
-    LEFT JOIN T_PR_CARGO C ON C.Id_Cargo = CE.Id_Cargo 
-    LEFT JOIN T_PR_EMPLEADO EMP ON EMP.Id_Empleado = CE.Id_Empleado 
-    LEFT JOIN T_PR_DOMINIO GEN ON GEN.Id_Dominio = EMP.Id_Genero 
-    LEFT JOIN T_PR_DOMINIO TI ON TI.Id_Dominio = EMP.Id_Tipo_Ident 
-    WHERE CE.Id_M_Retiro IS NULL 
-    AND CE.Id_Empresa IN (6,7,8,4,5,1,2,3) ORDER BY 5,7,8,9,3
-    ";
-
-    $tabla = '
-    <table class="table table-sm table-hover">
-            <thead>
-              <tr>
-              <th>Tipo identificación</th>
-              <th>No. identificación</th>
-              <th>Empleado</th>
-              <th>Género</th>
-              <th>Empresa</th>
-              <th>Fecha de ingreso</th>
-              <th>Unidad de gerencia</th>
-              <th>Área</th>
-              <th>Subárea</th>
-              <th>Cargo</th>
-              <th>Camisa</th>
-              <th>Pantalón</th>
-              <th>Zapatos</th>
-              <th>Overol</th>
-              <th>Bata</th>
-              <th>Elementos asignados</th>
-              </tr>
-            </thead>
-        <tbody>';
-
-    $query1 = Yii::app()->db->createCommand($query)->queryAll();
-
-    $array = array();
-
-    foreach ($query1 as $reg) {
-      
-      $Tipo_Ident = $reg['Tipo_Ident'];
-      $Identificacion = $reg['Identificacion'];
-      $Empleado = $reg['Empleado'];
-      $Genero = $reg['Genero'];
-      $Empresa = $reg['Empresa'];
-      $Fecha_Ingreso = $reg['Fecha_Ingreso'];
-      $UN = $reg['UN'];
-      $Area = $reg['Area'];
-      $Subarea = $reg['Subarea'];
-      $Cargo = $reg['Cargo'];
-      $Talla_Camisa = $reg['Talla_Camisa'];
-      $Talla_Pantalon = $reg['Talla_Pantalon'];
-      $Talla_Zapato = $reg['Talla_Zapato'];
-      $Talla_Overol = $reg['Talla_Overol'];
-      $Talla_Bata = $reg['Talla_Bata'];
-      $Id_Contrato = $reg['Id_Contrato'];
-
-      $query2 = "
-        SELECT 
-        E.Elemento AS Elemento
-        FROM T_PR_ELEMENTO_EMPLEADO EE
-        LEFT JOIN T_PR_AREA_ELEMENTO AE ON AE.Id_A_elemento = EE.Id_A_Elemento 
-        LEFT JOIN T_PR_ELEMENTO E ON E.Id_Elemento = AE.Id_Elemento 
-        WHERE EE.Id_Contrato = ".$Id_Contrato." AND EE.Id_A_Elemento IN (SELECT Id_A_Elemento FROM T_PR_AREA_ELEMENTO_DOT) 
-        AND EE.Estado = 1 
-      ";
-
-      $query3 = Yii::app()->db->createCommand($query2)->queryAll();
-
-      $Elem = "";
-
-      if(!empty($query3)){
-
-        foreach ($query3 as $r) {
-          $Elem .= "".$r['Elemento'].", ";
-        }
-
-        $Elem = substr ($Elem, 0, -2);    
-      }
-
-      $array[$Identificacion] = array();
-      $array[$Identificacion]['info'] = array();
-      $array[$Identificacion]['info']['Tipo_Ident'] = $Tipo_Ident;
-      $array[$Identificacion]['info']['Identificacion'] = $Identificacion;
-      $array[$Identificacion]['info']['Empleado'] = $Empleado;
-      $array[$Identificacion]['info']['Genero'] = $Genero;
-      $array[$Identificacion]['info']['Empresa'] = $Empresa;
-      $array[$Identificacion]['info']['Fecha_Ingreso'] = $Fecha_Ingreso;
-      $array[$Identificacion]['info']['UN'] = $UN;
-      $array[$Identificacion]['info']['Area'] = $Area;
-      $array[$Identificacion]['info']['Subarea'] = $Subarea;
-      $array[$Identificacion]['info']['Cargo'] = $Cargo;
-      $array[$Identificacion]['info']['Talla_Camisa'] = $Talla_Camisa;
-      $array[$Identificacion]['info']['Talla_Pantalon'] = $Talla_Pantalon;
-      $array[$Identificacion]['info']['Talla_Zapato'] = $Talla_Zapato;
-      $array[$Identificacion]['info']['Talla_Overol'] = $Talla_Overol;
-      $array[$Identificacion]['info']['Talla_Bata'] = $Talla_Bata;
-      $array[$Identificacion]['info']['elementos'] =$Elem;
-    }
-
-    if(!empty($array)){
-
-      $i = 1; 
-
-      foreach ($array as $registro) {
-        
-        $Tipo_Ident = ($registro['info']['Tipo_Ident'] == "") ? "-" : $registro['info']['Tipo_Ident'];
-        $Identificacion = $registro['info']['Identificacion'];
-        $Empleado = $registro['info']['Empleado'];
-        $Genero = ($registro['info']['Genero'] == "") ? "-" : $registro['info']['Genero'];
-        $Empresa = $registro['info']['Empresa'];
-        $Fecha_Ingreso = ($registro['info']['Fecha_Ingreso'] == "") ? "-" : $registro['info']['Fecha_Ingreso'];
-        $UN = ($registro['info']['UN'] == "") ? "-" : $registro['info']['UN'];
-        $Area = ($registro['info']['Area'] == "") ? "-" : $registro['info']['Area'];
-        $Subarea = ($registro['info']['Subarea'] == "") ? "-" : $registro['info']['Subarea'];
-        $Cargo = ($registro['info']['Genero'] == "") ? "-" : $registro['info']['Genero'];
-        $Talla_Camisa = ($registro['info']['Talla_Camisa'] == "") ? "-" : $registro['info']['Talla_Camisa'];
-        $Talla_Pantalon = ($registro['info']['Talla_Pantalon'] == "") ? "-" : $registro['info']['Talla_Pantalon'];
-        $Talla_Zapato = ($registro['info']['Talla_Zapato'] == "") ? "-" : $registro['info']['Talla_Zapato'];
-        $Talla_Overol = ($registro['info']['Talla_Overol'] == "") ? "-" : $registro['info']['Talla_Overol'];
-        $Talla_Bata = ($registro['info']['Talla_Bata'] == "") ? "-" : $registro['info']['Talla_Bata'];
-        $Elem = ($registro['info']['elementos'] == "") ? "-" : $registro['info']['elementos'];
-
-        if ($i % 2 == 0){
-          $clase = 'odd'; 
-        }else{
-          $clase = 'even'; 
-        }
-
-        $tabla .= '    
-        <tr class="'.$clase.'">
-              <td>'.$Tipo_Ident.'</td>
-              <td>'.$Identificacion.'</td>
-              <td>'.$Empleado.'</td>
-              <td>'.$Genero.'</td>
-              <td>'.$Empresa.'</td>
-              <td>'.$Fecha_Ingreso.'</td>
-              <td>'.$UN.'</td>
-              <td>'.$Area.'</td>
-              <td>'.$Subarea.'</td>
-              <td>'.$Cargo.'</td>
-              <td>'.$Talla_Camisa.'</td>
-              <td>'.$Talla_Pantalon.'</td>
-              <td>'.$Talla_Zapato.'</td>
-              <td>'.$Talla_Overol.'</td>
-              <td>'.$Talla_Bata.'</td>
-              <td>'.$Elem.'</td>
-        </tr>';
-
-        $i++;
-
-
-      }
-    }else{
-      $tabla .= ' 
-          <tr><td colspan="16" class="empty"><span class="empty">No se encontraron resultados.</span></td></tr>
-          ';
-    }
-
-    $tabla .= '</tbody>
-        </table>';
-
-  return $tabla;
-
-  }
+  
 
   public static function elemherremppantalla($id_empleado) {
 
@@ -1382,67 +872,6 @@ class UtilidadesReportesTh {
   
   }
 
-  public static function obscuentapantalla($id_empleado) {
-
-    $criteria=new CDbCriteria;
-    $criteria->condition = "Id_Empleado = :Id_Empleado";
-    $criteria->order = "Fecha_Actualizacion DESC";
-    $criteria->params = array (':Id_Empleado' => $id_empleado);
-
-    $model_cuentas = Cuenta::model()->findAll($criteria);
-
-    $tabla = '
-      <table class="table table-sm table-hover">
-        <thead>
-          <tr>
-          <th>Cuenta de correo</th>
-          <th>Observaciones</th>
-          <th>Estado</th>
-          <th>Usuario que actualizó</th>
-          <th>Fecha de actualización</th>
-          </tr>
-        </thead>
-        <tbody>
-          ';
-
-    if(!empty($model_cuentas)){
-      
-      $i = 1; 
-
-      foreach ($model_cuentas as $reg) {
-        
-        if ($i % 2 == 0){
-          $clase = 'odd'; 
-        }else{
-          $clase = 'even'; 
-        }
-
-        if($reg->Observaciones == "") { $o = "-"; } else{ $o = $reg->Observaciones; }
-
-        $tabla .= '    
-        <tr class="'.$clase.'">
-              <td>'.$reg->Cuenta_Correo.'</td>
-              <td>'.$o.'</td>
-              <td>'.UtilidadesEmpleado::estadoactualempleado($reg->Id_Empleado).'</td>
-              <td>'.$reg->idusuarioact->Usuario.'</td>
-              <td>'.UtilidadesVarias::textofechahora($reg->Fecha_Actualizacion).'</td>
-        </tr>';
-
-        $i++;
-
-      }
-    }else{
-      $tabla .= ' 
-        <tr><td colspan="5" class="empty"><span class="empty">No se encontraron resultados.</span></td></tr>
-        ';
-    }
-
-    $tabla .= '</tbody>
-      </table>';
-
-    return $tabla;
-
-  }
 
   public static function elemherrpendpantalla() {
 
@@ -1579,105 +1008,6 @@ class UtilidadesReportesTh {
 
   }
 
-  public static function cuentaspantalla($dominio, $estado) {
-    
-    $condicion = "WHERE c.Clasificacion = 314";
-
-    if($dominio != ""){
-      
-      $condicion .= " AND c.Dominio = ".$dominio;
-
-    }
-
-    if($estado != null){
-  
-      $condicion .= " AND c.Estado = ".$estado;
-
-    }
-
-    $query ="
-    SELECT
-    CONCAT(c.Cuenta_Usuario, '@', dw.Dominio) AS Cuenta,
-    CASE
-    WHEN c.Observaciones IS NULL THEN '-'
-    WHEN c.Observaciones IS NOT NULL THEN c.Observaciones
-    Else '-'
-    END AS Observaciones,
-    est.Dominio AS Estado_Cuenta,
-    CASE
-    WHEN e.Id_Empleado IS NULL THEN '-'
-    WHEN e.Id_Empleado IS NOT NULL THEN CONCAT (e.Nombre, ' ', e.Apellido, ' (',ti.Dominio,' ',e.Identificacion,')')
-    Else '-'
-    END AS Empleado,
-    CASE
-    WHEN e.Estado = 1 THEN 'ACTIVO'
-    WHEN e.Estado = 0 THEN 'INACTIVO'
-    Else '-'
-    END AS Estado_Empleado
-    FROM T_PR_CUENTA c
-    LEFT JOIN T_PR_CUENTA_EMPLEADO ce ON c.Id_Cuenta = ce.Id_Cuenta AND ce.Estado = 1
-    LEFT JOIN T_PR_EMPLEADO e ON ce.Id_Empleado = e.Id_Empleado
-    LEFT JOIN T_PR_DOMINIO ti ON e.Id_Tipo_Ident = ti.Id_Dominio
-    LEFT JOIN T_PR_DOMINIO est ON c.Estado = est.Id_Dominio
-    LEFT JOIN T_PR_DOMINIO_WEB dw ON c.Dominio = dw.Id_Dominio_Web
-    ".$condicion."
-    ORDER BY dw.Dominio, c.Cuenta_Usuario 
-    ";
-
-    $tabla = '
-      <table class="table table-sm table-hover">
-              <thead>
-                <tr>
-                <th>Correo</th>
-                <th>Notas</th>
-                <th>Estado de Correo</th>
-                <th>Empleado</th>
-                <th>Estado de empleado</th>
-                </tr>
-              </thead>
-          <tbody>';
-
-        $query1 = Yii::app()->db->createCommand($query)->queryAll();
-
-        $i = 1; 
-
-        if(!empty($query1)){
-          foreach ($query1 as $reg1) {
-
-            $Cuenta          = $reg1 ['Cuenta']; 
-            $Notas           = $reg1 ['Observaciones']; 
-            $Estado_Cuenta   = $reg1 ['Estado_Cuenta']; 
-            $Empleado        = $reg1 ['Empleado']; 
-            $Estado_Empleado = $reg1 ['Estado_Empleado']; 
-
-            if ($i % 2 == 0){
-              $clase = 'odd'; 
-            }else{
-              $clase = 'even'; 
-            }
-
-            $tabla .= '    
-            <tr class="'.$clase.'">
-                  <td>'.$Cuenta.'</td>
-                  <td>'.$Notas.'</td>
-                  <td>'.$Estado_Cuenta.'</td>
-                  <td>'.$Empleado.'</td>
-                  <td>'.$Estado_Empleado.'</td>
-              </tr>';
-
-            $i++;
-          }
-        }else{
-          $tabla .= ' 
-          <tr><td colspan="5" class="empty"><span class="empty">No se encontraron resultados.</span></td></tr>
-          ';
-        }
-
-        $tabla .= '  </tbody>
-        </table>';
-
-    return $tabla;
-  }
 
   public static function evaluacpantalla() {
 

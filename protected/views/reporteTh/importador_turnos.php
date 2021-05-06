@@ -149,53 +149,6 @@ $(function() {
 
   });
 
-/*
-  // Validacion de extensiones permitidas
-  function validarExtension(datos) {
-
-    var ruta = datos.value;
-    var extension = ruta.substring(ruta.lastIndexOf('.') + 1).toLowerCase();
-    var extensionValida = extensionesValidas.indexOf(extension);
-
-    if(extensionValida < 0) {
-
-      $('#error_file').html('La extensión no es válida (.'+ extension+'), Solo se admite (.xlsx)');
-      $('#error_file').show();
-      $('#valid_file').val(0);
-      return false;
-
-    } else {
-
-      return true;
-
-    }
-  }
-
-  // Validacion de peso del fichero en kbs
-
-  function validarPeso(datos) {
-
-    if (datos.files && datos.files[0]) {
-
-          var pesoFichero = datos.files[0].size/1024;
-
-          if(pesoFichero > pesoPermitido) {
-
-              $('#error_file').html('El peso maximo permitido del fichero es: ' + pesoPermitido / 1024 + ' MB, Su fichero tiene: '+ (pesoFichero /1024).toFixed(2) +' MB.');
-              $('#error_file').show();
-              $('#valid_file').val(0);
-              return false;
-
-          } else {
-
-              return true;
-
-          }
-
-      }
-
-  }
-*/
 });
 
 </script>

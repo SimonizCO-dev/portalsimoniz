@@ -61,6 +61,8 @@ class CPtjCorreriaController extends Controller
 			if($model->save()){
 				Yii::app()->user->setFlash('success', "Porcentaje actualizado correctamente.");
 				$this->redirect(array('admin'));
+			}else{
+				print_r($model->GetErrors());die;
 			}
 		}
 

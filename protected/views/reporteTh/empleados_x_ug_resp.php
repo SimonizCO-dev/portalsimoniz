@@ -4,9 +4,20 @@
 
 set_time_limit(0);
 
+//Inclusion de librerias
+
+spl_autoload_unregister(array('YiiBase','autoload'));
+
+require_once Yii::app()->basePath . '/extensions/phpspreadsheet/vendor/autoload.php';
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+spl_autoload_register(array('YiiBase','autoload'));
+
+//Fin inclusion de librerias
+
 //se reciben los parametros para el reporte
 $unidad_gerencia = $model['unidad_gerencia'];
-$estado = $model['estado'];
 
 $ug = UnidadGerencia::model()->findByPk($unidad_gerencia)->Unidad_Gerencia;
 
@@ -28,95 +39,51 @@ $fecha_act= $diaesp.", ".$dianro." de ".$mesesp." de ".$anionro;
 
 /*inicio configuración array de datos*/
 
-if($estado == 1){
+$query ="
+  SET NOCOUNT ON
+  EXEC P_PR_GH_EMPLEADO_UG
+  @Id_UN = ".$unidad_gerencia."
+";
 
-  $query ="
-  SELECT 
-  DISTINCT
-  '' AS Novedad,
-  TI.Dominio AS Tipo_Ident, 
-  P.Identificacion, 
-  CONCAT (P.Apellido, ' ', P.Nombre) AS Empleado, 
-  P.Fecha_Nacimiento, 
-  E.Descripcion AS Empresa,
-  R.Regional,
-  CI.Ciudad AS Ciu_Res,  
-  UG.Unidad_Gerencia,
-  A.Area,
-  S.Subarea,
-  C.Cargo,
-  CONCAT(CC.Codigo, ' - ', CC.Centro_Costo) AS CC, 
-  HP.Fecha_Ingreso,
-  HP.Salario,
-  CASE HP.Salario_Flexible
-      WHEN  1 THEN 'SI'
-      WHEN 0 THEN 'NO'
-      ELSE NULL
-  END AS Salario_F,
-  HP.Fecha_Retiro
-  FROM TH_CONTRATO_EMPLEADO HP 
-  LEFT JOIN TH_EMPLEADO P ON HP.Id_Empleado = P.Id_Empleado 
-  LEFT JOIN TH_DOMINIO TI ON P.Id_Tipo_Ident = TI.Id_Dominio 
-  LEFT JOIN TH_DOMINIO GE ON P.Id_Genero = GE.Id_Dominio 
-  LEFT JOIN TH_EMPRESA E ON HP.Id_Empresa = E.Id_Empresa 
-  LEFT JOIN TH_REGIONAL R ON P.Id_Regional_Labor = R.Id_Regional
-  LEFT JOIN TH_CIUDAD CI ON P.Id_Ciudad_Residencia = CI.Id_Ciudad 
-  LEFT JOIN TH_UNIDAD_GERENCIA UG ON HP.Id_Unidad_Gerencia = UG.Id_Unidad_Gerencia 
-  LEFT JOIN TH_AREA A ON HP.Id_Area = A.Id_Area
-  LEFT JOIN TH_SUBAREA S ON HP.Id_Subarea = S.Id_Subarea
-  LEFT JOIN TH_CARGO C ON HP.Id_Cargo = C.Id_Cargo
-  LEFT JOIN TH_CENTRO_COSTO CC ON HP.Id_Centro_Costo = CC.Id_C_Costo
-  WHERE HP.Id_Unidad_Gerencia = ".$unidad_gerencia." AND HP.Id_M_Retiro IS NULL
-  ORDER BY 4,6,9,10,11,12,13 ASC 
-  ";
-
-}else{
-
-  $query ="
-    SET NOCOUNT ON EXEC [dbo].[CONS_EMP_UG]
-    @UG = ".$unidad_gerencia."
-  ";
-
-}
+UtilidadesVarias::log($query);
 
 /*fin configuración array de datos*/
 
 //EXCEL
 
-// Se inactiva el autoloader de yii
-spl_autoload_unregister(array('YiiBase','autoload'));   
+//EXCEL
 
-require_once Yii::app()->basePath . '/extensions/PHPExcel/Classes/PHPExcel.php';
+$alignment_center = \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER;
+$alignment_left = \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT;
+$alignment_right = \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT;
+$type_string = \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING;
 
-//cuando se termina la accion relacionada con la libreria se activa el autoloader de yii
-spl_autoload_register(array('YiiBase','autoload'));
+$objPHPExcel = new Spreadsheet();
 
-$objPHPExcel = new PHPExcel();
-
-$objPHPExcel->getActiveSheet()->setTitle('Hoja1');
-$objPHPExcel->setActiveSheetIndex();
+$objPHPExcel->setActiveSheetIndex(0);
+$objPHPExcel->getActiveSheet()->setTitle('Reporte');
 
 /*Cabecera tabla*/
 
-$objPHPExcel->setActiveSheetIndex()->setCellValue('A1', 'Novedades');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('B1', 'Tipo identificación');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('C1', 'No. identificación');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('D1', 'Empleado');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('E1', 'Fec. nacimiento');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('F1', 'Empresa');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('G1', 'Regional');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('H1', 'Ciudad de residencia');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('I1', 'Unidad de gerencia');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('J1', 'Área');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('K1', 'Subárea');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('L1', 'Cargo');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('M1', 'Centro de costo');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('N1', 'Fec. ingreso');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('O1', 'Salario');
-$objPHPExcel->setActiveSheetIndex()->setCellValue('P1', 'Salario flexible ?');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', 'Novedades');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('B1', 'Tipo identificación');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('C1', 'No. identificación');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('D1', 'Empleado');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('E1', 'Fec. nacimiento');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('F1', 'Empresa');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('G1', 'Regional');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H1', 'Ciudad de residencia');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I1', 'Unidad de gerencia');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('J1', 'Área');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('K1', 'Subárea');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('L1', 'Cargo');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('M1', 'Centro de costo');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('N1', 'Fec. ingreso');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('O1', 'Salario');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('P1', 'Salario flexible ?');
 
-$objPHPExcel->getActiveSheet()->getStyle('A1:P1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-$objPHPExcel->getActiveSheet()->getStyle('A1:P1')->getFont()->setBold(true);
+$objPHPExcel->getActiveSheet(0)->getStyle('A1:P1')->getAlignment()->setHorizontal($alignment_center);
+$objPHPExcel->getActiveSheet(0)->getStyle('A1:P1')->getFont()->setBold(true);
 
 /*Inicio contenido tabla*/
 
@@ -184,58 +151,49 @@ foreach ($query1 as $reg1) {
     $sf = "-";
   }
 
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('A'.$Fila, '');
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('B'.$Fila, $tipo_ident);
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('C'.$Fila, $ident);
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('D'.$Fila, $empleado);
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('E'.$Fila, $fecha_nacimiento);
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('F'.$Fila, $empresa);
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('G'.$Fila, $regional);
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('H'.$Fila, $ciudad_res);
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('I'.$Fila, $ug);
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('J'.$Fila, $area);
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('K'.$Fila, $subarea);
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('L'.$Fila, $cargo);
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('M'.$Fila, $cc);
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('N'.$Fila, $fecha_ingreso);
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('O'.$Fila, $salario);
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('P'.$Fila, $sf);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$Fila, '');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$Fila, $tipo_ident);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$Fila, $ident);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$Fila, $empleado);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$Fila, $fecha_nacimiento);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$Fila, $empresa);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$Fila, $regional);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$Fila, $ciudad_res);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.$Fila, $ug);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('J'.$Fila, $area);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('K'.$Fila, $subarea);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('L'.$Fila, $cargo);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('M'.$Fila, $cc);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('N'.$Fila, $fecha_ingreso);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('O'.$Fila, $salario);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('P'.$Fila, $sf);
   
-  $objPHPExcel->getActiveSheet()->getStyle('A'.$Fila.':N'.$Fila)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-  $objPHPExcel->getActiveSheet()->getStyle('O'.$Fila)->getNumberFormat()->setFormatCode('0');
-  $objPHPExcel->getActiveSheet()->getStyle('O'.$Fila)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-  $objPHPExcel->getActiveSheet()->getStyle('P'.$Fila)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+  $objPHPExcel->getActiveSheet(0)->getStyle('A'.$Fila.':N'.$Fila)->getAlignment()->setHorizontal($alignment_left);
+  $objPHPExcel->getActiveSheet(0)->getStyle('O'.$Fila)->getNumberFormat()->setFormatCode('0');
+  $objPHPExcel->getActiveSheet(0)->getStyle('O'.$Fila)->getAlignment()->setHorizontal($alignment_right);
+  $objPHPExcel->getActiveSheet(0)->getStyle('P'.$Fila)->getAlignment()->setHorizontal($alignment_left);
   
   $Fila = $Fila + 1;
 
 }
-
 /*fin contenido tabla*/
 
 //se configura el ancho de cada columna en automatico solo funciona en el rango A-Z
-foreach($objPHPExcel->getWorksheetIterator() as $worksheet) {
+$nCols = 16; 
 
-    $objPHPExcel->setActiveSheetIndex($objPHPExcel->getIndex($worksheet));
-
-    $sheet = $objPHPExcel->getActiveSheet();
-    $cellIterator = $sheet->getRowIterator()->current()->getCellIterator();
-    $cellIterator->setIterateOnlyExistingCells(true);
-    foreach ($cellIterator as $cell) {
-        $sheet->getColumnDimension($cell->getColumn())->setAutoSize(true);
-    }
+foreach (range(0, $nCols) as $col) {
+  $objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($col)->setAutoSize(true);                
 }
 
-$n = 'Empleados_x_unidad_gerencia'.date('Y-m-d H_i_s');
+$n = 'Empleados_x_unidad_gerencia'.date('Y_m_d_H_i_s');
 
 header('Content-Type: application/vnd.ms-excel');
 header('Content-Disposition: attachment;filename="'.$n.'.xlsx"');
 header('Cache-Control: max-age=0');
-$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
+$objWriter = new Xlsx($objPHPExcel);
 ob_end_clean();
 $objWriter->save('php://output');
 exit;
-
-
 
 ?>
 

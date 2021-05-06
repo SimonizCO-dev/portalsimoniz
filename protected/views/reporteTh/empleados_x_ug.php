@@ -42,27 +42,6 @@ $lista_ug = CHtml::listData($unidades_gerencia, 'Id_Unidad_Gerencia', 'Unidad_Ge
             ?>
         </div>
     </div>
-    <div class="col-sm-4">
-        <div class="form-group">
-            <?php echo $form->error($model,'estado', array('class' => 'badge badge-warning float-right')); ?>
-            <?php echo $form->label($model,'estado'); ?>
-            <?php $estados = Yii::app()->params->estados; ?>
-            <?php
-                $this->widget('ext.select2.ESelect2',array(
-                    'name'=>'ReporteTh[estado]',
-                    'id'=>'ReporteTh_estado',
-                    'data'=>$estados,
-                    'value' => $model->estado,
-                    'htmlOptions'=>array(),
-                    'options'=>array(
-                        'placeholder'=>'Seleccione...',
-                        'width'=> '100%',
-                        'allowClear'=>true,
-                    ),
-                ));
-            ?>
-        </div>
-    </div>
 </div>
 
 <div class="row mb-2">
@@ -117,8 +96,7 @@ $(function() {
 function reporte_pantalla(){
 
   var empresa = $("#ReporteTh_empresa").val();
-  var estado = $("#ReporteTh_estado").val();
-  var data = {empresa: empresa, estado: estado}
+  var data = {empresa: empresa}
   $(".ajax-loader").fadeIn('fast');
   $.ajax({ 
     type: "POST", 
@@ -134,7 +112,6 @@ function reporte_pantalla(){
 
 function resetfields(){
   $('#ReporteTh_unidad_gerencia').val('').trigger('change');
-  $('#ReporteTh_estado').val('').trigger('change');
 }
   
 </script>

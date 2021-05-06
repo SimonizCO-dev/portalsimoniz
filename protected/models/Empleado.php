@@ -143,7 +143,7 @@ class Empleado extends CActiveRecord
 		    CONCAT (E.Apellido, ' ', E.Nombre, ' (', TI.Dominio, ' ', E.Identificacion, ')') AS Nombre_Apellido
 		    FROM T_PR_EMPLEADO E
 		    INNER JOIN T_PR_DOMINIO TI ON E.Id_Tipo_Ident = TI.Id_Dominio
-		    WHERE (E.Identificacion LIKE '%".$filtro."%' OR E.Nombre LIKE '%".$filtro."%' OR E.Apellido LIKE '%".$filtro."%') ORDER BY Nombre_Apellido
+		    WHERE (E.Identificacion LIKE '%".$filtro."%' OR E.Nombre LIKE '%".$filtro."%' OR E.Apellido LIKE '%".$filtro."%') AND E.estado = 1 ORDER BY Nombre_Apellido
 
 		")->queryAll();
         return $resp;

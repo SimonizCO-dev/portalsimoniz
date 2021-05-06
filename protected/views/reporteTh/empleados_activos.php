@@ -184,6 +184,7 @@ function resetfields(){
   $('#ReporteTh_fecha_inicial_cont').val('');
   $('#ReporteTh_fecha_final_cont').val('');
   $('#ReporteTh_empresa').val('').trigger('change');
+  $("#resultados").html(''); 
 }
   
 </script>

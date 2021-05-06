@@ -60,7 +60,7 @@
 	<div class="row mb-2">
 	  	<div class="col-sm-6">  
      		<button type="button" class="btn btn-primary btn-sm" onclick="resetfields();"><i class="fa fa-eraser"></i> Limpiar filtros</button>
-			<button type="button" class="btn btn-primary btn-sm" id="yt0"><i class="fa fa-search"></i> Buscar</button>
+			<button type="submit" class="btn btn-primary btn-sm" id="yt0"><i class="fa fa-search"></i> Buscar</button>
 	  	</div>
 	</div>
 

@@ -62,7 +62,7 @@ class HerramientaController extends Controller
 			$model->Fecha_Creacion = date('Y-m-d H:i:s');
 			$model->Fecha_Actualizacion = date('Y-m-d H:i:s');
 
-            $imagen_subida = CUploadedFile::getInstance($model,'img');
+            $imagen_subida = CUploadedFile::getInstance($model,'Imagen');
             $nombre_archivo = "{$rnd}-{$imagen_subida}"; 
             $model->Imagen = $nombre_archivo;
  
@@ -90,7 +90,7 @@ class HerramientaController extends Controller
 
 		$model=$this->loadModel($id);
 
-		$ruta_imagen_actual = Yii::app()->basePath.'/../images/herramientas/'.$model->Imagen;
+		$ruta_imagen_actual = Yii::app()->basePath.'/../files/talento_humano/herramientas/'.$model->Imagen;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -102,9 +102,9 @@ class HerramientaController extends Controller
 			$model->Id_Usuario_Actualizacion = Yii::app()->user->getState('id_user');
 			$model->Fecha_Actualizacion = date('Y-m-d H:i:s');
 
-			if($_FILES['Herramienta']['name']['img']  != "") {
+			if($_FILES['Herramienta']['name']['Imagen']  != "") {
 		    	$rnd = rand(0,99999);  // genera un numero ramdom entre 0-99999
-		        $imagen_subida = CUploadedFile::getInstance($model,'img');
+		        $imagen_subida = CUploadedFile::getInstance($model,'Imagen');
 	            $nombre_archivo = "{$rnd}-{$imagen_subida}"; 
 	            $model->Imagen = $nombre_archivo;
 	            $opc = 1;

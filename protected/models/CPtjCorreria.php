@@ -39,10 +39,9 @@ class CPtjCorreria extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('Id_Siesa, Ciudad, Porcentaje, Estado', 'required'),
+			array('Porcentaje', 'required'),
 			array('Id_Usuario_Creacion, Id_Usuario_Actualizacion, Estado', 'numerical', 'integerOnly'=>true),
-			array('Id_Siesa', 'length', 'max'=>3),
-			array('Ciudad', 'length', 'max'=>40),
+			array('Ciudad', 'length', 'max'=>80),
 			//array('Porcentaje', 'length', 'max'=>2),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.

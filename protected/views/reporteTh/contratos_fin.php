@@ -235,6 +235,7 @@ function resetfields(){
   $('#ReporteTh_motivo_retiro').val('').trigger('change');
   $('#ReporteTh_liquidado').val('').trigger('change');
   $('#ReporteTh_empresa').val('').trigger('change');
+  $("#resultados").html(''); 
 }
 
 </script> 

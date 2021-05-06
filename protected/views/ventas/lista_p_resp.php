@@ -151,10 +151,10 @@ class PDF extends FPDF{
 
         $MARCA_LINEA = $I_CRI_MARCA.' - '.$I_CRI_LINEA;
         
-        if (file_exists('images/imgs_listas_tmp/'.$ID.'.jpg')) {
-          $FOTO = 'images/imgs_listas_tmp/'.$ID.'.jpg';
+        if (file_exists('tmp/imgs_listas/'.$ID.'.jpg')) {
+          $FOTO = 'tmp/imgs_listas/'.$ID.'.jpg';
         }else{
-          $FOTO = 'images/items/default.jpg';
+          $FOTO = 'tmp/default.jpg';
         }
 
 
@@ -190,10 +190,10 @@ class PDF extends FPDF{
 
         $ORACLE_LINEA = $I_CRI_ORACLE.' - '.$I_CRI_LINEA;
         
-        if (file_exists('images/imgs_listas_tmp/'.$ID.'.jpg')) {
-          $FOTO = 'images/imgs_listas_tmp/'.$ID.'.jpg';
+        if (file_exists('tmp/imgs_listas/'.$ID.'.jpg')) {
+          $FOTO = 'tmp/imgs_listas/'.$ID.'.jpg';
         }else{
-          $FOTO = 'images/items/default.jpg';
+          $FOTO = 'tmp/default.jpg';
         }
 
         if($ORACLE_LINEA_ACT != $ORACLE_LINEA){

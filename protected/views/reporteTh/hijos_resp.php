@@ -4,47 +4,55 @@
 
 set_time_limit(0);
 
+//Inclusion de librerias
+
+spl_autoload_unregister(array('YiiBase','autoload'));
+
+require_once Yii::app()->basePath . '/extensions/fpdf/fpdf.php';
+require_once Yii::app()->basePath . '/extensions/phpspreadsheet/vendor/autoload.php';
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+spl_autoload_register(array('YiiBase','autoload'));
+
+//Fin inclusion de librerias
+
 //se reciben los parametros para el reporte
-if (isset($model['empresa'])) { $empresa = $model['empresa']; } else { $empresa = ""; }
+$empresa = $model['empresa'];
 if (isset($model['genero'])) { $genero = $model['genero']; } else { $genero = ""; }
 if (isset($model['edad_inicial'])) { $edad_inicial = $model['edad_inicial']; } else { $edad_inicial = ""; }
 if (isset($model['edad_final'])) { $edad_final = $model['edad_final']; } else { $edad_final = ""; }
+
+if($edad_inicial == "" && $edad_final != ""){
+  $edad_inicial = $edad_final;
+}
+
+if($edad_inicial != "" && $edad_final == ""){
+  $edad_final = $edad_inicial;
+}
+
 //opcion: 1. PDF, 2. EXCEL
 $opcion = $model['opcion_exp'];
 
-$condicion = "WHERE Id_Parentesco = ".Yii::app()->params->parentesco_hijo." AND P.Estado = 1";
-
 $criterio_emp = "";
 
-if($empresa != null){
-  $empresa = implode(",", $empresa);
-  $condicion .= " AND P.Id_Empresa IN (".$empresa.")";
-  
-  $q_empresa = Yii::app()->db->createCommand("SELECT Descripcion FROM TH_EMPRESA WHERE Id_Empresa IN (".$empresa.") ORDER BY Descripcion")->queryAll();
+$empresa = implode(",", $empresa);
 
-  $texto_e = '';
+$q_empresa = Yii::app()->db->createCommand("SELECT Descripcion FROM T_PR_EMPRESA WHERE Id_Empresa IN (".$empresa.") ORDER BY Descripcion")->queryAll();
 
-  foreach ($q_empresa as $e) {
-    $texto_e .= $e['Descripcion'].', ';
-  }
+$texto_e = '';
 
-  $texto_e = substr ($texto_e, 0, -2);
-
-  $criterio_emp .= "Empresa: ".$texto_e;
-
-}else{
-
-  $array_empresas = (Yii::app()->user->getState('array_empresas'));
-  $empresa = implode(",",$array_empresas);
-  $condicion .= " AND P.Id_Empresa IN (".$empresa.")";
-
-  $criterio_emp .= "Empresa: TODAS ";
+foreach ($q_empresa as $e) {
+  $texto_e .= $e['Descripcion'].', ';
 }
+
+$texto_e = substr ($texto_e, 0, -2);
+
+$criterio_emp .= "Empresa: ".$texto_e;
 
 $criterio = "";
 
 if($genero != null){
-  $condicion .= " AND H.Id_Genero = ".$genero;
   $genero = Dominio::model()->findByPk($genero)->Dominio;
   $criterio .= "Género: ".$genero;
 }else{
@@ -52,7 +60,6 @@ if($genero != null){
 }
 
 if($edad_inicial != null && $edad_final != null){
-  $condicion .= " AND DATEDIFF (yy, H.Fecha_Nacimiento, GETDATE()) BETWEEN ".$edad_inicial." AND ".$edad_final;
   $criterio .= ", Edad: de ".$edad_inicial." a ".$edad_final." años";
 }
 
@@ -74,32 +81,39 @@ $fecha_act= $diaesp.", ".$dianro." de ".$mesesp." de ".$anionro;
 
 /*inicio configuración array de datos*/
 
+
+if(($edad_inicial != "" && $edad_inicial != "" && $genero == "" && $empresa != "") ){
+  $o = 1;
+}
+
+if(($edad_inicial == "" && $edad_inicial == "" && $genero != "" && $empresa != "") ){
+  $o = 2;
+}
+
+if(($edad_inicial == "" && $edad_inicial == "" && $genero == "" && $empresa != "") ){
+  $o = 3;
+}
+
+if(($edad_inicial != "" && $edad_inicial != "" && $genero != "" && $empresa != "") ){
+  $o = 4;
+}
+
 $query ="
-SELECT
-TI.Dominio AS Tipo_Ident, 
-P.Identificacion, 
-CONCAT (P.Apellido, ' ', P.Nombre) AS Empleado,
-E.Descripcion AS Empresa,
-H.Nombre_Apellido AS Hijo, 
-H.Fecha_Nacimiento, 
-DATEDIFF (yy, H.Fecha_Nacimiento, GETDATE()) AS Edad,
-D.Dominio as Genero
-FROM TH_NUCLEO_EMPLEADO H
-LEFT JOIN TH_EMPLEADO P ON H.Id_Empleado = P.Id_Empleado
-LEFT JOIN TH_DOMINIO TI ON P.Id_Tipo_Ident = TI.Id_Dominio 
-LEFT JOIN TH_DOMINIO D ON H.Id_Genero = D.Id_Dominio
-LEFT JOIN TH_EMPRESA E ON P.Id_Empresa = E.Id_Empresa
-".$condicion."
-ORDER BY 4,3,6,7 ASC
+  SET NOCOUNT ON
+  EXEC P_PR_GH_HIJOS
+  @OPT = ".$o.",
+  @Edad_Ini = '".$edad_inicial."',
+  @Edad_Fin = '".$edad_final."',
+  @Genero = '".$genero."',
+  @Empresa = '".$empresa."'
 ";
+
+UtilidadesVarias::log($query);
 
 /*fin configuración array de datos*/
 
 if($opcion == 1){
   //PDF
-
-  //se incluye la libreria pdf
-  require_once Yii::app()->basePath . '/extensions/fpdf/fpdf.php';
 
   class PDF extends FPDF{
     
@@ -170,7 +184,7 @@ if($opcion == 1){
 
         $tipo_ident       = $reg1 ['Tipo_Ident']; 
         $ident            = $reg1 ['Identificacion']; 
-        $empleado         = $reg1 ['Empleado'];
+        $empleado         = $reg1 ['Apellido'].' '.$reg1 ['Nombre'];
         $empresa          = $reg1 ['Empresa']; 
         $hijo             = $reg1 ['Hijo']; 
         $fecha_nacimiento = $reg1 ['Fecha_Nacimiento']; 
@@ -210,38 +224,35 @@ if($opcion == 1){
   $pdf->AddPage();
   $pdf->Tabla();
   ob_end_clean();
-  $pdf->Output('D','Hijos_empleados_'.date('Y-m-d H_i_s').'.pdf');
+  $pdf->Output('D','Hijos_empleados_'.date('Y_m_d_H_i_s').'.pdf');
 }
 
 if($opcion == 2){
   //EXCEL
 
-  // Se inactiva el autoloader de yii
-  spl_autoload_unregister(array('YiiBase','autoload'));   
+  $alignment_center = \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER;
+  $alignment_left = \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT;
+  $alignment_right = \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT;
+  $type_string = \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING;
 
-  require_once Yii::app()->basePath . '/extensions/PHPExcel/Classes/PHPExcel.php';
-  
-  //cuando se termina la accion relacionada con la libreria se activa el autoloader de yii
-  spl_autoload_register(array('YiiBase','autoload'));
+  $objPHPExcel = new Spreadsheet();
 
-  $objPHPExcel = new PHPExcel();
-
-  $objPHPExcel->getActiveSheet()->setTitle('Hoja1');
-  $objPHPExcel->setActiveSheetIndex();
+  $objPHPExcel->setActiveSheetIndex(0);
+  $objPHPExcel->getActiveSheet()->setTitle('Reporte');
 
   /*Cabecera tabla*/
 
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('A1', 'Tipo identificación');
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('B1', 'No. identificación');
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('C1', 'Empleado');
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('D1', 'Empresa');
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('E1', 'Hijo');
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('F1', 'Fecha de nacimiento');
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('G1', 'Edad');
-  $objPHPExcel->setActiveSheetIndex()->setCellValue('H1', 'Género');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', 'Tipo identificación');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B1', 'No. identificación');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C1', 'Empleado');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D1', 'Empresa');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E1', 'Hijo');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F1', 'Fecha de nacimiento');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G1', 'Edad');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('H1', 'Género');
 
-  $objPHPExcel->getActiveSheet()->getStyle('A1:H1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-  $objPHPExcel->getActiveSheet()->getStyle('A1:H1')->getFont()->setBold(true);
+  $objPHPExcel->getActiveSheet(0)->getStyle('A1:H1')->getAlignment()->setHorizontal($alignment_center);
+  $objPHPExcel->getActiveSheet(0)->getStyle('A1:H1')->getFont()->setBold(true);
 
   /*Inicio contenido tabla*/
 
@@ -253,26 +264,26 @@ if($opcion == 2){
 
     $tipo_ident       = $reg1 ['Tipo_Ident']; 
     $ident            = $reg1 ['Identificacion']; 
-    $empleado         = $reg1 ['Empleado'];
-    $empresa          = $reg1 ['Empresa'];  
+    $empleado         = $reg1 ['Apellido'].' '.$reg1 ['Nombre'];
+    $empresa          = $reg1 ['Empresa']; 
     $hijo             = $reg1 ['Hijo']; 
     $fecha_nacimiento = $reg1 ['Fecha_Nacimiento']; 
     $edad             = $reg1 ['Edad']; 
-    $genero           = $reg1 ['Genero'];  
+    $genero           = $reg1 ['Genero']; 
 
-    $objPHPExcel->setActiveSheetIndex()->setCellValue('A'.$Fila, $tipo_ident);
-    $objPHPExcel->setActiveSheetIndex()->setCellValue('B'.$Fila, $ident);
-    $objPHPExcel->setActiveSheetIndex()->setCellValue('C'.$Fila, $empleado);
-    $objPHPExcel->setActiveSheetIndex()->setCellValue('D'.$Fila, $empresa);
-    $objPHPExcel->setActiveSheetIndex()->setCellValue('E'.$Fila, $hijo);
-    $objPHPExcel->setActiveSheetIndex()->setCellValue('F'.$Fila, $fecha_nacimiento);
-    $objPHPExcel->setActiveSheetIndex()->setCellValue('G'.$Fila, $edad);
-    $objPHPExcel->setActiveSheetIndex()->setCellValue('H'.$Fila, $genero);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$Fila, $tipo_ident);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$Fila, $ident);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$Fila, $empleado);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$Fila, $empresa);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$Fila, $hijo);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$Fila, $fecha_nacimiento);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$Fila, $edad);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$Fila, $genero);
         
-    $objPHPExcel->getActiveSheet()->getStyle('G'.$Fila)->getNumberFormat()->setFormatCode('0');
-    $objPHPExcel->getActiveSheet()->getStyle('A'.$Fila.':F'.$Fila)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-    $objPHPExcel->getActiveSheet()->getStyle('G'.$Fila)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-    $objPHPExcel->getActiveSheet()->getStyle('H'.$Fila)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+    $objPHPExcel->getActiveSheet(0)->getStyle('G'.$Fila)->getNumberFormat()->setFormatCode('0');
+    $objPHPExcel->getActiveSheet(0)->getStyle('A'.$Fila.':F'.$Fila)->getAlignment()->setHorizontal($alignment_left);
+    $objPHPExcel->getActiveSheet(0)->getStyle('G'.$Fila)->getAlignment()->setHorizontal($alignment_right);
+    $objPHPExcel->getActiveSheet(0)->getStyle('H'.$Fila)->getAlignment()->setHorizontal($alignment_left);
 
     $Fila = $Fila + 1;
 
@@ -281,24 +292,18 @@ if($opcion == 2){
   /*fin contenido tabla*/
 
   //se configura el ancho de cada columna en automatico solo funciona en el rango A-Z
-  foreach($objPHPExcel->getWorksheetIterator() as $worksheet) {
+  $nCols = 8; 
 
-      $objPHPExcel->setActiveSheetIndex($objPHPExcel->getIndex($worksheet));
-
-      $sheet = $objPHPExcel->getActiveSheet();
-      $cellIterator = $sheet->getRowIterator()->current()->getCellIterator();
-      $cellIterator->setIterateOnlyExistingCells(true);
-      foreach ($cellIterator as $cell) {
-          $sheet->getColumnDimension($cell->getColumn())->setAutoSize(true);
-      }
+  foreach (range(0, $nCols) as $col) {
+    $objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($col)->setAutoSize(true);                
   }
 
-  $n = 'Hijos_empleados_'.date('Y-m-d H_i_s');
+  $n = 'Hijos_empleados_'.date('Y_m_d_H_i_s');
 
   header('Content-Type: application/vnd.ms-excel');
   header('Content-Disposition: attachment;filename="'.$n.'.xlsx"');
   header('Cache-Control: max-age=0');
-  $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
+  $objWriter = new Xlsx($objPHPExcel);
   ob_end_clean();
   $objWriter->save('php://output');
   exit;

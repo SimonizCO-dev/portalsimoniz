@@ -8,8 +8,6 @@ $lista_empresas = CHtml::listData($empresas, 'Id_Empresa', 'Descripcion');
 //para combos de motivos
 $lista_ausencias = CHtml::listData($motivos_ausencia, 'Id_Dominio', 'Dominio');
 
-echo $model->Scenario;
-
 ?>
 
 <h4>Reporte ausencias de empleados</h4>
@@ -27,7 +25,7 @@ echo $model->Scenario;
 )); ?>
 
 <div class="row">
-    <div class="col-sm-9">
+    <div class="col-sm-6">
       <div class="form-group">
             <?php echo $form->error($model,'id_empleado', array('class' => 'badge badge-warning float-right')); ?>
             <?php echo $form->label($model,'id_empleado'); ?>
@@ -52,22 +50,6 @@ echo $model->Scenario;
                     ),
                 ));
             ?>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-sm-3">
-      <div class="form-group">
-        <?php echo $form->error($model,'fecha_inicial_reg', array('class' => 'badge badge-warning float-right')); ?>
-        <?php echo $form->label($model,'fecha_inicial_reg'); ?>
-        <?php echo $form->textField($model,'fecha_inicial_reg', array('class' => 'form-control form-control-sm', 'readonly' => true)); ?>
-        </div>
-    </div>
-    <div class="col-sm-3">
-      <div class="form-group">
-        <?php echo $form->error($model,'fecha_final_reg', array('class' => 'badge badge-warning float-right')); ?>
-        <?php echo $form->label($model,'fecha_final_reg'); ?>
-        <?php echo $form->textField($model,'fecha_final_reg', array('class' => 'form-control form-control-sm', 'readonly' => true)); ?>
         </div>
     </div>
     <div class="col-sm-3">
@@ -215,24 +197,6 @@ $(function() {
       weekStart: 1
   };
 
-  $("#ReporteTh_fecha_inicial_reg").datepicker({
-      language: 'es',
-      autoclose: true,
-      orientation: "right bottom",
-  }).on('changeDate', function (selected) {
-    var minDate = new Date(selected.date.valueOf());
-    $('#ReporteTh_fecha_final_reg').datepicker('setStartDate', minDate);
-  });
-
-  $("#ReporteTh_fecha_final_reg").datepicker({
-      language: 'es',
-      autoclose: true,
-      orientation: "right bottom",
-  }).on('changeDate', function (selected) {
-    var maxDate = new Date(selected.date.valueOf());
-    $('#ReporteTh_fecha_inicial_reg').datepicker('setEndDate', maxDate);
-  });
-
   $("#ReporteTh_fecha_inicial").datepicker({
       language: 'es',
       autoclose: true,
@@ -259,11 +223,9 @@ function reporte_pantalla(){
   var fecha_inicial = $("#ReporteTh_fecha_inicial").val();
   var fecha_final = $("#ReporteTh_fecha_final").val();
   var empresa = $("#ReporteTh_empresa").val();
-  var fecha_inicial_reg = $("#ReporteTh_fecha_inicial_reg").val();
-  var fecha_final_reg = $("#ReporteTh_fecha_final_reg").val();
   var id_empleado = $("#ReporteTh_id_empleado").val();
 
-  var data = {motivo_ausencia: motivo_ausencia, fecha_inicial: fecha_inicial, fecha_final: fecha_final, empresa: empresa, fecha_inicial_reg: fecha_inicial_reg, fecha_final_reg: fecha_final_reg, id_empleado: id_empleado}
+  var data = {motivo_ausencia: motivo_ausencia, fecha_inicial: fecha_inicial, fecha_final: fecha_final, empresa: empresa, id_empleado: id_empleado}
   $(".ajax-loader").fadeIn('fast');
   $.ajax({ 
     type: "POST", 
@@ -280,12 +242,11 @@ function reporte_pantalla(){
 function resetfields(){
   $('#ReporteTh_id_empleado').val('').trigger('change');
   $('#s2id_ReporteTh_id_empleado span').html("");
-  $('#ReporteTh_fecha_inicial_reg').val('');
-  $('#ReporteTh_fecha_final_reg').val('');
   $('#ReporteTh_fecha_inicial').val('');
   $('#ReporteTh_fecha_final').val('');
   $('#ReporteTh_motivo_ausencia').val('').trigger('change');
   $('#ReporteTh_empresa').val('').trigger('change');
+  $("#resultados").html(''); 
 }
 
 </script>

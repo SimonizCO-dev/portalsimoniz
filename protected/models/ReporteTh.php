@@ -23,7 +23,6 @@ class ReporteTh extends CFormModel
     public $archivo;
     public $unidad_gerencia;
     public $estado;
-    public $dominio_correo;
 
    
     
@@ -32,18 +31,13 @@ class ReporteTh extends CFormModel
         // will receive user inputs.
         return array(
             array('fecha_inicial, fecha_final', 'safe'),
-            array('opcion_exp', 'required','on'=>'empleados_activos'),
-            array('empresa, opcion_exp', 'required','on'=>'tallaje_empleados'),
-            array('opcion_exp', 'required','on'=>'hijos'),
             array('empresa, fecha_inicial, fecha_final, opcion_exp', 'required','on'=>'ausencias'),
-            array('opcion_exp', 'required','on'=>'llam_atenc'),
-            array('opcion_exp', 'required','on'=>'sanciones'),
-            array('opcion_exp', 'required','on'=>'comparendos'),
-            array('opcion_exp', 'required','on'=>'contratos_fin'),  
+            array('empresa, opcion_exp', 'required','on'=>'hijos'),
+            array('opcion_exp', 'required','on'=>'empleados_activos'),
+            array('empresa, fecha_inicial, fecha_final, opcion_exp', 'required','on'=>'disciplinarios'),
+            array('unidad_gerencia', 'required','on'=>'empleados_x_ug'),
+            array('empresa, opcion_exp', 'required','on'=>'contratos_fin'), 
             array('id_empleado', 'required','on'=>'elem_herr_emp'),  
-            array('id_empleado', 'required','on'=>'obs_cuenta'), 
-            array('unidad_gerencia, estado', 'required','on'=>'empleados_x_ug'),
-            array('opcion_exp', 'required','on'=>'cuentas'),   
             array('opcion_exp', 'required','on'=>'evaluac'),
         );  
     }
@@ -73,7 +67,6 @@ class ReporteTh extends CFormModel
             'id_empleado' => 'Empleado',
             'archivo' => 'Archivo',
             'unidad_gerencia' => 'Unidad de gerencia',
-            'dominio_correo' => 'Dominio de correo',
         );
     }
 

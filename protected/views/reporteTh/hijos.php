@@ -177,10 +177,11 @@ function reporte_pantalla(){
 }
 
 function resetfields(){
-  $('#ReporteTh_genero').val('');
+  $('#ReporteTh_genero').val('').trigger('change');
   $('#ReporteTh_edad_inicial').val('');
   $('#ReporteTh_edad_final').val('');
   $('#ReporteTh_empresa').val('').trigger('change');
+  $("#resultados").html(''); 
 }
 
 </script> 

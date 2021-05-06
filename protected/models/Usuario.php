@@ -179,7 +179,7 @@ class Usuario extends CActiveRecord
 	    }
 
 	    if(empty($this->orderby)){
-			$criteria->order = 't.Id_Usuario DESC'; 	
+			$criteria->order = 't.Nombres ASC'; 	
 		}else{
 			switch ($this->orderby) {
 			    case 1:

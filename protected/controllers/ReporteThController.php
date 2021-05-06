@@ -30,7 +30,7 @@ class ReporteThController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform actions
-				'actions'=>array('empleadosactivos', 'empleadosactivospant', 'tallajeempleados', 'tallajeempleadospant', 'hijos', 'hijospant','ausencias', 'ausenciaspant', 'llamatenc', 'llamatencpant','sanciones','sancionespant','comparendos','comparendospant','contratosfinalizados','contratosfinalizadospant','importadorausencias','uploadausencias','elemherremp','elemherremppant','obscuenta','obscuentapant','elemherrpend','elemherrpendpant','importadorturnos','uploadturnos','empleadosxug','cuentas','cuentaspant','evaluac','evaluacpant'),
+				'actions'=>array('empleadosactivos', 'empleadosactivospant', 'hijos', 'hijospant','ausencias', 'ausenciaspant', 'disciplinarios', 'disciplinariospant','contratosfinalizados','contratosfinalizadospant','importadorausencias','uploadausencias','elemherremp','elemherremppant','elemherrpend','elemherrpendpant','importadorturnos','uploadturnos','empleadosxug','evaluac','evaluacpant'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -39,94 +39,45 @@ class ReporteThController extends Controller
 		);
 	}
 
-	public function actionEmpleadosActivos()
+	public function actionAusencias()
 	{		
 		$model=new ReporteTh;
-		$model->scenario = 'empleados_activos';
+		$model->scenario = 'ausencias';
 
 		$array_empresas = (Yii::app()->user->getState('array_empresas'));
 		$cadena_empresas = implode(",",$array_empresas);
-		$empresas= Yii::app()->db->createCommand('SELECT e.Id_Empresa, e.Descripcion FROM T_PR_EMPRESA e WHERE e.Id_Empresa IN ('.$cadena_empresas.') ORDER BY e.Descripcion')->queryAll();
+
+		$empresas= Yii::app()->db->createCommand('SELECT e.Id_Empresa, e.Descripcion FROM T_PR_EMPRESA e WHERE e.Id_Empresa IN ('.$cadena_empresas.') AND e.Estado = 1 ORDER BY e.Descripcion')->queryAll();
+
+		$motivos_ausencia= Yii::app()->db->createCommand('SELECT d.Id_Dominio, d.Dominio FROM T_PR_DOMINIO d WHERE d.Id_Padre = '.Yii::app()->params->motivos_ausencia.' AND d.Estado = 1 ORDER BY d.Dominio')->queryAll();
 
 		if(isset($_POST['ReporteTh']))
 		{
 			$model=$_POST['ReporteTh'];
-			$this->renderPartial('empleados_activos_resp',array('model' => $model));	
+			$this->renderPartial('ausencias_resp',array('model' => $model));	
 		}
 
-		$this->render('empleados_activos',array(
+		$this->render('ausencias',array(
 			'model'=>$model,
 			'empresas'=>$empresas,
+			'motivos_ausencia'=>$motivos_ausencia
 		));
 	}
 
-	public function actionEmpleadosActivosPant()
+	public function actionAusenciasPant()
 	{		
-		$fecha_inicial_cont = $_POST['fecha_inicial_cont'];
-		$fecha_final_cont = $_POST['fecha_final_cont'];
-		if (isset($_POST['empresa'])){ $empresa = $_POST['empresa']; } else { $empresa = ""; }
 
-		$resultados = UtilidadesReportesTh::empleadosactivospantalla($fecha_inicial_cont, $fecha_final_cont, $empresa);
+		$fecha_inicial = $_POST['fecha_inicial'];
+		$fecha_final = $_POST['fecha_final'];
+		if (isset($_POST['motivo_ausencia'])){ $motivo_ausencia = $_POST['motivo_ausencia']; } else { $motivo_ausencia = ""; }
+		if (isset($_POST['empresa'])){ $empresa = $_POST['empresa']; } else { $empresa = ""; }
+		if (isset($_POST['id_empleado'])){ $id_empleado = $_POST['id_empleado']; } else { $id_empleado = ""; }
+
+		$resultados = UtilidadesReportesTh::ausenciaspantalla($motivo_ausencia, $fecha_inicial, $fecha_final, $empresa, $id_empleado);
 
 		echo $resultados;
 	}
 
-
-	public function actionEmpleadosXUg()
-	{		
-		$model=new ReporteTh;
-		$model->scenario = 'empleados_x_ug';
-
-		$unidades_gerencia=UnidadGerencia::model()->findAll(array('condition' => 'Estado = 1', 'order'=>'Unidad_Gerencia'));
-
-		if(isset($_POST['ReporteTh']))
-		{
-			$model=$_POST['ReporteTh'];
-			$this->renderPartial('empleados_x_ug_resp',array('model' => $model));	
-		}
-
-		$this->render('empleados_x_ug',array(
-			'model'=>$model,
-			'unidades_gerencia'=>$unidades_gerencia,
-		));
-	}
-
-
-
-
-	public function actionTallajeEmpleados()
-	{		
-		$model=new ReporteTh;
-		$model->scenario = 'tallaje_empleados';
-
-		$array_empresas = (Yii::app()->user->getState('array_empresas'));
-		$cadena_empresas = implode(",",$array_empresas);
-		$empresas= Yii::app()->db->createCommand('SELECT e.Id_Empresa, e.Descripcion FROM T_PR_EMPRESA e WHERE e.Id_Empresa IN ('.$cadena_empresas.') ORDER BY e.Descripcion')->queryAll();
-
-		if(isset($_POST['ReporteTh']))
-		{
-			$model=$_POST['ReporteTh'];
-			$this->renderPartial('tallaje_empleados_resp',array('model' => $model));	
-		}
-
-		$this->render('tallaje_empleados',array(
-			'model'=>$model,
-			'empresas'=>$empresas,
-		));
-	}
-
-	public function actionTallajeEmpleadosPant()
-	{		
-		$fecha_inicial_cont = $_POST['fecha_inicial_cont'];
-		$fecha_final_cont = $_POST['fecha_final_cont'];
-		if (isset($_POST['empresa'])){ $empresa = $_POST['empresa']; } else { $empresa = ""; }
-
-		$resultados = UtilidadesReportesTh::tallajeempleadospantalla($fecha_inicial_cont, $fecha_final_cont, $empresa);
-
-		echo $resultados;
-	}
-
-	
 	public function actionHijos()
 	{		
 		$model=new ReporteTh;
@@ -161,202 +112,41 @@ class ReporteThController extends Controller
 		$resultados = UtilidadesReportesTh::hijospantalla($genero, $edad_inicial, $edad_final, $empresa);
 
 		echo $resultados;
-	}
+	}	
 
-	public function actionAusencias()
+	public function actionEmpleadosActivos()
 	{		
 		$model=new ReporteTh;
-		$model->scenario = 'ausencias';
+		$model->scenario = 'empleados_activos';
 
 		$array_empresas = (Yii::app()->user->getState('array_empresas'));
 		$cadena_empresas = implode(",",$array_empresas);
 		$empresas= Yii::app()->db->createCommand('SELECT e.Id_Empresa, e.Descripcion FROM T_PR_EMPRESA e WHERE e.Id_Empresa IN ('.$cadena_empresas.') ORDER BY e.Descripcion')->queryAll();
 
-		$motivos_ausencia= Yii::app()->db->createCommand('SELECT d.Id_Dominio, d.Dominio FROM T_PR_DOMINIO d WHERE Id_Padre = '.Yii::app()->params->motivos_ausencia.' AND Estado = 1 ORDER BY d.Dominio')->queryAll();
-
 		if(isset($_POST['ReporteTh']))
 		{
 			$model=$_POST['ReporteTh'];
-			$this->renderPartial('ausencias_resp',array('model' => $model));	
+			$this->renderPartial('empleados_activos_resp',array('model' => $model));	
 		}
 
-		$this->render('ausencias',array(
+		$this->render('empleados_activos',array(
 			'model'=>$model,
 			'empresas'=>$empresas,
-			'motivos_ausencia'=>$motivos_ausencia
 		));
 	}
 
-	public function actionAusenciasPant()
+	public function actionEmpleadosActivosPant()
 	{		
-
-		$fecha_inicial = $_POST['fecha_inicial'];
-		$fecha_final = $_POST['fecha_final'];
-		$fecha_inicial_reg = $_POST['fecha_inicial_reg'];
-		$fecha_final_reg = $_POST['fecha_final_reg'];
-		if (isset($_POST['motivo_ausencia'])){ $motivo_ausencia = $_POST['motivo_ausencia']; } else { $motivo_ausencia = ""; }
+		$fecha_inicial_cont = $_POST['fecha_inicial_cont'];
+		$fecha_final_cont = $_POST['fecha_final_cont'];
 		if (isset($_POST['empresa'])){ $empresa = $_POST['empresa']; } else { $empresa = ""; }
-		if (isset($_POST['id_empleado'])){ $id_empleado = $_POST['id_empleado']; } else { $id_empleado = ""; }
 
-		$resultados = UtilidadesReportesTh::ausenciaspantalla($motivo_ausencia, $fecha_inicial, $fecha_final, $empresa, $fecha_inicial_reg, $fecha_final_reg, $id_empleado);
+		$resultados = UtilidadesReportesTh::empleadosactivospantalla($fecha_inicial_cont, $fecha_final_cont, $empresa);
 
 		echo $resultados;
 	}
 
-	public function actionLlamAtenc()
-	{		
-		$model=new ReporteTh;
-		$model->scenario = 'llam_atenc';
 
-		$array_empresas = (Yii::app()->user->getState('array_empresas'));
-		$cadena_empresas = implode(",",$array_empresas);
-		$empresas= Yii::app()->db->createCommand('SELECT e.Id_Empresa, e.Descripcion FROM T_PR_EMPRESA e WHERE e.Id_Empresa IN ('.$cadena_empresas.') ORDER BY e.Descripcion')->queryAll();
-
-		$motivos_llam_atenc= Yii::app()->db->createCommand('SELECT d.Id_Dominio, d.Dominio FROM T_PR_DOMINIO d WHERE Id_Padre = '.Yii::app()->params->motivos_d_llamado_atencion.' AND Estado = 1 ORDER BY d.Dominio')->queryAll();
-
-		if(isset($_POST['ReporteTh']))
-		{
-			$model=$_POST['ReporteTh'];
-			$this->renderPartial('llam_atenc_resp',array('model' => $model));	
-		}
-
-		$this->render('llam_atenc',array(
-			'model'=>$model,
-			'empresas'=>$empresas,
-			'motivos_llam_atenc'=>$motivos_llam_atenc
-		));
-	}
-
-	public function actionLlamAtencPant()
-	{		
-		$fecha_inicial = $_POST['fecha_inicial'];
-		$fecha_final = $_POST['fecha_final'];
-		$fecha_inicial_reg = $_POST['fecha_inicial_reg'];
-		$fecha_final_reg = $_POST['fecha_final_reg'];
-		if (isset($_POST['motivo'])){ $motivo = $_POST['motivo']; } else { $motivo = ""; }
-		if (isset($_POST['empresa'])){ $empresa = $_POST['empresa']; } else { $empresa = ""; }
-		if (isset($_POST['id_empleado'])){ $id_empleado = $_POST['id_empleado']; } else { $id_empleado = ""; }
-
-		$resultados = UtilidadesReportesTh::llamatencpantalla($motivo, $fecha_inicial, $fecha_final, $empresa, $fecha_inicial_reg, $fecha_final_reg, $id_empleado);
-
-		echo $resultados;
-	}
-
-	public function actionSanciones()
-	{		
-		$model=new ReporteTh;
-		$model->scenario = 'sanciones';
-
-		$array_empresas = (Yii::app()->user->getState('array_empresas'));
-		$cadena_empresas = implode(",",$array_empresas);
-		$empresas= Yii::app()->db->createCommand('SELECT e.Id_Empresa, e.Descripcion FROM T_PR_EMPRESA e WHERE e.Id_Empresa IN ('.$cadena_empresas.') ORDER BY e.Descripcion')->queryAll();
-
-		$motivos_sanciones= Yii::app()->db->createCommand('SELECT d.Id_Dominio, d.Dominio FROM T_PR_DOMINIO d WHERE Id_Padre = '.Yii::app()->params->motivos_d_sancion.' AND Estado = 1 ORDER BY d.Dominio')->queryAll();
-
-		if(isset($_POST['ReporteTh']))
-		{
-			$model=$_POST['ReporteTh'];
-			$this->renderPartial('sanciones_resp',array('model' => $model));	
-		}
-
-		$this->render('sanciones',array(
-			'model'=>$model,
-			'empresas'=>$empresas,
-			'motivos_sanciones'=>$motivos_sanciones
-		));
-	}
-
-	public function actionSancionesPant()
-	{		
-		$fecha_inicial = $_POST['fecha_inicial'];
-		$fecha_final = $_POST['fecha_final'];
-		$fecha_inicial_reg = $_POST['fecha_inicial_reg'];
-		$fecha_final_reg = $_POST['fecha_final_reg'];
-		if (isset($_POST['motivo'])){ $motivo = $_POST['motivo']; } else { $motivo = ""; }
-		if (isset($_POST['empresa'])){ $empresa = $_POST['empresa']; } else { $empresa = ""; }
-		if (isset($_POST['id_empleado'])){ $id_empleado = $_POST['id_empleado']; } else { $id_empleado = ""; }
-
-		$resultados = UtilidadesReportesTh::sancionespantalla($motivo, $fecha_inicial, $fecha_final, $empresa, $fecha_inicial_reg, $fecha_final_reg, $id_empleado);
-
-		echo $resultados;
-	}
-
-	public function actionComparendos()
-	{		
-		$model=new ReporteTh;
-		$model->scenario = 'comparendos';
-
-		$array_empresas = (Yii::app()->user->getState('array_empresas'));
-		$cadena_empresas = implode(",",$array_empresas);
-		$empresas= Yii::app()->db->createCommand('SELECT e.Id_Empresa, e.Descripcion FROM T_PR_EMPRESA e WHERE e.Id_Empresa IN ('.$cadena_empresas.') ORDER BY e.Descripcion')->queryAll();
-
-		$motivos_comparendos= Yii::app()->db->createCommand('SELECT d.Id_Dominio, d.Dominio FROM T_PR_DOMINIO d WHERE Id_Padre = '.Yii::app()->params->motivos_d_comparendo.' AND Estado = 1 ORDER BY d.Dominio')->queryAll();
-
-		if(isset($_POST['ReporteTh']))
-		{
-			$model=$_POST['ReporteTh'];
-			$this->renderPartial('comparendos_resp',array('model' => $model));	
-		}
-
-		$this->render('comparendos',array(
-			'model'=>$model,
-			'empresas'=>$empresas,
-			'motivos_comparendos'=>$motivos_comparendos
-		));
-	}
-
-	public function actionComparendosPant()
-	{		
-		$fecha_inicial = $_POST['fecha_inicial'];
-		$fecha_final = $_POST['fecha_final'];
-		$fecha_inicial_reg = $_POST['fecha_inicial_reg'];
-		$fecha_final_reg = $_POST['fecha_final_reg'];
-		if (isset($_POST['motivo'])){ $motivo = $_POST['motivo']; } else { $motivo = ""; }
-		if (isset($_POST['empresa'])){ $empresa = $_POST['empresa']; } else { $empresa = ""; }
-		if (isset($_POST['id_empleado'])){ $id_empleado = $_POST['id_empleado']; } else { $id_empleado = ""; }
-
-		$resultados = UtilidadesReportesTh::comparendospantalla($motivo, $fecha_inicial, $fecha_final, $empresa, $fecha_inicial_reg, $fecha_final_reg, $id_empleado);
-
-		echo $resultados;
-	}
-	
-	public function actionContratosFinalizados()
-	{		
-		$model=new ReporteTh;
-		$model->scenario = 'contratos_fin';
-
-		$array_empresas = (Yii::app()->user->getState('array_empresas'));
-		$cadena_empresas = implode(",",$array_empresas);
-		$empresas= Yii::app()->db->createCommand('SELECT e.Id_Empresa, e.Descripcion FROM T_PR_EMPRESA e WHERE e.Id_Empresa IN ('.$cadena_empresas.') ORDER BY e.Descripcion')->queryAll();
-
-		$motivos_retiro= Yii::app()->db->createCommand('SELECT d.Id_Dominio, d.Dominio FROM T_PR_DOMINIO d WHERE Id_Padre = '.Yii::app()->params->motivos_retiro.' AND Estado = 1 ORDER BY d.Dominio')->queryAll();
-
-		if(isset($_POST['ReporteTh']))
-		{
-			$model=$_POST['ReporteTh'];
-			$this->renderPartial('contratos_fin_resp',array('model' => $model));	
-		}
-
-		$this->render('contratos_fin',array(
-			'model'=>$model,
-			'empresas'=>$empresas,
-			'motivos_retiro'=>$motivos_retiro
-		));
-	}
-
-	public function actionContratosFinalizadosPant()
-	{		
-		$fecha_inicial_fin = $_POST['fecha_inicial_fin'];
-		$fecha_final_fin = $_POST['fecha_final_fin'];
-		$liquidado = $_POST['liquidado'];
-
-		if (isset($_POST['motivo_retiro'])){ $motivo_retiro = $_POST['motivo_retiro']; } else { $motivo_retiro = ""; }
-		if (isset($_POST['empresa'])){ $empresa = $_POST['empresa']; } else { $empresa = ""; }
-
-		$resultados = UtilidadesReportesTh::contratosfinalizadospantalla($motivo_retiro, $liquidado, $fecha_inicial_fin, $fecha_final_fin, $empresa);
-
-		echo $resultados;
-	}
 
 	public function actionImportadorAusencias()
 	{		
@@ -372,9 +162,9 @@ class ReporteThController extends Controller
 		$opc = '';
        	$msj = '';
 
-		$file_tmp = $_FILES['ReporteTh']['tmp_name']['archivo'];
-        
-        set_time_limit(0);
+       	$file_tmp = $_FILES['ReporteTh']['tmp_name']['archivo'];
+
+		set_time_limit(0);
 
 		spl_autoload_unregister(array('YiiBase','autoload'));  
 
@@ -534,64 +324,6 @@ class ReporteThController extends Controller
         echo json_encode($resp);
 	}
 
-	public function actionElemHerrEmp()
-	{		
-		$model=new ReporteTh;
-		$model->scenario = 'elem_herr_emp';
-
-		$this->render('elem_herr_emp',array(
-			'model'=>$model,
-		));
-
-	}
-
-	public function actionElemHerrEmpPant()
-	{		
-		$id_empleado = $_POST['id_empleado'];
-
-		$resultados = UtilidadesReportesTh::elemherremppantalla($id_empleado);
-
-		echo $resultados;
-	}
-
-	public function actionObsCuenta()
-	{		
-		$model=new ReporteTh;
-		$model->scenario = 'obs_cuenta';
-
-		$this->render('obs_cuenta',array(
-			'model'=>$model,
-		));
-
-	}
-
-	public function actionObsCuentaPant()
-	{		
-		$id_empleado = $_POST['id_empleado'];
-
-		$resultados = UtilidadesReportesTh::obscuentapantalla($id_empleado);
-
-		echo $resultados;
-	}
-
-	public function actionElemHerrPend()
-	{		
-		$model=new ReporteTh;
-		$model->scenario = 'elem_herr_pend';
-
-		$this->render('elem_herr_pend',array(
-			'model'=>$model,
-		));
-
-	}
-
-	public function actionElemHerrPendPant()
-	{		
-		$resultados = UtilidadesReportesTh::elemherrpendpantalla();
-
-		echo $resultados;
-	}
-
 	public function actionImportadorTurnos()
 	{		
 		$model=new ReporteTh;
@@ -606,9 +338,9 @@ class ReporteThController extends Controller
 		$opc = '';
        	$msj = '';
 
-		$file_tmp = $_FILES['ReporteTh']['tmp_name']['archivo'];
-        
-        set_time_limit(0);
+       	$file_tmp = $_FILES['ReporteTh']['tmp_name']['archivo'];
+
+		set_time_limit(0);
 
 		spl_autoload_unregister(array('YiiBase','autoload'));  
 
@@ -753,6 +485,141 @@ class ReporteThController extends Controller
         echo json_encode($resp);
 	}
 
+	public function actionEmpleadosXUg()
+	{		
+		$model=new ReporteTh;
+		$model->scenario = 'empleados_x_ug';
+
+		$unidades_gerencia=UnidadGerencia::model()->findAll(array('condition' => 'Estado = 1', 'order'=>'Unidad_Gerencia'));
+
+		if(isset($_POST['ReporteTh']))
+		{
+			$model=$_POST['ReporteTh'];
+			$this->renderPartial('empleados_x_ug_resp',array('model' => $model));	
+		}
+
+		$this->render('empleados_x_ug',array(
+			'model'=>$model,
+			'unidades_gerencia'=>$unidades_gerencia,
+		));
+	}
+
+	public function actionDisciplinarios()
+	{		
+		$model=new ReporteTh;
+		$model->scenario = 'disciplinarios';
+
+		$array_empresas = (Yii::app()->user->getState('array_empresas'));
+		$cadena_empresas = implode(",",$array_empresas);
+		$empresas= Yii::app()->db->createCommand('SELECT e.Id_Empresa, e.Descripcion FROM T_PR_EMPRESA e WHERE e.Id_Empresa IN ('.$cadena_empresas.') ORDER BY e.Descripcion')->queryAll();
+
+		$motivos_comparendos= Yii::app()->db->createCommand('SELECT d.Id_Dominio, d.Dominio FROM T_PR_DOMINIO d WHERE Id_Padre = '.Yii::app()->params->motivos_d_comparendo.' AND Estado = 1 ORDER BY d.Dominio')->queryAll();
+
+		if(isset($_POST['ReporteTh']))
+		{
+			$model=$_POST['ReporteTh'];
+			$this->renderPartial('disciplinarios_resp',array('model' => $model));	
+		}
+
+		$this->render('disciplinarios',array(
+			'model'=>$model,
+			'empresas'=>$empresas,
+			'motivos_comparendos'=>$motivos_comparendos
+		));
+	}
+
+	public function actionDisciplinariosPant()
+	{		
+
+		$fecha_inicial = $_POST['fecha_inicial'];
+		$fecha_final = $_POST['fecha_final'];
+		if (isset($_POST['motivo'])){ $motivo = $_POST['motivo']; } else { $motivo = ""; }
+		if (isset($_POST['empresa'])){ $empresa = $_POST['empresa']; } else { $empresa = ""; }
+		if (isset($_POST['id_empleado'])){ $id_empleado = $_POST['id_empleado']; } else { $id_empleado = ""; }
+
+		$resultados = UtilidadesReportesTh::disciplinariospantalla($motivo, $fecha_inicial, $fecha_final, $empresa, $id_empleado);
+
+		echo $resultados;
+	}
+
+	public function actionContratosFinalizados()
+	{		
+		$model=new ReporteTh;
+		$model->scenario = 'contratos_fin';
+
+		$array_empresas = (Yii::app()->user->getState('array_empresas'));
+		$cadena_empresas = implode(",",$array_empresas);
+		$empresas= Yii::app()->db->createCommand('SELECT e.Id_Empresa, e.Descripcion FROM T_PR_EMPRESA e WHERE e.Id_Empresa IN ('.$cadena_empresas.') ORDER BY e.Descripcion')->queryAll();
+
+		$motivos_retiro= Yii::app()->db->createCommand('SELECT d.Id_Dominio, d.Dominio FROM T_PR_DOMINIO d WHERE Id_Padre = '.Yii::app()->params->motivos_retiro.' AND Estado = 1 ORDER BY d.Dominio')->queryAll();
+
+		if(isset($_POST['ReporteTh']))
+		{
+			$model=$_POST['ReporteTh'];
+			$this->renderPartial('contratos_fin_resp',array('model' => $model));	
+		}
+
+		$this->render('contratos_fin',array(
+			'model'=>$model,
+			'empresas'=>$empresas,
+			'motivos_retiro'=>$motivos_retiro
+		));
+	}
+
+	public function actionContratosFinalizadosPant()
+	{		
+		$fecha_inicial_fin = $_POST['fecha_inicial_fin'];
+		$fecha_final_fin = $_POST['fecha_final_fin'];
+		$liquidado = $_POST['liquidado'];
+
+		if (isset($_POST['motivo_retiro'])){ $motivo_retiro = $_POST['motivo_retiro']; } else { $motivo_retiro = ""; }
+		if (isset($_POST['empresa'])){ $empresa = $_POST['empresa']; } else { $empresa = ""; }
+
+		$resultados = UtilidadesReportesTh::contratosfinalizadospantalla($motivo_retiro, $liquidado, $fecha_inicial_fin, $fecha_final_fin, $empresa);
+
+		echo $resultados;
+	}
+
+	
+
+	public function actionElemHerrEmp()
+	{		
+		$model=new ReporteTh;
+		$model->scenario = 'elem_herr_emp';
+
+		$this->render('elem_herr_emp',array(
+			'model'=>$model,
+		));
+
+	}
+
+	public function actionElemHerrEmpPant()
+	{		
+		$id_empleado = $_POST['id_empleado'];
+
+		$resultados = UtilidadesReportesTh::elemherremppantalla($id_empleado);
+
+		echo $resultados;
+	}
+
+	public function actionElemHerrPend()
+	{		
+		$model=new ReporteTh;
+		$model->scenario = 'elem_herr_pend';
+
+		$this->render('elem_herr_pend',array(
+			'model'=>$model,
+		));
+
+	}
+
+	public function actionElemHerrPendPant()
+	{		
+		$resultados = UtilidadesReportesTh::elemherrpendpantalla();
+
+		echo $resultados;
+	}
+
 	public function actionEvaluac()
 	{		
 		$model=new ReporteTh;
@@ -777,36 +644,5 @@ class ReporteThController extends Controller
 		echo $resultados;
 	}
 
-	public function actionCuentas()
-	{		
-		$model=new ReporteTh;
-		$model->scenario = 'cuentas';
-
-		$dominios= Yii::app()->db->createCommand('SELECT d.Id_Dominio_Web, d.Dominio FROM T_PR_DOMINIO_WEB d WHERE d.Estado = 1 AND Id_Tipo = '.Yii::app()->params->dominios_cuenta_correo.' ORDER BY d.Dominio ')->queryAll();
-
-		$estados= Yii::app()->db->createCommand('SELECT d.Id_Dominio, d.Dominio FROM T_PR_DOMINIO d WHERE d.Estado = 1 AND Id_Padre = '.Yii::app()->params->estado_cuenta.' ORDER BY d.Dominio')->queryAll();
-
-		if(isset($_POST['ReporteTh']))
-		{
-			$model=$_POST['ReporteTh'];
-			$this->renderPartial('cuentas_resp',array('model' => $model));	
-		}
-
-		$this->render('cuentas',array(
-			'model'=>$model,
-			'dominios'=>$dominios,
-			'estados'=>$estados,
-		));
-	}
-
-	public function actionCuentasPant()
-	{		
-		if (isset($_POST['dominio'])){ $dominio = $_POST['dominio']; } else { $dominio = ""; }
-		if (isset($_POST['estado'])){ $estado = $_POST['estado']; } else { $estado = ""; }
-
-		$resultados = UtilidadesReportesTh::cuentaspantalla($dominio, $estado);
-
-		echo $resultados;
-	}
 
 }

@@ -60,7 +60,7 @@ $('.search-form form').submit(function(){
             </div>
             <div class="modal-body">
                 <div class="search-form" style="display:; ">
-                <?php $this->renderPartial('_search',array(
+                <?php $this->renderPartial('_search_estados',array(
                     'model'=>$model,
                 )); ?>
                 </div><!-- search-form -->

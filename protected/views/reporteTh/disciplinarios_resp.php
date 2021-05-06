@@ -22,7 +22,7 @@ spl_autoload_register(array('YiiBase','autoload'));
 if (isset($model['id_empleado'])) { $id_empleado = $model['id_empleado']; } else { $id_empleado = ""; }
 if (isset($model['fecha_inicial'])) { $fecha_inicial = $model['fecha_inicial']; } else { $fecha_inicial = ""; }
 if (isset($model['fecha_final'])) { $fecha_final = $model['fecha_final']; } else { $fecha_final = ""; }
-if (isset($model['motivo_ausencia'])) { $motivo_ausencia = $model['motivo_ausencia']; } else { $motivo_ausencia = ""; }
+if (isset($model['motivo'])) { $motivo = $model['motivo']; } else { $motivo = ""; }
 $empresa = $model['empresa'];
 
 if($fecha_inicial == "" && $fecha_final != ""){
@@ -33,54 +33,47 @@ if($fecha_inicial != "" && $fecha_final == ""){
   $fecha_final = $fecha_inicial;
 }
 
-if($id_empleado == "" && $fecha_inicial != "" && $fecha_final != "" && $motivo_ausencia == "" && $empresa != ""){
+if($id_empleado == "" && $fecha_inicial != "" && $fecha_final != "" && $motivo == "" && $empresa != ""){
   $o = 1;
 }
 
-if($id_empleado != "" && $fecha_inicial != "" && $fecha_final != "" && $motivo_ausencia == "" && $empresa != ""){
+if($id_empleado != "" && $fecha_inicial != "" && $fecha_final != "" && $motivo == "" && $empresa != ""){
   $o = 2;
 }
 
-if($id_empleado != "" && $fecha_inicial != "" && $fecha_final != "" && $motivo_ausencia != "" && $empresa != ""){
+if($id_empleado != "" && $fecha_inicial != "" && $fecha_final != "" && $motivo != "" && $empresa != ""){
   $o = 3;
 }
 
-if($id_empleado == "" && $fecha_inicial != "" && $fecha_final != "" && $motivo_ausencia != "" && $empresa != ""){
+if($id_empleado == "" && $fecha_inicial != "" && $fecha_final != "" && $motivo != "" && $empresa != ""){
   $o = 4;
 }
 
 //opcion: 1. PDF, 2. EXCEL
 $opcion = $model['opcion_exp'];
 
-
 $criterio_emp = "";
 
-if($empresa != null){
-  $empresa = implode(",", $empresa);
-  $q_empresa = Yii::app()->db->createCommand("SELECT Descripcion FROM T_PR_EMPRESA WHERE Id_Empresa IN (".$empresa.") ORDER BY Descripcion")->queryAll();
+$empresa = implode(",", $empresa);
 
-  $texto_e = '';
+$q_empresa = Yii::app()->db->createCommand("SELECT Descripcion FROM T_PR_EMPRESA WHERE Id_Empresa IN (".$empresa.") ORDER BY Descripcion")->queryAll();
 
-  foreach ($q_empresa as $e) {
-    $texto_e .= $e['Descripcion'].', ';
-  }
+$texto_e = '';
 
-  $texto_e = substr ($texto_e, 0, -2);
-
-  $criterio_emp .= "Empresa: ".$texto_e;
-
-}else{
-
-  $array_empresas = (Yii::app()->user->getState('array_empresas'));
-  $empresa = implode(",",$array_empresas);
-  $criterio_emp .= "Empresa: TODAS ";
+foreach ($q_empresa as $e) {
+  $texto_e .= $e['Descripcion'].', ';
 }
+
+$texto_e = substr ($texto_e, 0, -2);
+
+$criterio_emp .= "Empresa: ".$texto_e;
 
 $criterio_mot = "";
 
-if($motivo_ausencia != null){
-  $motivo_ausencia = implode(",", $motivo_ausencia);
-  $q_motivos = Yii::app()->db->createCommand("SELECT Dominio FROM T_PR_DOMINIO WHERE Id_Dominio IN (".$motivo_ausencia.") ORDER BY Dominio")->queryAll();
+if($motivo != null){
+  $motivo = implode(",", $motivo);
+  
+  $q_motivos = Yii::app()->db->createCommand("SELECT Dominio FROM T_PR_DOMINIO WHERE Id_Dominio IN (".$motivo.") ORDER BY Dominio")->queryAll();
 
   $texto_m = '';
 
@@ -136,12 +129,12 @@ $FechaM2 = str_replace("-","",$fecha_final);
 
 $query ="
   SET NOCOUNT ON
-  EXEC P_PR_GH_AUSENCIAS
+  EXEC P_PR_GH_DISCIPLINARIO
   @OPT = ".$o.",
   @Id_Emp = '".$id_empleado."',
   @Fecha_Ini = N'".$FechaM1."',
   @Fecha_Fin = N'".$FechaM2."',
-  @Motivo = '".$motivo_ausencia."',
+  @Motivo = '".$motivo."',
   @Empresa = '".$empresa."'
 ";
 
@@ -151,6 +144,9 @@ UtilidadesVarias::log($query);
 
 if($opcion == 1){
   //PDF
+
+  //se incluye la libreria pdf
+  require_once Yii::app()->basePath . '/extensions/fpdf/fpdf.php';
 
   class PDF extends FPDF{
     
@@ -180,7 +176,7 @@ if($opcion == 1){
 
     function Header(){
       $this->SetFont('Arial','B',10);
-      $this->Cell(260,5,'Reporte ausencias de empleados',0,0,'L');
+      $this->Cell(260,5,'Reporte comparendos de empleados',0,0,'L');
       $this->SetFont('Arial','',7);
       $this->Cell(80,5,utf8_decode($this->fecha_actual),0,0,'R');
       $this->Ln();
@@ -202,7 +198,7 @@ if($opcion == 1){
         $this->Cell(340,5,utf8_decode($this->criterio_empl),0,0,'L');
         $this->Ln();
       }
-
+      
       //linea superior a la cabecera de la tabla
       $this->SetDrawColor(0,0,0);
       $this->Cell(340,1,'','T');
@@ -212,19 +208,18 @@ if($opcion == 1){
       
       //cabecera de tabla
       $this->SetFont('Arial','B',6);
+  
+      
       $this->Cell(30,2,utf8_decode('Tipo identificación'),0,0,'L');
       $this->Cell(20,2,utf8_decode('No. identificación'),0,0,'L');
-      $this->Cell(52,2,utf8_decode('Empleado'),0,0,'L');
-      $this->Cell(23,2,utf8_decode('Empresa'),0,0,'L');
-      $this->Cell(61,2,utf8_decode('Motivo'),0,0,'L');
-      $this->Cell(15,2,utf8_decode('Fecha inicial'),0,0,'L');
-      $this->Cell(15,2,utf8_decode('Fecha final'),0,0,'L');
-      $this->Cell(7,2,utf8_decode('Días'),0,0,'L');
-      $this->Cell(7,2,utf8_decode('Horas'),0,0,'L');
-      $this->Cell(16,2,utf8_decode('Cod. soporte'),0,0,'L');
-      $this->Cell(12,2,utf8_decode('Descontar'),0,0,'L');
-      $this->Cell(16,2,utf8_decode('Descontar FDS'),0,0,'L');
-      $this->Cell(66,2,utf8_decode('Observaciones / Notas'),0,0,'L');
+      $this->Cell(50,2,utf8_decode('Empleado'),0,0,'L');
+      $this->Cell(25,2,utf8_decode('Empresa'),0,0,'L');
+      $this->Cell(25,2,utf8_decode('Evento'),0,0,'L');
+      $this->Cell(60,2,utf8_decode('Motivo'),0,0,'L');
+      $this->Cell(15,2,utf8_decode('Fecha'),0,0,'L');
+      $this->Cell(50,2,utf8_decode('Impuesto Por'),0,0,'L');
+      $this->Cell(20,2,utf8_decode('Orden No.'),0,0,'L');
+      $this->Cell(45,2,utf8_decode('Notas'),0,0,'L');
       $this->Ln(3);
       
       //linea inferior a la cabecera de la tabla
@@ -245,50 +240,26 @@ if($opcion == 1){
 
         $tipo_ident       = $reg1['Tipo_Identificacion']; 
         $ident            = $reg1['Identificacion'];  
-        $empleado         = $reg1['Apellido'].' '.$reg1['Nombre'];
+        $empleado         = $reg1['Empleado'];
         $empresa          = $reg1['Empresa'];
+        $disciplinario    = $reg1['Disciplinario'];
         $motivo           = $reg1['Motivo']; 
-        $fecha_inicial    = $reg1['Fecha_Inicial']; 
-        $fecha_final      = $reg1['Fecha_Final']; 
-        $dias             = $reg1['Dias']; 
-        
-        if($reg1['Horas'] == 0.0){
-          $horas = 0;
-        }else{
-          $horas = $reg1['Horas'];
-        }
-
-        $cod_soporte = $reg1['Cod_Soporte']; 
-        $descontar = $reg1['Descontar'];
-        $descontar_FDS = $reg1['Descontar_FDS'];
-        
-        
-        if($reg1['Observacion'] != ""){
-          $observaciones = $reg1['Observacion']; 
-        }else{
-          $observaciones = "-";
-        }
-
-        if($reg1['Nota'] != ""){
-          $notas = $reg1['Nota']; 
-        }else{
-          $notas = "-";
-        }
+        $fecha_evento     = $reg1['Fecha']; 
+        $persona_imp      = $reg1['Imp']; 
+        $orden            = $reg1['Orden_No'];
+        $observaciones    = $reg1['Observacion']; 
 
         $this->SetFont('Arial','',6);
         $this->Cell(30,3,utf8_decode($tipo_ident),0,0,'L');
         $this->Cell(20,3,utf8_decode($ident),0,0,'L');
-        $this->Cell(52,3,substr(utf8_decode($empleado),0,40),0,0,'L');
-        $this->Cell(23,3,utf8_decode($empresa),0,0,'L');
-        $this->Cell(61,3,substr(utf8_decode($motivo),0,55),0,0,'L');
-        $this->Cell(15,3,utf8_decode($fecha_inicial),0,0,'L');
-        $this->Cell(15,3,utf8_decode($fecha_final),0,0,'L');
-        $this->Cell(7,3,utf8_decode($dias),0,0,'L');
-        $this->Cell(7,3,utf8_decode($horas),0,0,'L');
-        $this->Cell(16,3,utf8_decode($cod_soporte),0,0,'L');
-        $this->Cell(12,3,utf8_decode($descontar),0,0,'L');
-        $this->Cell(16,3,utf8_decode($descontar_FDS),0,0,'L');
-        $this->MultiCell(66,3,utf8_decode($observaciones.' / '.$notas),0,'J');
+        $this->Cell(50,3,substr(utf8_decode($empleado),0,45),0,0,'L');
+        $this->Cell(25,3,utf8_decode($empresa),0,0,'L');
+        $this->Cell(25,3,substr(utf8_decode($disciplinario),0,20),0,0,'L');
+        $this->Cell(60,3,substr(utf8_decode($motivo),0,45),0,0,'L');
+        $this->Cell(15,3,utf8_decode($fecha_evento),0,0,'L');
+        $this->Cell(50,3,substr(utf8_decode($persona_imp),0,45),0,0,'L');
+        $this->Cell(20,3,utf8_decode($orden),0,0,'L');
+        $this->MultiCell(45,3,utf8_decode($observaciones),0,'J');
         $this->Ln();
 
       }
@@ -315,7 +286,7 @@ if($opcion == 1){
   $pdf->AddPage();
   $pdf->Tabla();
   ob_end_clean();
-  $pdf->Output('D','Ausencias_empleados_'.date('Y_m_d_H_i_s').'.pdf');
+  $pdf->Output('D','Disciplinarios_empleados_'.date('Y_m_d_H_i_s').'.pdf');
 }
 
 if($opcion == 2){
@@ -337,19 +308,15 @@ if($opcion == 2){
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B1', 'No. identificación');
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C1', 'Empleado');
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D1', 'Empresa');
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E1', 'Motivo');
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F1', 'Fecha inicial');
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G1', 'Fecha final');
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('H1', 'Días');
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('I1', 'Horas');
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('J1', 'Cod. soporte');
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('K1', 'Descontar');
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('L1', 'Descontar FDS');
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('M1', 'Observaciones');
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('N1', 'Notas');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E1', 'Evento');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F1', 'Motivo');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G1', 'Fecha');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('H1', 'Impuesto Por');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('I1', 'Orden No.');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('J1', 'Observaciones');
 
-  $objPHPExcel->getActiveSheet(0)->getStyle('A1:N1')->getAlignment()->setHorizontal($alignment_center);
-  $objPHPExcel->getActiveSheet(0)->getStyle('A1:N1')->getFont()->setBold(true);
+  $objPHPExcel->getActiveSheet()->getStyle('A1:J1')->getAlignment()->setHorizontal($alignment_center);
+  $objPHPExcel->getActiveSheet()->getStyle('A1:J1')->getFont()->setBold(true);
 
   /*Inicio contenido tabla*/
 
@@ -361,56 +328,27 @@ if($opcion == 2){
 
     $tipo_ident       = $reg1['Tipo_Identificacion']; 
     $ident            = $reg1['Identificacion'];  
-    $empleado         = $reg1['Apellido'].' '.$reg1['Nombre'];
+    $empleado         = $reg1['Empleado'];
     $empresa          = $reg1['Empresa'];
+    $disciplinario    = $reg1['Disciplinario'];
     $motivo           = $reg1['Motivo']; 
-    $fecha_inicial    = $reg1['Fecha_Inicial']; 
-    $fecha_final      = $reg1['Fecha_Final']; 
-    $dias             = $reg1['Dias']; 
+    $fecha_evento     = $reg1['Fecha']; 
+    $persona_imp      = $reg1['Imp']; 
+    $orden            = $reg1['Orden_No'];
+    $observaciones    = $reg1['Observacion']; 
     
-    if($reg1['Horas'] == 0.0){
-      $horas = 0;
-    }else{
-      $horas = $reg1['Horas'];
-    }
-
-    $cod_soporte = $reg1['Cod_Soporte']; 
-    $descontar = $reg1['Descontar'];
-    $descontar_FDS = $reg1['Descontar_FDS'];
-    
-    
-    if($reg1['Observacion'] != ""){
-      $observaciones = $reg1['Observacion']; 
-    }else{
-      $observaciones = "-";
-    }
-
-    if($reg1['Nota'] != ""){
-      $notas = $reg1['Nota']; 
-    }else{
-      $notas = "-";
-    }
-
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$Fila, $tipo_ident);
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$Fila, $ident);
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$Fila, $empleado);
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$Fila, $empresa);
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$Fila, $motivo);
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$Fila, $fecha_inicial);
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$Fila, $fecha_final);
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$Fila, $dias);
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.$Fila, $horas);
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('J'.$Fila, $cod_soporte);
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('K'.$Fila, $descontar);
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('L'.$Fila, $descontar_FDS);
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('M'.$Fila, $observaciones);
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('N'.$Fila, $notas);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$Fila, $disciplinario);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$Fila, $motivo);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$Fila, $fecha_evento);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$Fila, $persona_imp);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.$Fila, $orden);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('J'.$Fila, $observaciones);
     
-    $objPHPExcel->getActiveSheet(0)->getStyle('H'.$Fila)->getNumberFormat()->setFormatCode('0');
-    $objPHPExcel->getActiveSheet(0)->getStyle('I'.$Fila)->getNumberFormat()->setFormatCode('#,#0.0');  
-    $objPHPExcel->getActiveSheet(0)->getStyle('A'.$Fila.':G'.$Fila)->getAlignment()->setHorizontal($alignment_left);
-    $objPHPExcel->getActiveSheet(0)->getStyle('H'.$Fila.':I'.$Fila)->getAlignment()->setHorizontal($alignment_right);
-    $objPHPExcel->getActiveSheet(0)->getStyle('J'.$Fila.':N'.$Fila)->getAlignment()->setHorizontal($alignment_left);
+    $objPHPExcel->getActiveSheet()->getStyle('A'.$Fila.':J'.$Fila)->getAlignment()->setHorizontal($alignment_left);
 
     $Fila = $Fila + 1;
 
@@ -419,13 +357,13 @@ if($opcion == 2){
   /*fin contenido tabla*/
 
   //se configura el ancho de cada columna en automatico solo funciona en el rango A-Z
-  $nCols = 14; 
+  $nCols = 10; 
 
   foreach (range(0, $nCols) as $col) {
     $objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($col)->setAutoSize(true);                
   }
 
-  $n = 'Ausencias_empleados_'.date('Y_m_d_H_i_s');
+  $n = 'Disciplinarios_empleados_'.date('Y_m_d_H_i_s');
 
   header('Content-Type: application/vnd.ms-excel');
   header('Content-Disposition: attachment;filename="'.$n.'.xlsx"');
@@ -434,7 +372,7 @@ if($opcion == 2){
   ob_end_clean();
   $objWriter->save('php://output');
   exit;
-  
+
 }
 
 ?>

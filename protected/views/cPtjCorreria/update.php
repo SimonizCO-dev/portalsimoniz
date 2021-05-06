@@ -20,8 +20,8 @@ $(function() {
                  	$.fn.yiiactiveform.updateInput(this,messages,form); 
              	});
                  
-				form.submit();
-				loadershow();
+				    form.submit();
+				    loadershow();
       
           	} else {
               	settings = form.data('settings'),

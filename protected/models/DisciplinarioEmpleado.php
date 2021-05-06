@@ -82,6 +82,10 @@ class DisciplinarioEmpleado extends CActiveRecord
 				return 'SANCIÓN';	
 			}
 
+			if($modelo_motivo->idmdisciplinario->Id_Padre == Yii::app()->params->motivos_d_comparendo){
+				return 'COMPARENDO';
+			}
+
 		}else{
 			return 'N/A';
 		}

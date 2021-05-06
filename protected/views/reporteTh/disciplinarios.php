@@ -6,11 +6,11 @@
 $lista_empresas = CHtml::listData($empresas, 'Id_Empresa', 'Descripcion');
 
 //para combos de motivos
-$lista_motivos = CHtml::listData($motivos_llam_atenc, 'Id_Dominio', 'Dominio');
+$lista_motivos = CHtml::listData($motivos_comparendos, 'Id_Dominio', 'Dominio');
 
 ?>
 
-<h3>Reporte llamados de atención de empleados</h3>
+<h4>Reporte eventos disciplinarios de empleados</h4>
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'reporte-th-form',
@@ -25,15 +25,15 @@ $lista_motivos = CHtml::listData($motivos_llam_atenc, 'Id_Dominio', 'Dominio');
 )); ?>
 
 <div class="row">
-    <div class="col-sm-8">
+    <div class="col-sm-6">
       <div class="form-group">
-            <?php echo $form->error($model,'id_empleado', array('class' => 'pull-right badge bg-red')); ?>
+            <?php echo $form->error($model,'id_empleado', array('class' => 'badge badge-warning float-right')); ?>
             <?php echo $form->label($model,'id_empleado'); ?>
 
             <?php echo $form->textField($model,'id_empleado'); ?>
             <?php
                 $this->widget('ext.select2.ESelect2', array(
-                    'selector' => '#Reporte_id_empleado',
+                    'selector' => '#ReporteTh_id_empleado',
                     'options'  => array(
                         'allowClear' => true,
                         'minimumInputLength' => 5,
@@ -45,55 +45,37 @@ $lista_motivos = CHtml::listData($motivos_llam_atenc, 'Id_Dominio', 'Dominio');
                             'data'=>'js:function(term){return{q: term};}',
                             'results'=>'js:function(data){ return {results:data};}'                   
                         ),
-                        'formatNoMatches'=> 'js:function(){ clear_select2_ajax("Reporte_id_empleado"); return "No se encontraron resultados"; }',
-                        'formatInputTooShort' =>  'js:function(){ return "Digite más de 5 caracteres para iniciar busqueda <button type=\"button\" class=\"btn btn-success btn-xs pull-right\" onclick=\"clear_select2_ajax(\'Reporte_id_empleado\')\">Limpiar campo</button>"; }',
+                        'formatNoMatches'=> 'js:function(){ clear_select2_ajax("ReporteTh_id_empleado"); return "No se encontraron resultados"; }',
+                        'formatInputTooShort' =>  'js:function(){ return "Digite más de 5 caracteres para iniciar busqueda <button type=\"button\" class=\"btn btn-primary btn-xs float-right\" onclick=\"clear_select2_ajax(\'ReporteTh_id_empleado\')\">Limpiar campo</button>"; }',
                     ),
                 ));
             ?>
         </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-3">
       <div class="form-group">
-        <?php echo $form->error($model,'fecha_inicial_reg', array('class' => 'pull-right badge bg-red')); ?>
-        <?php echo $form->label($model,'fecha_inicial_reg'); ?>
-        <?php echo $form->textField($model,'fecha_inicial_reg', array('class' => 'form-control', 'readonly' => true)); ?>
-        </div>
-    </div>
-    <div class="col-sm-4">
-      <div class="form-group">
-        <?php echo $form->error($model,'fecha_final_reg', array('class' => 'pull-right badge bg-red')); ?>
-        <?php echo $form->label($model,'fecha_final_reg'); ?>
-        <?php echo $form->textField($model,'fecha_final_reg', array('class' => 'form-control', 'readonly' => true)); ?>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-sm-4">
-      <div class="form-group">
-        <?php echo $form->error($model,'fecha_inicial', array('class' => 'pull-right badge bg-red')); ?>
+        <?php echo $form->error($model,'fecha_inicial', array('class' => 'badge badge-warning float-right')); ?>
         <?php echo $form->label($model,'fecha_inicial'); ?>
-        <?php echo $form->textField($model,'fecha_inicial', array('class' => 'form-control', 'readonly' => true)); ?>
+        <?php echo $form->textField($model,'fecha_inicial', array('class' => 'form-control form-control-sm', 'readonly' => true)); ?>
         </div>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-3">
       <div class="form-group">
-        <?php echo $form->error($model,'fecha_final', array('class' => 'pull-right badge bg-red')); ?>
+        <?php echo $form->error($model,'fecha_final', array('class' => 'badge badge-warning float-right')); ?>
         <?php echo $form->label($model,'fecha_final'); ?>
-        <?php echo $form->textField($model,'fecha_final', array('class' => 'form-control', 'readonly' => true)); ?>
+        <?php echo $form->textField($model,'fecha_final', array('class' => 'form-control form-control-sm', 'readonly' => true)); ?>
         </div>
     </div>
 </div>
 <div class="row">
-    <div class="col-sm-4">
+    <div class="col-sm-6">
       <div class="form-group">
-        <?php echo $form->error($model,'motivo', array('class' => 'pull-right badge bg-red')); ?>
+        <?php echo $form->error($model,'motivo', array('class' => 'badge badge-warning float-right')); ?>
         <?php echo $form->label($model,'motivo'); ?>
         <?php
             $this->widget('ext.select2.ESelect2',array(
-                'name'=>'Reporte[motivo]',
-                'id'=>'Reporte_motivo',
+                'name'=>'ReporteTh[motivo]',
+                'id'=>'ReporteTh_motivo',
                 'data'=>$lista_motivos,
                 'htmlOptions'=>array(
                   'multiple'=>'multiple',
@@ -107,14 +89,14 @@ $lista_motivos = CHtml::listData($motivos_llam_atenc, 'Id_Dominio', 'Dominio');
         ?>
       </div>
     </div>           
-    <div class="col-sm-4">
+    <div class="col-sm-6">
       <div class="form-group">
-        <?php echo $form->error($model,'empresa', array('class' => 'pull-right badge bg-red')); ?>
+        <?php echo $form->error($model,'empresa', array('class' => 'badge badge-warning float-right')); ?>
             <?php echo $form->label($model,'empresa'); ?>
             <?php
                 $this->widget('ext.select2.ESelect2',array(
-                    'name'=>'Reporte[empresa]',
-                    'id'=>'Reporte_empresa',
+                    'name'=>'ReporteTh[empresa]',
+                    'id'=>'ReporteTh_empresa',
                     'data'=>$lista_empresas,
                     'htmlOptions'=>array(
                       'multiple'=>'multiple',
@@ -130,38 +112,40 @@ $lista_motivos = CHtml::listData($motivos_llam_atenc, 'Id_Dominio', 'Dominio');
     </div>
   </div>
   <div class="row">
-    <div class="col-sm-4">
-    	<div class="form-group">
-			<?php echo $form->error($model,'opcion_exp', array('class' => 'pull-right badge bg-red')); ?>
-          	<?php echo $form->label($model,'opcion_exp'); ?><br>
-			<?php 
-				echo $form->radioButtonList($model,'opcion_exp',
-			    	array('3'=>'<i class="fa fa-desktop" aria-hidden="true"></i> Pantalla','1'=>'<i class="fa fa-file-pdf-o" aria-hidden="true"></i> PDF','2'=>'<i class="fa fa-file-excel-o" aria-hidden="true"></i> EXCEL'),
-			    	array(
-			        	'template'=>'{input}{label}',
-			        	'separator'=>'',
-			        	'labelOptions'=>array(
-			            	'style'=> '
-			                	padding-left:1%;
-			                	padding-right:5%;
-		            	'),
-		          	)                              
-		      	);
-			?>			
-    	</div>
+    <div class="col-sm-3">
+      <div class="form-group">
+      <?php echo $form->error($model,'opcion_exp', array('class' => 'badge badge-warning float-right')); ?>
+            <?php echo $form->label($model,'opcion_exp'); ?><br>
+      <?php 
+        echo $form->radioButtonList($model,'opcion_exp',
+            array('3'=>'<i class="fa fa-desktop" aria-hidden="true"></i> Pantalla','1'=>'<i class="far fa-file-pdf" aria-hidden="true"></i> PDF','2'=>'<i class="far fa-file-excel" aria-hidden="true"></i> EXCEL'),
+            array(
+                'template'=>'{input}{label}',
+                'separator'=>'',
+                'labelOptions'=>array(
+                    'style'=> '
+                        padding-left:1%;
+                        padding-right:5%;
+                  '),
+                )                              
+            );
+      ?>      
+      </div>
     </div>
 </div>
-
-<div class="btn-group" style="padding-bottom: 2%">
-    <button type="button" class="btn btn-success" onclick="resetfields();"><i class="fa fa-eraser"></i> Limpiar filtros</button>
-    <button type="button" class="btn btn-success" id="valida_form"><i class="fa fa-bar-chart"></i> Generar</button>
+  
+<div class="row mb-2">
+    <div class="col-sm-6"> 
+      <button type="button" class="btn btn-primary btn-sm" onclick="resetfields();"><i class="fa fa-eraser"></i> Limpiar filtros</button>
+      <button type="button" class="btn btn-primary btn-sm" id="valida_form"><i class="fa fa-cogs"></i> Generar</button>
+    </div>
 </div>
 
 <div class="row">
     <div class="col-lg-12 table-responsive" id="resultados" style="font-size: 10px !important;">
     <!-- contenido via ajax -->
     </div>
-</div>  
+</div>    
 
 
 <?php $this->endWidget(); ?>
@@ -213,59 +197,39 @@ $(function() {
       weekStart: 1
   };
 
-  $("#Reporte_fecha_inicial_reg").datepicker({
+  $("#ReporteTh_fecha_inicial").datepicker({
       language: 'es',
       autoclose: true,
       orientation: "right bottom",
   }).on('changeDate', function (selected) {
     var minDate = new Date(selected.date.valueOf());
-    $('#Reporte_fecha_final_reg').datepicker('setStartDate', minDate);
+    $('#ReporteTh_fecha_final').datepicker('setStartDate', minDate);
   });
 
-  $("#Reporte_fecha_final_reg").datepicker({
+  $("#ReporteTh_fecha_final").datepicker({
       language: 'es',
       autoclose: true,
       orientation: "right bottom",
   }).on('changeDate', function (selected) {
     var maxDate = new Date(selected.date.valueOf());
-    $('#Reporte_fecha_inicial_reg').datepicker('setEndDate', maxDate);
-  });
-
-  $("#Reporte_fecha_inicial").datepicker({
-      language: 'es',
-      autoclose: true,
-      orientation: "right bottom",
-  }).on('changeDate', function (selected) {
-    var minDate = new Date(selected.date.valueOf());
-    $('#Reporte_fecha_final').datepicker('setStartDate', minDate);
-  });
-
-  $("#Reporte_fecha_final").datepicker({
-      language: 'es',
-      autoclose: true,
-      orientation: "right bottom",
-  }).on('changeDate', function (selected) {
-    var maxDate = new Date(selected.date.valueOf());
-    $('#Reporte_fecha_inicial').datepicker('setEndDate', maxDate);
+    $('#ReporteTh_fecha_inicial').datepicker('setEndDate', maxDate);
   });
 
 });
 
 function reporte_pantalla(){
 
-  var motivo = $("#Reporte_motivo").val();
-  var fecha_inicial = $("#Reporte_fecha_inicial").val();
-  var fecha_final = $("#Reporte_fecha_final").val();
-  var empresa = $("#Reporte_empresa").val();
-  var fecha_inicial_reg = $("#Reporte_fecha_inicial_reg").val();
-  var fecha_final_reg = $("#Reporte_fecha_final_reg").val();
-  var id_empleado = $("#Reporte_id_empleado").val();
+  var motivo = $("#ReporteTh_motivo").val();
+  var fecha_inicial = $("#ReporteTh_fecha_inicial").val();
+  var fecha_final = $("#ReporteTh_fecha_final").val();
+  var empresa = $("#ReporteTh_empresa").val();
+  var id_empleado = $("#ReporteTh_id_empleado").val();
   
-  var data = {motivo: motivo, fecha_inicial: fecha_inicial, fecha_final: fecha_final, empresa: empresa, fecha_inicial_reg: fecha_inicial_reg, fecha_final_reg: fecha_final_reg, id_empleado: id_empleado}
+  var data = {motivo: motivo, fecha_inicial: fecha_inicial, fecha_final: fecha_final, empresa: empresa, id_empleado: id_empleado}
   $(".ajax-loader").fadeIn('fast');
   $.ajax({ 
     type: "POST", 
-    url: "<?php echo Yii::app()->createUrl('reporte/llamatencpant'); ?>",
+    url: "<?php echo Yii::app()->createUrl('reporteth/disciplinariospant'); ?>",
     data: data,
     success: function(data){ 
       $(".ajax-loader").fadeOut('fast');
@@ -276,19 +240,13 @@ function reporte_pantalla(){
 }
 
 function resetfields(){
-  $('#Reporte_id_empleado').val('').trigger('change');
-  $('#s2id_Reporte_id_empleado span').html("");
-  $('#Reporte_fecha_inicial_reg').val('');
-  $('#Reporte_fecha_final_reg').val('');
-  $('#Reporte_fecha_inicial').val('');
-  $('#Reporte_fecha_final').val('');
-  $('#Reporte_motivo').val('').trigger('change');
-  $('#Reporte_empresa').val('').trigger('change');
-}
-
-function clear_select2_ajax(id){
-    $('#'+id+'').val('').trigger('change');
-    $('#s2id_'+id+' span').html("");
+  $('#ReporteTh_id_empleado').val('').trigger('change');
+  $('#s2id_ReporteTh_id_empleado span').html("");
+  $('#ReporteTh_fecha_inicial').val('');
+  $('#ReporteTh_fecha_final').val('');
+  $('#ReporteTh_motivo').val('').trigger('change');
+  $('#ReporteTh_empresa').val('').trigger('change');
+  $("#resultados").html(''); 
 }
 
 </script> 
