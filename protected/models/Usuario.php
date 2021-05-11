@@ -35,6 +35,7 @@ class Usuario extends CActiveRecord
     public $new_password;
     public $repeat_password;
     public $orderby;
+    public $n_ident;
 
 	/**
 	 * @return string the associated database table name
@@ -56,7 +57,7 @@ class Usuario extends CActiveRecord
 			array('Nombres, Correo, Usuario, Estado, Genero, perfiles','required','on'=>'update'),
 			array('Usuario','unique'),
 			array('Correo','email', 'message'=>'E-mail no valido' ,'on'=>'create , update'),
-			array('Password', 'match', 'pattern'=>'/(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{8,10})$/', 'message'=>'Se requieren de 8 a 10 caracteres, <br> por lo menos una letra y un número, <br> sin caracteres especiales.','on'=>'create , update'),
+			array('Password', 'match', 'pattern'=>'/(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{8,10})$/', 'message'=>'Se requieren de 8 a 10 caracteres, por lo menos una letra y un número, <br> sin caracteres especiales.','on'=>'create , update'),
 			//array('Nombres, Correo, Usuario, Password, Estado', 'required'),
 			array('Id_Usuario_Creacion, Id_Usuario_Actualizacion, Id_Niv_Det_Emp', 'numerical', 'integerOnly'=>true),
 			array('Usuario', 'length', 'max'=>30),
@@ -69,9 +70,14 @@ class Usuario extends CActiveRecord
 			array('Id_Usuario, Id_Usuario_Creacion, Id_Usuario_Actualizacion, Usuario, Nombres, Correo, Estado, Fecha_Creacion, Fecha_Actualizacion, orderby', 'safe', 'on'=>'search'),
 			//reglas para el cambio de credenciales
 			array('old_password, new_password, repeat_password', 'required', 'on' => 'profile'),
-        	array('old_password', 'comparePassword', 'on' => 'profile'),
-        	array('new_password', 'match', 'pattern'=>'/(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{8,10})$/', 'message'=>'Se requieren de 8 a 10 caracteres, <br> por lo menos una letra y un número, sin caracteres especiales.','on'=>'profile'),
+        	array('old_password', 'comparePassword', 'on' => 'profile', 'message'=>'Los dos password deben coincidir.'),
+        	array('new_password', 'match', 'pattern'=>'/(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{8,10})$/', 'message'=>'Se requieren de 8 a 10 caracteres, por lo menos: <br> una letra y un número, sin caracteres especiales.','on'=>'profile'),
         	array('repeat_password', 'compare', 'compareAttribute'=>'new_password', 'on'=>'profile'),
+        	array('n_ident', 'required', 'on' => 'reqrestart'),
+			array('n_ident', 'validUser','on'=>'reqrestart'),
+			array('new_password, repeat_password', 'required', 'on' => 'resetpassword'),
+			array('new_password', 'match', 'pattern'=>'/(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{8,10})$/', 'message'=>'Se requieren de 8 a 10 caracteres, por lo menos: <br> una letra y un número, sin caracteres especiales.','on'=>'resetpassword'),
+        	array('repeat_password', 'compare', 'compareAttribute'=>'new_password', 'on'=>'resetpassword', 'message'=>'Los dos password deben coincidir.'),
 		);
 	}
 
@@ -81,6 +87,31 @@ class Usuario extends CActiveRecord
         if ($modelousuario->Password != sha1($this->old_password)){
             $this->addError($attribute, 'Password actual incorrecto.');
         }
+    }
+
+    public function validUser($attribute,$params){
+        
+  		//se busca empleado con el # Identificación indicado 
+        $criteria=new CDbCriteria;
+		$criteria->condition='Estado=:Estado AND Identificacion = :Identificacion';
+		$criteria->params=array(':Estado'=>1,':Identificacion'=>$this->n_ident);
+		$modeloemp=Empleado::model()->find($criteria);
+
+        if(!is_null($modeloemp)){
+        	
+        	//se busca usuario de acuerdo al empleado encontrado 
+	        $criteria=new CDbCriteria;
+			$criteria->condition='Estado=:Estado AND Id_Emp = :Id_Emp';
+			$criteria->params=array(':Estado'=>1,':Id_Emp'=>$modeloemp->Id_Empleado);
+			$modelousuario=Usuario::model()->find($criteria);
+
+			if(is_null($modelousuario)){
+	        	$this->addError($attribute, 'Este # Identificación no registra usuario.');	
+	        }
+
+        } else{
+        	$this->addError($attribute, 'Este # Identificación no esta registrado.');	
+        }     
     }
 
 	/**
@@ -125,6 +156,7 @@ class Usuario extends CActiveRecord
 			'tipos_docto' => 'Tipos de docto asociados',
 			'bodegas' => 'Bodegas asociadas',
 			'Id_Emp' => 'Empleado',
+			'n_ident'=>'# Identificación',
 			
 		);
 	}

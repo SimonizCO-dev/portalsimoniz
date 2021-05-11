@@ -13,7 +13,7 @@ $('.search-form form').submit(function(){
 ");
 
 //para combos de usuarios
-$lista_usuarios = CHtml::listData($usuarios, 'Usuario', 'Usuario'); 
+$lista_usuarios = CHtml::listData($usuarios, 'Id_Usuario', 'Usuario'); 
 //para combos de tipos de docto
 $lista_tipos_docto = CHtml::listData($tipos_docto, 'Id', 'Descripcion'); 
 

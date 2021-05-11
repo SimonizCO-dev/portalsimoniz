@@ -162,6 +162,7 @@ $cs->registerScriptFile(Yii::app()->theme->baseUrl."/plugins/bootstrap/js/bootst
         <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" id="sidebar-menu" role="menu" data-accordion="false" style="">
         <!-- <li class="nav-item"><a href="#" class="nav-link menu"><i class="nav-icon fas fa-file-invoice-dollar"></i><span class="badge badge-warning navbar-badge">3</span><p class="text">Notificación de prueba</p></a></li> -->
         <li class="nav-item"><a href="#" data-toggle="modal" data-target="#modal-search-menu" title="Busqueda de opciones en aplicación" class="nav-link menu"><i class="nav-icon fas fa-search"></i><p class="text">Busqueda avanzada</p></a></li>
+        <li class="nav-item"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=site/ayuda'; ?>" title="Ayuda" class="nav-link menu"><i class="nav-icon fas fa-question-circle"></i><p class="text">Ayuda</p></a></li>
         <li class="nav-item"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=site/logout'; ?>" title="Cerrar sesión / Salir de la aplicación" class="nav-link menu"><i class="nav-icon fas fa-sign-out-alt"></i><p class="text">Cerrar sesión</p></a></li></ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -232,7 +233,7 @@ $cs->registerScriptFile(Yii::app()->theme->baseUrl."/plugins/bootstrap/js/bootst
     <!-- <div class="float-right d-none d-sm-block">
       <b>Version</b> 1.0
     </div> -->
-    <strong>© <?php echo date('Y'); ?> - <?php echo CHtml::encode(Yii::app()->name) ?></strong>
+    <strong><?php echo CHtml::encode(Yii::app()->name) ?> © <?php echo date('Y'); ?> - Versión 1.0</strong>
   </footer>
 
 </div>
@@ -241,6 +242,9 @@ $cs->registerScriptFile(Yii::app()->theme->baseUrl."/plugins/bootstrap/js/bootst
 <?php } else { ?>
 
 <body class="login-page" style="background: linear-gradient(-135deg,#ffe9a6,#fc5000c7);">
+
+    <div class="ajax-loader" style="display: none;">
+    </div>
 
     <?php echo $content; ?>
 

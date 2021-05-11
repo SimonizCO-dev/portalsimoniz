@@ -35,6 +35,10 @@ class UsuarioController extends Controller
 				'actions'=>array('admin','profile'),
 				'users'=>array('@'),
 			),
+			array('allow', // allow admin user to perform 'admin' and 'delete' actions
+				'actions'=>array('reqrestart','resetpassword'),
+				'users'=>array('*'),
+			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
@@ -387,5 +391,140 @@ class UsuarioController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+
+	public function actionReqRestart()
+	{
+		if(!Yii::app()->user->isGuest) {
+			$this->redirect(array('site/info'));	
+		}else{
+
+			$model=new Usuario;
+			$model->Scenario = 'reqrestart';
+
+			// collect user input data
+			if(isset($_POST['Usuario']))
+			{
+				$model->attributes=$_POST['Usuario'];
+				if($model->validate()){
+
+					$empleado = Empleado::model()->findByAttributes(array('Identificacion'=>$_POST['Usuario']['n_ident']));
+					$usuario = Usuario::model()->findByAttributes(array('Id_Emp'=>$empleado->Id_Empleado));
+
+					$correo = $usuario->Correo;
+					$fecha_solicitud = date('Y-m-d H:i:s'); 
+					$n_fecha = strtotime ('+15 minute', strtotime ($fecha_solicitud)); 
+					$fecha_vencimiento = date ('Y-m-d H:i:s', $n_fecha);
+
+					//se valida si el correo es valido
+					$matches = null;
+	  				if(preg_match('/^[A-z0-9\\._-]+@[A-z0-9][A-z0-9-]*(\\.[A-z0-9_-]+)*\\.([A-z]{2,6})$/', $correo, $matches)){
+	  					
+	  					//se crea una nueva solicitud
+	  					$sol = new SolPassUsuario;
+	  					$sol->Id_Usuario = $usuario->Id_Usuario;
+						$sol->Fecha_Hora_Sol = $fecha_solicitud;
+						$sol->Fecha_Hora_Venc = $fecha_vencimiento;
+						$sol->Estado = 1;
+
+						if($sol->save()){
+							$res = UtilidadesMail::envioresetpassword($sol->Id_Sol, $correo);
+
+							if($res == 0){
+								Yii::app()->user->setFlash('warning', "No se pudo enviar la solicitud.");
+								$this->redirect(array('site/login'));
+							}else{
+							 	Yii::app()->user->setFlash('success', "Solicitud enviada al correo ".$correo);
+								$this->redirect(array('site/login'));
+							}
+
+						}else{
+							print_r($sol->GetErrors());die;
+							Yii::app()->user->setFlash('warning', "No se pudo crear la solicitud.");
+							$this->redirect(array('site/login'));	
+						}
+
+	  				}else{
+	  					Yii::app()->user->setFlash('warning', "El correo registrado no es valido.");
+						$this->redirect(array('site/login'));
+	  				}
+				
+				}
+
+			}
+
+			$this->render('reqrestart',array('model'=>$model));	
+		}	
+	}
+
+	public function actionResetPassword($token)
+	{
+		
+		if(!Yii::app()->user->isGuest) {
+			$this->redirect(array('site/info'));	
+		}else{
+
+			$id = intval(base64_decode($token));
+
+			if (is_numeric($id)){
+				$modelsol = SolPassUsuario::model()->findByAttributes(array('Id_Sol' => $id, 'Estado' => 1));
+
+				if(!is_null($modelsol)){
+
+					$fecha_hora_actual = date('Y-m-d H:i:s');
+
+					if(strtotime($fecha_hora_actual) < strtotime($modelsol->Fecha_Hora_Venc)){
+						$modeluser = Usuario::model()->findByPk($modelsol->Id_Usuario);	
+						$modeluser->Scenario = 'resetpassword';
+						$opc = 1;
+					}else{
+						$modelsol->Estado = 0;
+						$modelsol->save();
+						$opc = 0;
+						Yii::app()->user->setFlash('warning', "La solicitud es invalida o ya caduco.");	
+					}
+		
+				}else{
+					$opc = 0;
+					Yii::app()->user->setFlash('warning', "La solicitud es invalida o ya caduco.");	
+				}
+
+			}else{
+				$opc = 0;
+				Yii::app()->user->setFlash('warning', "La solicitud es invalida o ya caduco.");	
+			}
+
+			// collect user input data
+			if(isset($_POST['Usuario']))
+			{
+				$modeluser->attributes=$_POST['Usuario'];
+				if($modeluser->validate()){
+
+					$modeluser->Password = sha1($modeluser->new_password);
+	      			$modeluser->Id_Usuario_Actualizacion = $modelsol->Id_Usuario;
+					$modeluser->Fecha_Actualizacion = date('Y-m-d H:i:s');
+
+					$modelsol->Estado = 2;
+
+					if($modeluser->save() && $modelsol->save()){
+						Yii::app()->user->setFlash('success', "Ha cambiado su password.");
+						$this->redirect(array('site/login'));
+					}else{
+						Yii::app()->user->setFlash('warning', "No se pudo realizar el cambio de password.");
+						$this->redirect(array('site/login'));
+					}	
+				
+				}
+
+			}
+
+			if($opc == 0){
+				$this->render('resetpassword',array('opc'=> 0, 'model'=> array(), 'modelsol'=> array()));
+			}else{
+				$this->render('resetpassword',array('opc'=> 1, 'model'=>$modeluser, 'modelsol'=> $modelsol));
+			}
+
+		}				
+	
 	}
 }

@@ -18,10 +18,24 @@
   <!-- /.login-logo -->
   <div class="card card-login">
     <div class="card-body login-card-body">
+    	
     	<div class="login-logo js-tilt" data-tilt>
 			<img src="<?php echo Yii::app()->baseUrl."/images/login-logo.png"; ?>">
-		  </div>
-		      
+		</div>
+		<?php if(Yii::app()->user->hasFlash('success')):?>
+        <div class="alert alert-primary alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h5><i class="icon fas fa-check-circle"></i>Realizado</h5>
+            <?php echo Yii::app()->user->getFlash('success'); ?>
+        </div>
+    	<?php endif; ?> 
+    	<?php if(Yii::app()->user->hasFlash('warning')):?>
+        <div class="alert alert-warning alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h5><i class="icon fas fa-info-circle"></i>Cuidado</h5>
+            <?php echo Yii::app()->user->getFlash('warning'); ?>
+        </div>
+    	<?php endif; ?>     
 		<div class="form-group">
 			<?php echo $form->label($model,'username', array('class' => 'control-label')); ?>
 			<?php echo $form->error($model,'username', array('class' => 'badge badge-warning float-right')); ?>
@@ -46,14 +60,12 @@
 		  		</div>
 			</div>
 		</div>
-        <div class="row">
-        	<div class="col-6"> 
-        	</div>
-          	<div class="col-6">
-            	<button type="submit" class="btn btn-block btn-login btn-sm"><i class="fas fa-sign-in-alt"></i> Ingresar</button>
-          	</div>
-          	<!-- /.col -->
-        </div>
+        <div class="row text-center mb-3">
+        	<button type="submit" class="btn btn-block btn-login btn-sm"><i class="fas fa-sign-in-alt"></i> Ingresar</button>
+      	</div>
+        <p class="mb-1">
+        	<a href="<?php echo Yii::app()->getBaseUrl(true)."/index.php?r=usuario/reqrestart"; ?>" class="text-warning">He olvidado mi password</a>
+      	</p>
     </div>
     <!-- /.login-card-body -->
   </div>

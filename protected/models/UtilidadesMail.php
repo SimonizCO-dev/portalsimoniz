@@ -625,4 +625,65 @@ class UtilidadesMail {
 	
 	}
 
+	public static function envioresetpassword($id, $correo) {
+
+		set_time_limit(0);
+		
+		// Se inactiva el autoloader de yii
+		spl_autoload_unregister(array('YiiBase','autoload'));  
+
+		require_once(Yii::app()->basePath . '\extensions\PHPMailer\src\PHPMailer.php');
+		require_once(Yii::app()->basePath . '\extensions\PHPMailer\src\SMTP.php');
+		require_once(Yii::app()->basePath . '\extensions\PHPMailer\src\Exception.php');
+
+		//cuando se termina la accion relacionada con la libreria se activa el autoloader de yii
+		spl_autoload_register(array('YiiBase','autoload'));
+
+		$host = Yii::app()->params->env_mail_host;
+		$port = Yii::app()->params->env_mail_port;
+		$smtpsecure = Yii::app()->params->env_mail_smtpsecure;
+		$smtpauth = Yii::app()->params->env_mail_smtpauth;
+		$smtpdebug = Yii::app()->params->env_mail_smtpdebug;
+		$username = Yii::app()->params->env_mail_cuenta;
+		$password = Yii::app()->params->env_mail_password;
+		$correo_rem = Yii::app()->params->env_mail_cuenta_rem;
+		$desc_correo_rem = Yii::app()->params->env_mail_desc_cuenta_rem;
+
+		$modelo_sol = SolPassUsuario::model()->findByPk($id);
+
+		$url = Yii::app()->getBaseUrl(true).'/index.php?r=usuario/resetpassword&token='.base64_encode($id);
+			
+		$asunto = 'Recuperación de password '.CHtml::encode(Yii::app()->name);
+		$mensaje = UtilidadesMail::horamensaje().'<br><br>
+		ha solicitado el restablecimiento de password.<br><br>
+		Pulse <a href="'.$url.'"/>aqui</a> para continuar con el proceso, este link tiene 15 minutos de validez.';		
+		
+		$mail = new PHPMailer\PHPMailer\PHPMailer;
+		
+		$mail->IsSMTP();
+		$mail->CharSet = 'UTF-8';
+
+		$mail->Host 	  = $host;
+		$mail->Port       = $port;
+		$mail->SMTPSecure = $smtpsecure;
+		$mail->SMTPAuth   = $smtpauth;
+		$mail->SMTPDebug  = $smtpdebug;
+		$mail->Username   = $username;
+		$mail->Password   = $password;
+		$mail->From       = $correo_rem;
+		
+		$mail->isHTML(true);
+		$mail->Subject = $asunto;
+		$mail->Body = $mensaje;
+		
+        $mail->addAddress($correo);
+
+        if(!$mail->send()){
+			return 0;
+		}else{
+		 	return 1;
+		}
+        
+	}
+
 }
