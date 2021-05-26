@@ -17,6 +17,9 @@
         <?php if ($asociacion == 1) { ?>  
         <ul class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 48px, 0px);">
             <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=licenciaEquipo/create&e='.$model->Id_Equipo; ?>">Asociar licencia a equipo</a></li>
+        <?php if ($asociacion == 1 && $asoc_emp == 1) { ?> 
+            <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=empEquipo/create&e='.$model->Id_Equipo; ?>">Asociar empleado a equipo</a></li>
+        <?php } ?>
         <?php if ($asociacion == 1 && $n_ip_act < 2) { ?> 
             <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=network/asig2&e='.$model->Id_Equipo; ?>">Asociar IP a equipo</a></li>
         <?php } ?>
@@ -29,6 +32,7 @@
     <ul class="nav nav-tabs">
         <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#info">Información</a></li>
         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#lic">licencia(s)</a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#emp">Empleado(s)</a></li>
         <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#network">Red</a></li>
     </ul>
 
@@ -175,6 +179,42 @@
 
                                 'click'=>'function(){if (window.confirm("Esta seguro de desvincular la licencia de este equipo ?")) { return true; }else{ return false;}}',
                                 'options'=>array('title'=>'Desvincular licencia'),
+                            ),
+                        )
+                    ),
+                ),
+            )); ?>               
+        </div>
+        <div id="emp" class="tab-pane fade"><br>
+            <?php $this->widget('zii.widgets.grid.CGridView', array(
+                'id'=>'emp-equipo-grid',
+                'dataProvider'=>$emp->search(),
+                'pager'=>array(
+                    'cssFile'=>Yii::app()->getBaseUrl(true).'/css/pager.css',
+                ),
+                'enableSorting' => false,
+                'columns'=>array(
+                    array(
+                        'name'=>'Id_Emp',
+                        'value'=>'UtilidadesEmpleado::nombreempleado($data->Id_Emp)',
+                    ),
+                    array(
+                        'name' => 'Estado',
+                        'value' => 'UtilidadesVarias::textoestado1($data->Estado)',
+                    ),
+                    array(
+                        'class'=>'CButtonColumn',
+                        'template'=>'{update}',
+                        'buttons'=>array(
+                            
+                            'update'=>array(
+                                'label'=>'<i class="fas fa-unlink actions text-dark"></i>',
+                                'imageUrl'=>false,
+                                'url'=>'Yii::app()->createUrl("empEquipo/inact", array("id"=>$data->Id_Emp_Equ, "opc"=>2))',
+                                'visible'=> '(Yii::app()->user->getState("permiso_act") == true && $data->Estado == 1)',
+
+                                'click'=>'function(){if (window.confirm("Esta seguro de desvincular el empleado de este equipo ?")) { return true; }else{ return false;}}',
+                                'options'=>array('title'=>'Desvincular empleado'),
                             ),
                         )
                     ),

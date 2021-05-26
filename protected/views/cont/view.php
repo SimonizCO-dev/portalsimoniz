@@ -41,6 +41,14 @@
                     <?php echo '<p>'.$model->Id_Contrato.'</p>';?>
                 </div>
             </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <?php echo '<p>'.$model->DescTipo($model->Tipo).'</p>';?>
+                </div>
+            </div>
             <div class="col-sm-3">
                 <div class="form-group">
                     <label>Empresa</label>
@@ -49,8 +57,8 @@
             </div>
             <div class="col-sm-3">
                 <div class="form-group">
-                    <label>Proveedor</label>
-                    <?php echo '<p>'.$model->Proveedor.'</p>';?>
+                    <label>Razón social</label>
+                    <?php echo '<p>'.$model->Razon_Social.'</p>';?>
                 </div>
             </div>
             <div class="col-sm-3">

@@ -40,11 +40,15 @@ $lista_period = CHtml::listData($period, 'Id_Dominio', 'Dominio');
     'enableSorting' => false,
 	'columns'=>array(
 		'Id_Contrato',
+        array(
+            'name'=>'Tipo',
+            'value'=>'$data->DescTipo($data->Tipo)',
+        ),
 		array(
             'name'=>'Empresa',
             'value'=>'$data->empresa->Descripcion',
         ),
-		'Proveedor',
+        'Razon_Social',
 		'Concepto_Contrato',
         array(
             'name'=>'Periodicidad',

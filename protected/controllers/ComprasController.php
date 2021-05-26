@@ -30,7 +30,7 @@ class ComprasController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform actions
-				'actions'=>array('cuadrocompraspt','cuadrocompraspt2','cuadrocomprasmp'),
+				'actions'=>array('cuadrocompraspt','cuadrocompraspt2','cuadrocomprasmp','cuadrocomprasmp2'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -168,6 +168,12 @@ class ComprasController extends Controller
 	public function actionCuadroComprasMp()
 	{		
 		$this->renderPartial('cuadro_compras_mp_resp');
+	
+	}
+
+	public function actionCuadroComprasMp2()
+	{		
+		$this->renderPartial('cuadro_compras_mp2_resp');
 	
 	}
 }

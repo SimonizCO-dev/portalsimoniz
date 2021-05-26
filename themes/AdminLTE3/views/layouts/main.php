@@ -162,6 +162,7 @@ $cs->registerScriptFile(Yii::app()->theme->baseUrl."/plugins/bootstrap/js/bootst
         <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" id="sidebar-menu" role="menu" data-accordion="false" style="">
         <!-- <li class="nav-item"><a href="#" class="nav-link menu"><i class="nav-icon fas fa-file-invoice-dollar"></i><span class="badge badge-warning navbar-badge">3</span><p class="text">Notificación de prueba</p></a></li> -->
         <li class="nav-item"><a href="#" data-toggle="modal" data-target="#modal-search-menu" title="Busqueda de opciones en aplicación" class="nav-link menu"><i class="nav-icon fas fa-search"></i><p class="text">Busqueda avanzada</p></a></li>
+        <li class="nav-item"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=ticket/create'; ?>" title="Ayuda" class="nav-link menu"><i class="nav-icon fas fa-ticket-alt"></i><p class="text">Nuevo ticket</p></a></li>
         <li class="nav-item"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=site/ayuda'; ?>" title="Ayuda" class="nav-link menu"><i class="nav-icon fas fa-question-circle"></i><p class="text">Ayuda</p></a></li>
         <li class="nav-item"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=site/logout'; ?>" title="Cerrar sesión / Salir de la aplicación" class="nav-link menu"><i class="nav-icon fas fa-sign-out-alt"></i><p class="text">Cerrar sesión</p></a></li></ul>
       </nav>
@@ -540,8 +541,6 @@ function renderPdfByUrl(url) {
 
         //Start with first page
         pdf.getPage(1).then(handlePages);
-
-        hideloader();
     });
 
 
@@ -563,6 +562,7 @@ function renderPdfByUrl(url) {
 
         //Add it to the web page
         document.getElementById('viewer').appendChild(canvas);
+        hideloader();
 
         //Move to next page
         currPage++;

@@ -220,7 +220,7 @@ class Actividad extends CActiveRecord
 		    }
 
 			if($this->Pais != ""){
-
+				
 				$array_paises = $this->Pais;
 
 				$cond_pais_t = "";

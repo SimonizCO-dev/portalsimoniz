@@ -18,75 +18,17 @@
 
 
 <div class="row">
- 	  <div class="col-sm-4">
-        <div class="form-group">
-            <?php echo $form->error($model,'Empresa', array('class' => 'badge badge-warning float-right')); ?>
-            <?php echo $form->label($model,'Empresa'); ?>
-            <?php
-                $this->widget('ext.select2.ESelect2',array(
-                    'name'=>'Cont[Empresa]',
-                    'id'=>'Cont_Empresa',
-                    'data'=>$lista_empresas,
-                    'value' => $model->Empresa,
-                    'htmlOptions'=>array(),
-                    'options'=>array(
-                        'placeholder'=>'Seleccione...',
-                        'width'=> '100%',
-                        'allowClear'=>true,
-                    ),
-                ));
-            ?>  
-        </div>
-    </div>
-  	<div class="col-sm-4">
-      	<div class="form-group">
-      		<?php echo $form->error($model,'Proveedor', array('class' => 'badge badge-warning float-right')); ?>
-          <?php echo $form->label($model,'Proveedor'); ?>
-      		<?php echo $form->textField($model,'Proveedor', array('class' => 'form-control form-control-sm form-control form-control-sm-sm', 'maxlength' => '100', 'autocomplete' => 'off', 'onkeyup' => 'convert_may(this)')); ?>
-      	</div>
-  	</div>
-  	<div class="col-sm-4">
-      	<div class="form-group">
-      		<?php echo $form->error($model,'Concepto_Contrato', array('class' => 'badge badge-warning float-right')); ?>
-          <?php echo $form->label($model,'Concepto_Contrato'); ?>
-      		<?php echo $form->textField($model,'Concepto_Contrato', array('class' => 'form-control form-control-sm', 'maxlength' => '200', 'autocomplete' => 'off', 'onkeyup' => 'convert_may(this)')); ?>
-      	</div>
-  	</div>
-</div>
-<div class="row">
- 	<div class="col-sm-4">
-      	<div class="form-group">
-      		<?php echo $form->error($model,'Contacto', array('class' => 'badge badge-warning float-right')); ?>
-          <?php echo $form->label($model,'Contacto'); ?>
-      		<?php echo $form->textField($model,'Contacto', array('class' => 'form-control form-control-sm', 'maxlength' => '100', 'autocomplete' => 'off', 'onkeyup' => 'convert_may(this)')); ?>
-      	</div>
-  	</div>
-  	<div class="col-sm-4">
-      	<div class="form-group">
-      		<?php echo $form->error($model,'Telefono_Contacto', array('class' => 'badge badge-warning float-right')); ?>
-          <?php echo $form->label($model,'Telefono_Contacto'); ?>
-      		<?php echo $form->textField($model,'Telefono_Contacto', array('class' => 'form-control form-control-sm', 'maxlength' => '100', 'autocomplete' => 'off', 'onkeyup' => 'convert_may(this)')); ?>
-      	</div>
-  	</div>
-  	<div class="col-sm-4">
-      	<div class="form-group">
-      		<?php echo $form->error($model,'Email_Contacto', array('class' => 'badge badge-warning float-right')); ?>
-          <?php echo $form->label($model,'Email_Contacto'); ?>
-      		<?php echo $form->textField($model,'Email_Contacto', array('class' => 'form-control form-control-sm', 'maxlength' => '100', 'autocomplete' => 'off')); ?>
-      	</div>
-  	</div>
-</div>
-<div class="row">
   <div class="col-sm-4">
-    <div class="form-group">
-          <?php echo $form->error($model,'Periodicidad', array('class' => 'badge badge-warning float-right')); ?>
-          <?php echo $form->label($model,'Periodicidad'); ?>
+      <div class="form-group">
+          <?php echo $form->error($model,'Tipo', array('class' => 'badge badge-warning float-right')); ?>
+          <?php echo $form->label($model,'Tipo'); ?>
+          <?php $lista_tipos = array(1 => 'CLIENTE', 2 => 'PROVEEDOR'); ?>
           <?php
               $this->widget('ext.select2.ESelect2',array(
-                  'name'=>'Cont[Periodicidad]',
-                  'id'=>'Cont_Periodicidad',
-                  'data'=>$lista_period,
-                  'value' => $model->Periodicidad,
+                  'name'=>'Cont[Tipo]',
+                  'id'=>'Cont_Tipo',
+                  'data'=>$lista_tipos,
+                  'value' => $model->Tipo,
                   'htmlOptions'=>array(),
                   'options'=>array(
                       'placeholder'=>'Seleccione...',
@@ -96,6 +38,85 @@
               ));
           ?>  
       </div>
+  </div>
+	  <div class="col-sm-4">
+      <div class="form-group">
+          <?php echo $form->error($model,'Empresa', array('class' => 'badge badge-warning float-right')); ?>
+          <?php echo $form->label($model,'Empresa'); ?>
+          <?php
+              $this->widget('ext.select2.ESelect2',array(
+                  'name'=>'Cont[Empresa]',
+                  'id'=>'Cont_Empresa',
+                  'data'=>$lista_empresas,
+                  'value' => $model->Empresa,
+                  'htmlOptions'=>array(),
+                  'options'=>array(
+                      'placeholder'=>'Seleccione...',
+                      'width'=> '100%',
+                      'allowClear'=>true,
+                  ),
+              ));
+          ?>  
+      </div>
+  </div>
+	<div class="col-sm-4">
+    	<div class="form-group">
+    		<?php echo $form->error($model,'Razon_Social', array('class' => 'badge badge-warning float-right')); ?>
+        <?php echo $form->label($model,'Razon_Social'); ?>
+    		<?php echo $form->textField($model,'Razon_Social', array('class' => 'form-control form-control-sm form-control form-control-sm-sm', 'maxlength' => '100', 'autocomplete' => 'off', 'onkeyup' => 'convert_may(this)')); ?>
+    	</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-4">
+    	<div class="form-group">
+    		<?php echo $form->error($model,'Concepto_Contrato', array('class' => 'badge badge-warning float-right')); ?>
+        <?php echo $form->label($model,'Concepto_Contrato'); ?>
+    		<?php echo $form->textField($model,'Concepto_Contrato', array('class' => 'form-control form-control-sm', 'maxlength' => '200', 'autocomplete' => 'off', 'onkeyup' => 'convert_may(this)')); ?>
+    	</div>
+	</div>
+	  <div class="col-sm-4">
+    	<div class="form-group">
+    		<?php echo $form->error($model,'Contacto', array('class' => 'badge badge-warning float-right')); ?>
+        <?php echo $form->label($model,'Contacto'); ?>
+    		<?php echo $form->textField($model,'Contacto', array('class' => 'form-control form-control-sm', 'maxlength' => '100', 'autocomplete' => 'off', 'onkeyup' => 'convert_may(this)')); ?>
+    	</div>
+	</div>
+	<div class="col-sm-4">
+    	<div class="form-group">
+    		<?php echo $form->error($model,'Telefono_Contacto', array('class' => 'badge badge-warning float-right')); ?>
+        <?php echo $form->label($model,'Telefono_Contacto'); ?>
+    		<?php echo $form->textField($model,'Telefono_Contacto', array('class' => 'form-control form-control-sm', 'maxlength' => '100', 'autocomplete' => 'off', 'onkeyup' => 'convert_may(this)')); ?>
+    	</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-4">
+    	<div class="form-group">
+    		<?php echo $form->error($model,'Email_Contacto', array('class' => 'badge badge-warning float-right')); ?>
+        <?php echo $form->label($model,'Email_Contacto'); ?>
+    		<?php echo $form->textField($model,'Email_Contacto', array('class' => 'form-control form-control-sm', 'maxlength' => '100', 'autocomplete' => 'off')); ?>
+    	</div>
+	</div>
+  <div class="col-sm-4">
+    <div class="form-group">
+        <?php echo $form->error($model,'Periodicidad', array('class' => 'badge badge-warning float-right')); ?>
+        <?php echo $form->label($model,'Periodicidad'); ?>
+        <?php
+            $this->widget('ext.select2.ESelect2',array(
+                'name'=>'Cont[Periodicidad]',
+                'id'=>'Cont_Periodicidad',
+                'data'=>$lista_period,
+                'value' => $model->Periodicidad,
+                'htmlOptions'=>array(),
+                'options'=>array(
+                    'placeholder'=>'Seleccione...',
+                    'width'=> '100%',
+                    'allowClear'=>true,
+                ),
+            ));
+        ?>  
+    </div>
   </div>
   <div class="col-sm-4">
       <div class="form-group">
@@ -144,26 +165,26 @@
     	</div>
 	</div>
 	<div class="col-sm-4">
-        <div class="form-group">
-          <?php echo $form->error($model,'Estado', array('class' => 'badge badge-warning float-right')); ?>
-          <?php echo $form->label($model,'Estado'); ?>
-          <?php $estados = Yii::app()->params->estados; ?>
-          <?php
-              $this->widget('ext.select2.ESelect2',array(
-                  'name'=>'Cont[Estado]',
-                  'id'=>'Cont_Estado',
-                  'data'=>$estados,
-                  'value' => $model->Estado,
-                  'htmlOptions'=>array(),
-                  'options'=>array(
-                      'placeholder'=>'Seleccione...',
-                      'width'=> '100%',
-                      'allowClear'=>true,
-                  ),
-              ));
-          ?>
-        </div>
-    </div>
+      <div class="form-group">
+        <?php echo $form->error($model,'Estado', array('class' => 'badge badge-warning float-right')); ?>
+        <?php echo $form->label($model,'Estado'); ?>
+        <?php $estados = Yii::app()->params->estados; ?>
+        <?php
+            $this->widget('ext.select2.ESelect2',array(
+                'name'=>'Cont[Estado]',
+                'id'=>'Cont_Estado',
+                'data'=>$estados,
+                'value' => $model->Estado,
+                'htmlOptions'=>array(),
+                'options'=>array(
+                    'placeholder'=>'Seleccione...',
+                    'width'=> '100%',
+                    'allowClear'=>true,
+                ),
+            ));
+        ?>
+      </div>
+  </div>
 </div>
 
 <?php if(!$model->isNewRecord){ ?>

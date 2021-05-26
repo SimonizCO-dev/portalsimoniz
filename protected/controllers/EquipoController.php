@@ -64,6 +64,23 @@ class EquipoController extends Controller
 		$licencias->unsetAttributes();  // clear any default values
 		$licencias->Id_Equipo = $id;
 
+		//Empleados asociadas a equipo
+		$emp=new EmpEquipo('search');
+		$emp->unsetAttributes();  // clear any default values
+		$emp->Id_Equipo = $id;
+
+		//empleados activos asociados
+		$emp_act= EmpEquipo::model()->findAllByAttributes(array('Id_Equipo'=>$id, 'Estado'=>1));
+
+		$n_emp_act = count($emp_act);
+
+		//se valida si se pueden seguir asociando empleados al equipo
+		if($n_emp_act < $model->Num_Usuarios){
+			$asoc_emp = 1;
+		}else{
+			$asoc_emp = 0;
+		}
+
 		//IPs asociadas a equipo
 		$network=new NetworkEquipo('search');
 		$network->unsetAttributes();  // clear any default values
@@ -77,6 +94,8 @@ class EquipoController extends Controller
 		$this->render('view',array(
 			'model'=> $model,
 			'asociacion'=> $asociacion,
+			'emp'=> $emp,
+			'asoc_emp'=>$asoc_emp,
 			'licencias'=> $licencias,
 			'network'=> $network,
 			'n_ip_act'=> $n_ip_act,
@@ -203,9 +222,52 @@ class EquipoController extends Controller
 								$licencia->Fecha_Actualizacion = date('Y-m-d H:i:s');
 								$licencia->save();
 							
+            				}else{
+            					$reg->Estado = 0;
+            					$reg->Id_Usuario_Actualizacion = Yii::app()->user->getState('id_user');
+								$reg->Fecha_Actualizacion = date('Y-m-d H:i:s');
+								$reg->save();	
             				}
             			}
             		}
+
+            		//se inactivan los empleados ligados al equipo en estado activo
+            		$model_emp = EmpEquipo::model()->findAllByAttributes(array('Id_Equipo' => $id, 'Estado' => 1));
+        			if(!empty($model_emp)){
+            			foreach ($model_emp as $reg) {
+            				
+	    					$reg->Estado = 0;
+	    					$reg->Id_Usuario_Actualizacion = Yii::app()->user->getState('id_user');
+							$reg->Fecha_Actualizacion = date('Y-m-d H:i:s');
+							$reg->save();
+            				
+            			}
+            		}
+
+
+            		//se inactivan las IP al equipo en estado activo
+            		$model_emp = networkEquipo::model()->findAllByAttributes(array('Id_Equipo' => $id, 'Estado' => 1));
+        			if(!empty($model_emp)){
+            			foreach ($model_emp as $reg) {
+
+            				//se habilita la IP nuevamente
+            				$model_n = Network::model()->findByPk($reg->Id_Network);
+            				$model_n->Estado = 1;
+            				$model_n->Id_Usuario_Actualizacion = Yii::app()->user->getState('id_user');
+							$model_n->Fecha_Actualizacion = date('Y-m-d H:i:s');
+							$model_n->save();
+            				
+            				//se elimina la relación entre el equipo y la IP 
+	    					$reg->Estado = 0;
+	    					$reg->Id_Usuario_Actualizacion = Yii::app()->user->getState('id_user');
+							$reg->Fecha_Actualizacion = date('Y-m-d H:i:s');
+							$reg->save();
+            				
+            			}
+            		}
+
+
+
         		}
 
         		Yii::app()->user->setFlash('success', "Equipo actualizado correctamente.");

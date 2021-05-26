@@ -59,7 +59,7 @@ class ItemCont extends CActiveRecord
 
 		$modelo_cont = Cont::model()->findByPk($Id_Contrato);
 
-		$desc_contrato = $modelo_cont->Id_Contrato.' / '.$modelo_cont->Proveedor.' - '.$modelo_cont->Concepto_Contrato;
+		$desc_contrato = $modelo_cont->Id_Contrato.' / '.$modelo_cont->DescTipo($modelo_cont->Tipo).' ('.$modelo_cont->Razon_Social.' - '.$modelo_cont->Concepto_Contrato.')';
 		
 		return $desc_contrato;
 
@@ -117,7 +117,7 @@ class ItemCont extends CActiveRecord
 	{
 		return array(
 			'Id_Item' => 'ID',
-			'Id_Contrato' => 'Contrato (ID / Proveedor - Concepto)',
+			'Id_Contrato' => 'ID contrato / Tipo (Razón social - Concepto)',
 			'Id' => 'ID de item',
 			'Item' => 'Item',
 			'Descripcion' => 'Descripción',

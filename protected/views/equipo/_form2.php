@@ -137,6 +137,15 @@
     </div>
     <div class="col-sm-4">
         <div class="form-group">
+          <?php echo $form->error($model,'Num_Usuarios', array('class' => 'badge badge-warning float-right')); ?>
+          <?php echo $form->label($model,'Num_Usuarios'); ?>
+          <?php echo $form->numberField($model,'Num_Usuarios', array('class' => 'form-control form-control-sm', 'autocomplete' => 'off', 'type' => 'number', 'min' => 1, 'max' => 100)); ?>
+        </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+        <div class="form-group">
             <?php echo $form->error($model,'Estado', array('class' => 'badge badge-warning float-right')); ?>
             <?php echo $form->label($model,'Estado'); ?>
             <?php $estados = Yii::app()->params->estados; ?>
@@ -156,17 +165,42 @@
             ?>
         </div>
     </div>
-</div>
-<div class="row">
-  <div class="col-sm-8">
-    <div class="form-group">
-      <?php echo $form->label($model,'sop', array('class' => 'control-label')); ?>
-      <div class="badge badge-warning float-right" id="error_sop" style="display: none;"></div><br>
-      <input type="hidden" id="valid_sop" value="1">
-      <?php echo $form->fileField($model, 'sop'); ?>
+    <div class="col-sm-8">
+      <div class="form-group">
+        <?php echo $form->label($model,'sop', array('class' => 'control-label')); ?>
+        <div class="badge badge-warning float-right" id="error_sop" style="display: none;"></div><br>
+        <input type="hidden" id="valid_sop" value="1">
+        <?php echo $form->fileField($model, 'sop'); ?>
+      </div>
     </div>
   </div>
-</div>
+
+  <div class="row">
+    <div class="col-sm-3">
+        <div class="form-group">
+            <?php echo $form->label($model,'Id_Usuario_Creacion', array('class' => 'control-label')); ?>
+            <p><?php echo $model->idusuariocre->Usuario; ?></p>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            <?php echo $form->label($model,'Fecha_Creacion', array('class' => 'control-label')); ?>
+            <p><?php echo UtilidadesVarias::textofechahora($model->Fecha_Creacion); ?></p>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            <?php echo $form->label($model,'Id_Usuario_Actualizacion', array('class' => 'control-label')); ?>
+            <p><?php echo $model->idusuarioact->Usuario; ?></p>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            <?php echo $form->label($model,'Fecha_Actualizacion', array('class' => 'control-label')); ?>
+            <p><?php echo UtilidadesVarias::textofechahora($model->Fecha_Actualizacion); ?></p>
+        </div>
+    </div>
+  </div>
 
 <div class="row mb-2">
     <div class="col-sm-6">  

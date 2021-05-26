@@ -19,6 +19,28 @@
 		    <?php echo $form->numberField($model,'Id_Contrato', array('class' => 'form-control form-control-sm', 'autocomplete' => 'off', 'type' => 'number')); ?>
         </div>
     </div>
+</div>
+<div class="row">
+    <div class="col-sm-3">
+        <div class="form-group">
+            <?php echo $form->error($model,'Tipo', array('class' => 'pull-right badge bg-red')); ?>
+            <?php echo $form->label($model,'Tipo'); ?>
+            <?php $lista_tipos = array(1 => 'CLIENTE', 2 => 'PROVEEDOR'); ?>
+            <?php
+                $this->widget('ext.select2.ESelect2',array(
+                    'name'=>'Cont[Tipo]',
+                    'id'=>'Cont_Tipo',
+                    'data'=>$lista_tipos,
+                    'htmlOptions'=>array(),
+                    'options'=>array(
+                        'placeholder'=>'Seleccione...',
+                        'width'=> '100%',
+                        'allowClear'=>true,
+                    ),
+                ));
+            ?>  
+        </div>
+    </div>
     <div class="col-sm-3">
     	<div class="form-group">
           	<?php echo $form->label($model,'Empresa'); ?>
@@ -39,8 +61,8 @@
     </div>
     <div class="col-sm-3">
     	<div class="form-group">
-          	<?php echo $form->label($model,'Proveedor'); ?>
-		    <?php echo $form->textField($model,'Proveedor', array('class' => 'form-control form-control-sm', 'autocomplete' => 'off')); ?>
+          	<?php echo $form->label($model,'Razon_Social'); ?>
+		    <?php echo $form->textField($model,'Razon_Social', array('class' => 'form-control form-control-sm', 'autocomplete' => 'off')); ?>
         </div>
     </div>
     <div class="col-sm-3">
@@ -164,8 +186,9 @@
 
 	function resetfields(){
 		$('#Cont_Id_Contrato').val('');
-		$('#Cont_Empresa').val('').trigger('change');
-		$('#Cont_Proveedor').val('');
+        $('#Cont_Tipo').val('').trigger('change');
+        $('#Cont_Empresa').val('').trigger('change');
+        $('#Cont_Razon_Social').val('');
 		$('#Cont_Concepto_Contrato').val('');
 		$('#Cont_Periodicidad').val('').trigger('change');
 		$('#Cont_Area').val('');

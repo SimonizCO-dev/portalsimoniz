@@ -1,4 +1,4 @@
-<div class="alert alert-warning alert-dismissible text-center">
+<div class="alert alert-primary alert-dismissible text-center">
 <h3 class="mb-5">Bienvenido a <?php echo CHtml::encode(Yii::app()->name) ?></h3>
 <img src="<?php echo Yii::app()->getBaseUrl(true).'/images/portalsimonizco.png'; ?>" class="img-fluid mb-3" alt="<?php echo CHtml::encode(Yii::app()->name) ?>">
 <h5>Navegación:</h5>

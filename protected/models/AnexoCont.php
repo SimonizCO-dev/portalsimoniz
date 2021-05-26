@@ -54,7 +54,7 @@ class AnexoCont extends CActiveRecord
 
 		$modelo_cont = Cont::model()->findByPk($Id_Contrato);
 
-		$desc_contrato = $modelo_cont->Id_Contrato.' / '.$modelo_cont->Proveedor.' - '.$modelo_cont->Concepto_Contrato;
+		$desc_contrato = $modelo_cont->Id_Contrato.' / '.$modelo_cont->DescTipo($modelo_cont->Tipo).' ('.$modelo_cont->Razon_Social.' - '.$modelo_cont->Concepto_Contrato.')';
 		
 		return $desc_contrato;
 
@@ -81,7 +81,7 @@ class AnexoCont extends CActiveRecord
 	{
 		return array(
 			'Id_Anexo' => 'ID',
-			'Id_Contrato' => 'Contrato (ID / Proveedor - Concepto)',
+			'Id_Contrato' => 'ID contrato / Tipo (Razón social - Concepto)',
 			'Titulo' => 'Nombre',
 			'Descripcion' => 'Descripción',
 			'Doc_Soporte' => 'Soporte',

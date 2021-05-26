@@ -459,7 +459,7 @@ class ActividadController extends Controller
 
 		$q_user = Yii::app()->db->createCommand("
 		SELECT TAU.Id_Usuario, U.Nombres FROM T_PR_TIPO_ACT_USUARIO TAU 
-		LEFT JOIN T_PR_USUARIO U ON TAU.Id_Usuario = U.Id_Usuario AND U.Estado = 1
+		INNER JOIN T_PR_USUARIO U ON TAU.Id_Usuario = U.Id_Usuario AND U.Estado = 1
 		WHERE TAU.Estado = 1 AND TAU.Id_Tipo = ".$tipo." ORDER BY 2
 		")->queryAll();
 

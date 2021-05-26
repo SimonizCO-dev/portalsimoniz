@@ -21,6 +21,7 @@
  * @property string $Modelo
  * @property string $MAC1
  * @property string $MAC2
+ * @property integer $Num_Usuarios
  *
  * The followings are the available model relations:
  * @property THDOMINIO $tipoEquipo
@@ -51,7 +52,7 @@ class Equipo extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('Tipo_Equipo, Serial, Modelo, MAC1, Empresa_Compra, Fecha_Compra, Proveedor, Numero_Factura, Numero_Inventario, Estado', 'required'),
+			array('Tipo_Equipo, Serial, Modelo, MAC1, Empresa_Compra, Fecha_Compra, Proveedor, Numero_Factura, Numero_Inventario, Estado, Num_Usuarios', 'required'),
 			array('Serial, MAC1, MAC2','unique','on'=>'create'),
 			array('Serial', 'uniqueSerial','on'=>'update'),
 			array('Tipo_Equipo, Empresa_Compra, Proveedor, Estado, Id_Usuario_Creacion, Id_Usuario_Actualizacion', 'numerical', 'integerOnly'=>true),
@@ -111,13 +112,14 @@ class Equipo extends CActiveRecord
 			'Estado' => 'Estado',
 			'Id_Usuario_Creacion' => 'Usuario que creo',
 			'Fecha_Creacion' => 'Fecha de creación',
-			'Id_Usuario_Actualizacion' => 'Usuario que actualizó',
-			'Fecha_Actualizacion' => 'Fecha de actualización',
+			'Id_Usuario_Actualizacion' => 'Ultimo usuario que actualizó',
+			'Fecha_Actualizacion' => 'Ultima fecha de actualización',
 			'orderby' => 'Orden de resultados',
 			'sop' => 'Soporte',
 			'Modelo' => 'Modelo',
 			'MAC1' => 'MAC LAN',
 			'MAC2' => 'MAC WAN',
+			'Num_Usuarios' => 'Usuarios x equipo',
 		);
 	}
 

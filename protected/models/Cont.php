@@ -5,8 +5,9 @@
  *
  * The followings are the available columns in table 'T_PR_CONT':
  * @property integer $Id_Contrato
+ * @property integer $Tipo
  * @property integer $Empresa
- * @property string $Proveedor
+ * @property string $Razon_Social
  * @property string $Concepto_Contrato
  * @property string $Fecha_Inicial
  * @property string $Fecha_Final
@@ -53,22 +54,37 @@ class Cont extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('Empresa, Proveedor, Concepto_Contrato, Fecha_Inicial, Fecha_Final, Fecha_Ren_Can, Area, Observaciones, Periodicidad, Dias_Alerta, Estado', 'required'),
-			array('Empresa, Periodicidad, Dias_Alerta, Estado, Id_Usuario_Creacion, Id_Usuario_Actualizacion', 'numerical', 'integerOnly'=>true),
-			array('Proveedor, Area, Contacto, Telefono_Contacto, Email_Contacto', 'length', 'max'=>100),
-			array('Concepto_Contrato', 'length', 'max'=>200),
+			array('Tipo, Empresa, Razon_Social, Concepto_Contrato, Fecha_Inicial, Fecha_Final, Fecha_Ren_Can, Area, Observaciones, Periodicidad, Dias_Alerta, Estado', 'required'),
+			array('Tipo, Empresa, Periodicidad, Dias_Alerta, Estado, Id_Usuario_Creacion, Id_Usuario_Actualizacion', 'numerical', 'integerOnly'=>true),
+			array('Area, Contacto, Telefono_Contacto, Email_Contacto', 'length', 'max'=>100),
+			array('Razon_Social, Concepto_Contrato', 'length', 'max'=>200),
 			array('Email_Contacto','email', 'message'=>'E-mail no valido'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('Id_Contrato, Empresa, Proveedor, Concepto_Contrato, Fecha_Inicial, Fecha_Final, Fecha_Ren_Can, Area, Observaciones, Periodicidad, Dias_Alerta, Contacto, Telefono_Contacto, Email_Contacto, Estado, Id_Usuario_Creacion, Fecha_Creacion, Id_Usuario_Actualizacion, Fecha_Actualizacion, orderby, view', 'safe', 'on'=>'search'),
+			array('Id_Contrato, Tipo, Empresa, Razon_Social, Concepto_Contrato, Fecha_Inicial, Fecha_Final, Fecha_Ren_Can, Area, Observaciones, Periodicidad, Dias_Alerta, Contacto, Telefono_Contacto, Email_Contacto, Estado, Id_Usuario_Creacion, Fecha_Creacion, Id_Usuario_Actualizacion, Fecha_Actualizacion, orderby, view', 'safe', 'on'=>'search'),
 		);
+	}
+
+	public function DescTipo($tipo){
+
+		switch ($tipo) {
+		    case 1:
+		        $texto_tipo = 'CLIENTE';
+		        break;
+		    case 2:
+		        $texto_tipo = 'PROVEEDOR';
+		        break;		    
+		}
+
+		return $texto_tipo;
+
 	}
 
 	public function Desccontrato($Id_Contrato) {
 
 		$modelo_cont = Cont::model()->findByPk($Id_Contrato);
 
-		$desc_contrato = $modelo_cont->Id_Contrato.' / '.$modelo_cont->Proveedor.' - '.$modelo_cont->Concepto_Contrato;
+		$desc_contrato = $modelo_cont->Id_Contrato.' / '.$modelo_cont->DescTipo($modelo_cont->Tipo).' ('.$modelo_cont->Razon_Social.' - '.$modelo_cont->Concepto_Contrato.')';
 		
 		return $desc_contrato;
 
@@ -151,8 +167,9 @@ class Cont extends CActiveRecord
 	{
 		return array(
 			'Id_Contrato' => 'ID',
+			'Tipo' => 'Tipo',
 			'Empresa' => 'Empresa',
-			'Proveedor' => 'Proveedor',
+			'Razon_Social' => 'Razón social',
 			'Concepto_Contrato' => 'Concepto',
 			'Fecha_Inicial' => 'Fecha de inicio',
 			'Fecha_Final' => 'Fecha de fin.',
@@ -197,12 +214,13 @@ class Cont extends CActiveRecord
 		$criteria->with=array('periodicidad','empresa');
 
 		$criteria->compare('t.Id_Contrato',$this->Id_Contrato);
+		$criteria->compare('t.Tipo',$this->Tipo);
 
 		if($this->Empresa != ""){
 			$criteria->AddCondition("t.Empresa = '".$this->Empresa."'"); 
 	    }
 
-		$criteria->compare('t.Proveedor',$this->Proveedor,true);
+		$criteria->compare('t.Razon_Social',$this->Razon_Social,true);
 		$criteria->compare('t.Concepto_Contrato',$this->Concepto_Contrato,true);
 
 		if($this->Periodicidad != ""){
@@ -247,7 +265,7 @@ class Cont extends CActiveRecord
 		}
 
 	    if(empty($this->orderby)){
-			$criteria->order = 't.Proveedor ASC'; 	
+			$criteria->order = 't.Razon_Social ASC'; 	
 		}else{
 			switch ($this->orderby) {
 			    case 1:
@@ -263,10 +281,10 @@ class Cont extends CActiveRecord
 			        $criteria->order = 'empresa.Descripcion DESC'; 
 			        break;
 			    case 5:
-			        $criteria->order = 't.Proveedor ASC'; 
+			        $criteria->order = 't.Razon_Social ASC'; 
 			        break;
 			    case 6:
-			        $criteria->order = 't.Proveedor DESC'; 
+			        $criteria->order = 't.Razon_Social DESC'; 
 			        break;
 			    case 7:
 			        $criteria->order = 't.Concepto_Contrato ASC'; 

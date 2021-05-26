@@ -57,22 +57,9 @@ $(function() {
 
 	    if(fecha_final != "" && dias_ant != ""){
 	      
-	      var fecha = new Date(fecha_final);
-	      var dias = dias_ant;
-	      fecha.setDate(fecha.getDate() - dias);
-
-	      dia = fecha.getDate() + 1;
-	      mes = fecha.getMonth() + 1;
-	      anio = fecha.getFullYear();
-	     
-	      dia = (dia.toString().length == 1) ? "0" + dia.toString() : dia;
-	      mes = (mes.toString().length == 1) ? "0" + mes.toString() : mes;
-
-	      fecha_ren_can = anio+'-'+mes+'-'+dia;
+	      fecha_ren_can = moment(fecha_final).subtract(dias_ant,'days').format('YYYY-MM-DD');
 
 	      $("#Cont_Fecha_Ren_Can").val(fecha_ren_can); 
-
-
 
 	    }else{
 	      $("#Cont_Fecha_Ren_Can").val(''); 
