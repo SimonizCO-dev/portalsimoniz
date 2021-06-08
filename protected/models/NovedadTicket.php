@@ -36,7 +36,7 @@ class NovedadTicket extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('Id_Grupo, Novedad, Estado, Id_Usuario_Creacion, Id_Usuario_Actualizacion, Fecha_Creacion, Fecha_Actualizacion', 'required'),
+			array('Id_Grupo, Novedad, Usuarios', 'required'),
 			array('Id_Grupo, Id_Novedad_Padre, Estado, Id_Usuario_Creacion, Id_Usuario_Actualizacion', 'numerical', 'integerOnly'=>true),
 			array('Novedad', 'length', 'max'=>200),
 			// The following rule is used by search().

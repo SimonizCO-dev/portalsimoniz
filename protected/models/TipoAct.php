@@ -47,8 +47,8 @@ class TipoAct extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('Clasificacion, Id_Grupo, Tipo, Usuarios, Cantidad, Ind_Alto, Ind_Medio, Ind_Bajo, Id_Usuario_Creacion', 'required','on'=>'create'),
-			array('Clasificacion, Id_Grupo, Tipo, Usuarios, Estado, Cantidad, Ind_Alto, Ind_Medio, Ind_Bajo, Id_Usuario_Creacion', 'required','on'=>'update'),
+			array('Clasificacion, Id_Grupo, Tipo, Usuarios, Cantidad, Ind_Alto, Ind_Medio, Ind_Bajo', 'required','on'=>'create'),
+			array('Clasificacion, Id_Grupo, Tipo, Usuarios, Estado, Cantidad, Ind_Alto, Ind_Medio, Ind_Bajo', 'required','on'=>'update'),
 			array('Id_Tipo, Id_Grupo, Cantidad, Estado, Id_Usuario_Creacion, Id_Usuario_Actualizacion', 'numerical', 'integerOnly'=>true),
 			array('Tipo', 'length', 'max'=>100),
 			array('Padre', 'safe'),

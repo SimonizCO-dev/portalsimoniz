@@ -661,6 +661,64 @@ class UtilidadesUsuario {
 		}
 	}
 
+	public static function adminnovedadticketusuario($id_novedad, $array) {
+		$array_tip_selec = array();
+		foreach ($array as $clave => $valor) {
+		    
+		    //se busca el registro para saber si tiene que ser creado 
+		    $criteria=new CDbCriteria;
+			$criteria->condition='Id_Novedad=:Id_Novedad AND Id_Usuario=:Id_Usuario';
+			$criteria->params=array(':Id_Novedad'=>$id_novedad,':Id_Usuario'=>$valor);
+			$modelo_tipo_usuario=NovedadTicketUsuario::model()->find($criteria);
+
+			if(!is_null($modelo_tipo_usuario)){
+				//si el estado es inactivo se cambia a activo, si ya esta activo no se realiza ninguna acción
+				if($modelo_tipo_usuario->Estado == 0){
+					$modelo_tipo_usuario->Id_Usuario_Actualizacion = Yii::app()->user->getState('id_user');
+					$modelo_tipo_usuario->Fecha_Actualizacion = date('Y-m-d H:i:s');
+					$modelo_tipo_usuario->Estado = 1;
+					if($modelo_tipo_usuario->save()){
+						array_push($array_tip_selec, intval($valor));
+					}	
+				}else{
+					array_push($array_tip_selec, intval($valor));	
+				}
+			}else{
+				//se debe insertar un nuevo registro en la tabla
+				$nuevo_tipo_usuario = new NovedadTicketUsuario;
+			    $nuevo_tipo_usuario->Id_Novedad = $id_novedad;
+			    $nuevo_tipo_usuario->Id_Usuario = $valor;
+				$nuevo_tipo_usuario->Id_Usuario_Creacion = Yii::app()->user->getState('id_user');
+				$nuevo_tipo_usuario->Id_Usuario_Actualizacion = Yii::app()->user->getState('id_user');
+				$nuevo_tipo_usuario->Fecha_Creacion = date('Y-m-d H:i:s');
+				$nuevo_tipo_usuario->Fecha_Actualizacion = date('Y-m-d H:i:s');
+				$nuevo_tipo_usuario->Estado = 1;
+				if($nuevo_tipo_usuario->save()){
+					array_push($array_tip_selec, intval($valor));
+				}
+			}
+		}
+
+		//se inactivan los usuarios que no vienen en el array
+		$usuarios_excluidos = implode(",",$array_tip_selec);
+		$ue = str_replace("'", "", $usuarios_excluidos);
+		$criteria=new CDbCriteria;
+		$criteria->condition='Id_Novedad=:Id_Novedad AND Id_Usuario NOT IN ('.$ue.')';
+		$criteria->params=array(':Id_Novedad'=>$id_novedad);
+		$modelo_tipo_usuario_inactivar=NovedadTicketUsuario::model()->findAll($criteria);
+		if(!is_null($modelo_tipo_usuario_inactivar)){
+			foreach ($modelo_tipo_usuario_inactivar as $usuarios_inactivar) {
+				//si el estado es activo se cambia a inactivo, si ya esta inactivo no se realiza ninguna acción
+				if($usuarios_inactivar->Estado == 1){
+					$usuarios_inactivar->Id_Usuario_Actualizacion = Yii::app()->user->getState('id_user');
+					$usuarios_inactivar->Fecha_Actualizacion = date('Y-m-d H:i:s');
+					$usuarios_inactivar->Estado = 0;
+					$usuarios_inactivar->save();
+				}	
+			}
+		}
+	}
+
 	public static function listaareasusuario() {
 
 		$array_areas_usuario = Yii::app()->user->getState('array_areas');
@@ -686,6 +744,20 @@ class UtilidadesUsuario {
 		$criteria->params=array(':Id_Tipo'=>$id_tipo,':Estado'=> 1);
 		$array_u_activos = array();
 		$usuarios_act=TipoActUsuario::model()->findAll($criteria);
+		foreach ($usuarios_act as $u_act) {
+			array_push($array_u_activos, $u_act->Id_Usuario);
+		}
+
+		return json_encode($array_u_activos);
+	}
+
+	public static function usuariosnovedadticketactivos($id_novedad) {
+		//opciones activas en el combo usuarios
+		$criteria=new CDbCriteria;
+		$criteria->condition='Id_Novedad=:Id_Novedad AND Estado=:Estado';
+		$criteria->params=array(':Id_Novedad'=>$id_novedad,':Estado'=> 1);
+		$array_u_activos = array();
+		$usuarios_act=NovedadTicketUsuario::model()->findAll($criteria);
 		foreach ($usuarios_act as $u_act) {
 			array_push($array_u_activos, $u_act->Id_Usuario);
 		}

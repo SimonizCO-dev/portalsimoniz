@@ -72,6 +72,7 @@ $lista_tipos_docto = CHtml::listData($tipos_docto, 'Id', 'Descripcion');
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Busqueda avanzada</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="search-form" style="display:; ">
