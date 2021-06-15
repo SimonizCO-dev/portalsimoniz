@@ -11,43 +11,6 @@ $lista_grupos = $grupos;
 
 $(function() {
 
-  
-
-});
-
-
-$(function() {
-
-    /*$('#Ticket_Prioridad').val(3).trigger('change');
-
-    $("#valida_form").click(function() {
-      var form = $("#ticket-form");
-      var settings = form.data('settings') ;
-
-      settings.submitting = true ;
-      $.fn.yiiactiveform.validate(form, function(messages) {
-          if($.isEmptyObject(messages)) {
-            $.each(settings.attributes, function () {
-                $.fn.yiiactiveform.updateInput(this,messages,form); 
-            });
-                
-            //se envia el form
-            form.submit();
-            loadershow();
-            
-          } else {
-              settings = form.data('settings'),
-              $.each(settings.attributes, function () {
-                 $.fn.yiiactiveform.updateInput(this,messages,form); 
-              });
-              settings.submitting = false ;
-          }
-      });
-    });*/
-
-
-
-
   var extensionesValidas = ".jpg";
   var textExtensionesValidas = "(.jpg)";
   var pesoPermitido = 512;

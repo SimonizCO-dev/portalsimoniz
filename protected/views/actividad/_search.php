@@ -157,7 +157,7 @@
 	    	<div class="form-group">
 	          	<?php echo $form->label($model,'orderby'); ?>
 			    <?php 
-                	$array_orden = array(1 => 'ID ASC', 2 => 'ID DESC', 3 => 'Fecha ASC', 4 => 'Fecha DESC', 5 => 'Actividad ASC', 6 => 'Actividad DESC', 7 => 'Prioridad ASC', 8 => 'Prioridad DESC'
+                	$array_orden = array(1 => 'ID ASC', 2 => 'ID DESC', 3 => 'Fecha ASC', 4 => 'Fecha DESC', 5 => 'Prioridad ASC', 6 => 'Prioridad DESC'
 					);
             	?>
             	<?php
@@ -212,6 +212,7 @@
 	          data: data,
 	          dataType: 'json',
 	          success: function(data){ 
+	          	$("#Actividad_Id_Tipo").val('').trigger('change');
 	            $("#Actividad_Id_Tipo").html('');
 	            $("#Actividad_Id_Tipo").append('<option value=""></option>');
 	            $.each(data, function(i,item){
@@ -221,7 +222,7 @@
 	          }
 	        });
 	      }else{
-	        $("#Actividad_Id_Tipo").val('');
+	        $("#Actividad_Id_Tipo").val('').trigger('change');
 	        $("#div_tipo").hide();
 	      }
 	    });
@@ -236,6 +237,7 @@
 	          data: data,
 	          dataType: 'json',
 	          success: function(data){ 
+	          	$("#Actividad_user_enc").val('').trigger('change');
 	            $("#Actividad_user_enc").html('');
 	            $("#Actividad_user_enc").append('<option value=""></option>');
 	            $.each(data, function(i,item){
@@ -245,7 +247,7 @@
 	          }
 	        });
 	      }else{
-	        $("#Actividad_user_enc").val('');
+	        $("#Actividad_user_enc").val('').trigger('change');
 	        $("#div_usuario").hide();
 	      }
 	    });

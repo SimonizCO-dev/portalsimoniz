@@ -21,10 +21,14 @@
  * @property integer $Id_Usuario_Actualizacion
  * @property string $Fecha_Actualizacion
  * @property string $Soporte
- * @property integer $Estado
- */
+ * @property string $Notas
+ *
+ * @property string $Solicitud
+ }*/
 class Ticket extends CActiveRecord
 {
+	public $orderby;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -42,11 +46,12 @@ class Ticket extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('Id_Tipo, Prioridad, Id_Grupo, Id_Novedad, Solicitud', 'required','on'=>'create'),
+			array('Id_Usuario_Asig, Estado', 'required','on'=>'update'),
 			array('Id_Tipo, Prioridad, Id_Grupo, Id_Novedad, Id_Novedad_Det, Id_Usuario_Asig, Calificacion, Id_Usuario_Creacion, Id_Usuario_Actualizacion', 'numerical', 'integerOnly'=>true),
 			array('Fecha_Asig, Fecha_Cierre, Fecha_Calificacion', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('Id_Grupo, Id_Tipo, Solicitud, Fecha_Asig, Id_Usuario_Asig, Fecha_Cierre, Calificacion, Fecha_Calificacion, Id_Usuario_Creacion, Fecha_Creacion, Id_Usuario_Actualizacion, Fecha_Actualizacion, Estado', 'safe', 'on'=>'search, searchasig'),
+			array('Id_Grupo, Id_Tipo, Id_Novedad, Id_Novedad_Det, Solicitud, Fecha_Asig, Id_Usuario_Asig, Fecha_Cierre, Calificacion, Fecha_Calificacion, Id_Usuario_Creacion, Fecha_Creacion, Id_Usuario_Actualizacion, Fecha_Actualizacion, Estado, orderby', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -75,15 +80,12 @@ class Ticket extends CActiveRecord
 		        $texto_estado = 'ASIGNADO';
 		        break;
 		    case 3:
-		        $texto_estado = 'ANULADO /RECHAZADO';
-		        break;
-		    case 4:
 		        $texto_estado = 'EN PROCESO';
 		        break;
-		    case 5:
+		    case 4:
 		        $texto_estado = 'CERRADO';
 		        break;
-		    case 6:
+		    case 5:
 		        $texto_estado = 'FINALIZADO / CALIFICADO';
 		        break;
 		}
@@ -117,13 +119,13 @@ class Ticket extends CActiveRecord
 		        $texto_calif = '<br><h2 class="fas fa-meh-blank text-muted" title="SIN CALIFICAR"></h2>';
 		        break;
 		    case 1:
-		        $texto_calif = '<h1 class="fas fa-frown text-warning title="MALO"></h1>';
+		        $texto_calif = '<br><h2 class="fas fa-frown text-warning title="POR MEJORAR"></h2>';
 		        break;
 		    case 2:
-		        $texto_calif = '<h1 class="fas fa-meh text-primary" title="NEUTRO"></h1>';
+		        $texto_calif = '<br><h2 class="fas fa-meh text-primary" title="NEUTRO"></h2>';
 		        break;
 		    case 3:
-		        $texto_calif = '<h1 class="fas fa-smile text-success" title="BUENO"></h1>';
+		        $texto_calif = '<br><h2 class="fas fa-smile text-success" title="BUENO"></h2>';
 		        break;
 		}
 
@@ -160,7 +162,7 @@ class Ticket extends CActiveRecord
 			'Id_Grupo' => 'Área / Grupo',
 			'Id_Novedad' => 'Novedad',
 			'Id_Novedad_Det' => 'Detalle',
-			'Solicitud' => 'Solicitud',
+			'Solicitud' => 'Descripción de Caso',
 			'Fecha_Asig' => 'Fecha de asignación',
 			'Id_Usuario_Asig' => 'Responsable',
 			'Fecha_Cierre' => 'Fecha de cierre',
@@ -168,10 +170,12 @@ class Ticket extends CActiveRecord
 			'Fecha_Calificacion' => 'Fecha de Calificación',
 			'Id_Usuario_Creacion' => 'Usuario que solicita',
 			'Fecha_Creacion' => 'Fecha de creación',
-			'Id_Usuario_Actualizacion' => 'ultimo usuario que actualizo',
+			'Id_Usuario_Actualizacion' => 'Ultimo usuario que actualizo',
 			'Fecha_Actualizacion' => 'Ultima Fecha de actualización',
 			'Soporte' => 'Soporte',
 			'Estado' => 'Estado',
+			'Notas' => 'Notas',
+			'orderby' => 'Orden de resultados',
 		);
 	}
 
@@ -188,16 +192,13 @@ class Ticket extends CActiveRecord
 	 * based on the search/filter conditions.
 	 */
 	
-	public function asig()
+	public function search()
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
 
 		$user = Yii::app()->user->getState('id_user');
-
-		//$criteria->together  =  true;
-	   	//$criteria->with=array('idusuariocre','idusuarioact','idgrupo','idtipo','idusuariodeleg');
 
 		$q_grupos = Yii::app()->db->createCommand("SELECT DISTINCT NT.Id_Grupo FROM T_PR_NOVEDAD_TICKET NT WHERE Id_Novedad IN (
 		SELECT DISTINCT NTU.Id_Novedad FROM T_PR_NOVEDAD_TICKET_USUARIO NTU 
@@ -213,6 +214,10 @@ class Ticket extends CActiveRecord
 			//el usuario cuenta con grupos y tipos
 
 			$criteria->compare('t.Id_Ticket',$this->Id_Ticket);
+			$criteria->compare('t.Id_Tipo',$this->Id_Tipo);
+			$criteria->compare('t.Prioridad',$this->Prioridad);
+			$criteria->compare('t.Estado',$this->Estado);
+			$criteria->compare('t.Id_Novedad_Det',$this->Id_Novedad_Det);
 			
 			if($this->Fecha_Creacion != ""){
 	      		$fci = $this->Fecha_Creacion." 00:00:00";
@@ -224,7 +229,6 @@ class Ticket extends CActiveRecord
 	    	if($this->Id_Usuario_Creacion != ""){
 				$criteria->AddCondition("t.Id_Usuario_Creacion = ".$this->Id_Usuario_Creacion); 
 		    }
-
 
 			//condicion grupos
 			$cond_grupos_t = "t.Id_Grupo IN (";
@@ -263,79 +267,41 @@ class Ticket extends CActiveRecord
 		    }
 
 		    if($this->Estado == ""){
-				$criteria->AddCondition("t.Estado IN (1,4)"); 
+				$criteria->AddCondition("t.Estado IN (1,2,3)"); 
 		    }else{
 		    	$criteria->compare('t.Estado',$this->Estado);
 		    }
 
+		    if(empty($this->orderby)){
+				$criteria->order = 't.Id_Ticket DESC'; 	
+			}else{
+				switch ($this->orderby) {
+				    case 1:
+				        $criteria->order = 't.Id_Ticket ASC'; 
+				        break;
+				    case 2:
+				        $criteria->order = 't.Id_Ticket DESC'; 
+				        break;
+				    case 3:
+				        $criteria->order = 't.Fecha_Creacion ASC'; 
+				        break;
+				    case 4:
+				        $criteria->order = 't.Fecha_Creacion DESC'; 
+				        break;
+			        case 5:
+				        $criteria->order = 't.Prioridad ASC'; 
+				        break;
+				    case 6:
+				        $criteria->order = 't.Prioridad DESC'; 
+				        break;
+				}
+			}
 
-		    /*if($this->Id_Tipo == ""){
-				$criteria->AddCondition("t.Id_Tipo IN (1,4,5)"); 
-		    }else{
-		    	$criteria->compare('t.Id_Tipo',$this->Id_Tipo);
-		    }*/
-
-			
-			
-			//$criteria->compare('t.Id_Ticket',$this->Id_Ticket);
-			/*$criteria->compare('t.Fecha',$this->Fecha,true);
-			$criteria->compare('t.Actividad',$this->Actividad,true);
-			$criteria->compare('t.Id_Grupo',$this->Id_Grupo);
-			$criteria->compare('t.Id_Tipo',$this->Id_Tipo);
-			$criteria->compare('t.Prioridad',$this->Prioridad);*/
-
-			
-
-			/*if($this->Id_Grupo == ""){
-		    	$criteria->AddCondition("t.Id_Usuario = ".$user." OR t.Id_Usuario_Deleg = ".$user);  
-		    }else{
-		  		if($this->user_enc != ""){
-		    		$criteria->AddCondition("t.Id_Usuario = ".$this->user_enc." OR t.Id_Usuario_Deleg = ".$this->user_enc); 
-		    	}	
-		    }
-
-			
-
-		    
-
-			if($this->Fecha_Creacion != ""){
-	      		$fci = $this->Fecha_Creacion." 00:00:00";
-	      		$fcf = $this->Fecha_Creacion." 23:59:59";
-
-	      		$criteria->addBetweenCondition('t.Fecha_Creacion', $fci, $fcf);
-	    	}*/
 
 		}else{
 			//no se muestran actividades
 			$criteria->AddCondition("t.Id_Ticket = 0"); 
 		}
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
-
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('Id_Ticket',$this->Id_Ticket);
-		$criteria->compare('Id_Grupo',$this->Id_Grupo);
-		$criteria->compare('Id_Tipo',$this->Id_Tipo);
-		$criteria->compare('Solicitud',$this->Solicitud,true);
-		$criteria->compare('Fecha_Asig',$this->Fecha_Asig,true);
-		$criteria->compare('Id_Usuario_Asig',$this->Id_Usuario_Asig);
-		$criteria->compare('Fecha_Cierre',$this->Fecha_Cierre,true);
-		$criteria->compare('Calificacion',$this->Calificacion);
-		$criteria->compare('Fecha_Calificacion',$this->Fecha_Calificacion,true);
-		$criteria->compare('Id_Usuario_Creacion',$this->Id_Usuario_Creacion);
-		$criteria->compare('Fecha_Creacion',$this->Fecha_Creacion,true);
-		$criteria->compare('Id_Usuario_Actualizacion',$this->Id_Usuario_Actualizacion);
-		$criteria->compare('Fecha_Actualizacion',$this->Fecha_Actualizacion,true);
-		$criteria->compare('Estado',$this->Estado);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

@@ -686,4 +686,112 @@ class UtilidadesMail {
         
 	}
 
+	public static function enviocalificacionticketcerrado($id, $correo) {
+
+		set_time_limit(0);
+		
+		// Se inactiva el autoloader de yii
+		spl_autoload_unregister(array('YiiBase','autoload'));  
+
+		require_once(Yii::app()->basePath . '\extensions\PHPMailer\src\PHPMailer.php');
+		require_once(Yii::app()->basePath . '\extensions\PHPMailer\src\SMTP.php');
+		require_once(Yii::app()->basePath . '\extensions\PHPMailer\src\Exception.php');
+
+		//cuando se termina la accion relacionada con la libreria se activa el autoloader de yii
+		spl_autoload_register(array('YiiBase','autoload'));
+
+		$host = Yii::app()->params->env_mail_host;
+		$port = Yii::app()->params->env_mail_port;
+		$smtpsecure = Yii::app()->params->env_mail_smtpsecure;
+		$smtpauth = Yii::app()->params->env_mail_smtpauth;
+		$smtpdebug = Yii::app()->params->env_mail_smtpdebug;
+		$username = Yii::app()->params->env_mail_cuenta;
+		$password = Yii::app()->params->env_mail_password;
+		$correo_rem = Yii::app()->params->env_mail_cuenta_rem;
+		$desc_correo_rem = Yii::app()->params->env_mail_desc_cuenta_rem;
+
+		$ticket = Ticket::model()->findByPk($id);
+
+		$desc_caso = $ticket->Solicitud;
+
+		if($ticket->Notas != ""){$notas = $ticket->Notas;}else{$notas="-";}
+
+		$url = Yii::app()->getBaseUrl(true).'/index.php?r=ticket/cticket&token='.base64_encode($id);
+			
+		$asunto = 'El ticket ( ID '.$id.' ) ha sido cerrado, por favor califica el servicio';
+		$mensaje = '
+		<!DOCTYPE html>
+		<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+		<head>
+		    <meta charset="utf-8">
+		    <meta name="viewport" content="width=device-width">
+		    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+		    <meta name="x-apple-disable-message-reformatting">
+		</head>
+		<body>
+		    <center>
+		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto;" class="email-container" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 40%;">
+		            <tr>
+		                <td style="background-color: #ffffff;">
+		                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+		                        <tr>
+		                            <td style="padding: 30px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+		                                <h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">'.UtilidadesMail::horamensaje().' califica nuestro servicio</h1>
+
+		                                <p>El ticket ( ID '.$id.' ) ha sido cerrado:</p><br>
+
+		                                <p>A continuación encontrara la descripción del caso, notas adicionales y una <a href="'.$url.'"/>encuesta</a>: </p><br>
+
+		                                <strong>Descripción del caso: </strong><p>'.$desc_caso.'</p>
+
+		                                <strong>Notas: </strong><p>'.$notas.'</p>
+
+		                                <hr>
+
+		                                <p>Pulse <a href="'.$url.'"/>aqui</a> para continuar con la encuesta.</p>
+
+		                            </td>
+		                        </tr>
+		                    </table>
+		                </td>
+		            </tr>
+		            <tr style="padding: 40px 0; text-align: center">
+		                </tr>
+		        </table>
+		    </center>
+		</body>
+		</html>
+		';		
+		
+		$mail = new PHPMailer\PHPMailer\PHPMailer;
+		
+		$mail->IsSMTP();
+		$mail->CharSet = 'UTF-8';
+
+		$mail->Host 	  = $host;
+		$mail->Port       = $port;
+		$mail->SMTPSecure = $smtpsecure;
+		$mail->SMTPAuth   = $smtpauth;
+		$mail->SMTPDebug  = $smtpdebug;
+		$mail->Username   = $username;
+		$mail->Password   = $password;
+		$mail->From       = $correo_rem;
+		
+		$mail->isHTML(true);
+		$mail->Subject = $asunto;
+		$mail->AddEmbeddedImage( Yii::app()->getBaseUrl(true)."/images/pse_pansell.jpg", "my-attach", "rocks.png");
+
+		$mail->Body = $mensaje;
+		$mail->IsHTML(true);
+		
+        $mail->addAddress($correo);
+
+        if(!$mail->send()){
+			return 0;
+		}else{
+		 	return 1;
+		}
+        
+	}
+
 }

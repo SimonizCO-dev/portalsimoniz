@@ -275,16 +275,10 @@ class Actividad extends CActiveRecord
 			    case 4:
 			        $criteria->order = 't.Fecha DESC'; 
 			        break;
-			    case 5:
-			        $criteria->order = 't.Actividad ASC'; 
-			        break;
-			    case 6:
-			        $criteria->order = 't.Actividad DESC'; 
-			        break;
-		        case 7:
+		        case 5:
 			        $criteria->order = 't.Prioridad ASC'; 
 			        break;
-			    case 8:
+			    case 6:
 			        $criteria->order = 't.Prioridad DESC'; 
 			        break;
 			}

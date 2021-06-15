@@ -439,7 +439,6 @@ class UsuarioController extends Controller
 							}
 
 						}else{
-							print_r($sol->GetErrors());die;
 							Yii::app()->user->setFlash('warning', "No se pudo crear la solicitud.");
 							$this->redirect(array('site/login'));	
 						}
@@ -527,4 +526,5 @@ class UsuarioController extends Controller
 		}				
 	
 	}
+
 }
