@@ -176,7 +176,7 @@ $lista_usuarios = CHtml::listData($usuarios, 'Id_Usuario', 'Nombres');
 
 <div class="alert alert-warning alert-dismissible">
     <h5><i class="icon fas fa-info-circle"></i>Info</h5>
-    Este usuario no tiene novedades de actividades asociadas.
+    Este usuario no tiene novedades de tickets asociadas.
 </div> 
 
 <?php } ?>
