@@ -116,16 +116,16 @@ class Ticket extends CActiveRecord
 
 		switch ($calificacion) {
 		    case "":
-		        $texto_calif = '<br><h2 class="fas fa-meh-blank text-muted" title="SIN CALIFICAR"></h2>';
+		        $texto_calif = '<h4 class="fas fa-meh-blank text-muted" title="SIN CALIFICAR"></h4>';
 		        break;
 		    case 1:
-		        $texto_calif = '<br><h2 class="fas fa-frown text-warning title="POR MEJORAR"></h2>';
+		        $texto_calif = '<h4 class="fas fa-frown text-warning" title="POR MEJORAR"></h4>';
 		        break;
 		    case 2:
-		        $texto_calif = '<br><h2 class="fas fa-meh text-primary" title="NEUTRO"></h2>';
+		        $texto_calif = '<h4 class="fas fa-meh text-primary" title="NEUTRO"></h4>';
 		        break;
 		    case 3:
-		        $texto_calif = '<br><h2 class="fas fa-smile text-success" title="BUENO"></h2>';
+		        $texto_calif = '<h4 class="fas fa-smile text-success" title="BUENO"></h4>';
 		        break;
 		}
 
@@ -217,7 +217,6 @@ class Ticket extends CActiveRecord
 			$criteria->compare('t.Id_Tipo',$this->Id_Tipo);
 			$criteria->compare('t.Prioridad',$this->Prioridad);
 			$criteria->compare('t.Estado',$this->Estado);
-			$criteria->compare('t.Id_Novedad_Det',$this->Id_Novedad_Det);
 			
 			if($this->Fecha_Creacion != ""){
 	      		$fci = $this->Fecha_Creacion." 00:00:00";
@@ -263,7 +262,18 @@ class Ticket extends CActiveRecord
 			if($this->Id_Novedad == ""){
 				$criteria->AddCondition($cond_n);
 		    }else{
-		    	$criteria->compare('t.Id_Novedad',$this->Id_Novedad);
+				$novedades = implode(",", $this->Id_Novedad);
+				$criteria->AddCondition("t.Id_Novedad IN (".$novedades.")"); 
+		    }
+
+		    if($this->Id_Novedad_Det != ""){
+				$novedades_det = implode(",", $this->Id_Novedad_Det);
+				$criteria->AddCondition("t.Id_Novedad_Det IN (".$novedades_det.")"); 
+		    }
+
+		    if($this->Id_Usuario_Asig != ""){
+				$usuarios_asig = implode(",", $this->Id_Usuario_Asig);
+				$criteria->AddCondition("t.Id_Usuario_Asig IN (".$usuarios_asig.")"); 
 		    }
 
 		    if($this->Estado == ""){
@@ -305,6 +315,23 @@ class Ticket extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination' => array('pageSize'=>Yii::app()->user->getState('pageSize',Yii::app()->params['defaultPageSize'])),
+		));
+	}
+
+	public function hist()
+	{
+		$criteria=new CDbCriteria;
+
+		if($this->Id_Usuario_Creacion != ""){
+			$criteria->AddCondition("t.Id_Usuario_Creacion = ".$this->Id_Usuario_Creacion); 
+	    }
+
+		$criteria->order = 't.Id_Ticket DESC'; 
+
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+			'pagination' => array('pageSize'=>Yii::app()->user->getState('pageSize',Yii::app()->params['defaultPageSize'])),
 		));
 	}
 

@@ -208,14 +208,14 @@ class Actividad extends CActiveRecord
 			$criteria->compare('t.Fecha',$this->Fecha,true);
 			$criteria->compare('t.Actividad',$this->Actividad,true);
 			$criteria->compare('t.Id_Grupo',$this->Id_Grupo);
-			$criteria->compare('t.Id_Tipo',$this->Id_Tipo);
 			$criteria->compare('t.Prioridad',$this->Prioridad);
 
 			if($this->Id_Grupo == ""){
 		    	$criteria->AddCondition("t.Id_Usuario = ".$user." OR t.Id_Usuario_Deleg = ".$user);  
 		    }else{
 		  		if($this->user_enc != ""){
-		    		$criteria->AddCondition("t.Id_Usuario = ".$this->user_enc." OR t.Id_Usuario_Deleg = ".$this->user_enc); 
+		  			$users_encs = implode(",", $this->user_enc);
+		    		$criteria->AddCondition("t.Id_Usuario IN (".$users_encs.") OR t.Id_Usuario_Deleg IN  (".$users_encs.")"); 
 		    	}	
 		    }
 
@@ -231,6 +231,11 @@ class Actividad extends CActiveRecord
 
 				$cond = substr($cond_pais_t, 0, -3);
 				$criteria->AddCondition($cond);
+		    }
+
+		    if($this->Id_Tipo != ""){	
+				$tipos = implode(",", $this->Id_Tipo);
+				$criteria->AddCondition("t.Id_Tipo IN (".$tipos.")"); 
 		    }
 
 			if($this->Estado == ""){

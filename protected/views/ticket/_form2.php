@@ -161,7 +161,7 @@ foreach ($usuarios_asig as $u) {
         <div class="form-group">
             <?php echo $form->label($model,'Notas', array('class' => 'control-label')); ?>
             <?php echo $form->error($model,'Notas', array('class' => 'badge badge-warning float-right')); ?>
-            <?php echo $form->textArea($model,'Notas',array('class' => 'form-control form-control-sm', 'rows'=>2, 'cols'=>50, 'maxlength'=>5000, 'onkeyup' => 'convert_may(this)')); ?>
+            <?php echo $form->textArea($model,'Notas',array('class' => 'form-control form-control-sm', 'rows'=>2, 'cols'=>50, 'maxlength'=>5000)); ?>
         </div>
     </div>
 </div>

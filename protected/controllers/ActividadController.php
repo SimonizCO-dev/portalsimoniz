@@ -455,12 +455,12 @@ class ActividadController extends Controller
 
 	public function actionGetUsuarios()
 	{	
-		$tipo = $_POST['tipo'];
+		$tipos = implode(",", $_POST['tipo']);
 
 		$q_user = Yii::app()->db->createCommand("
-		SELECT TAU.Id_Usuario, U.Nombres FROM T_PR_TIPO_ACT_USUARIO TAU 
+		SELECT DISTINCT TAU.Id_Usuario, U.Nombres FROM T_PR_TIPO_ACT_USUARIO TAU 
 		INNER JOIN T_PR_USUARIO U ON TAU.Id_Usuario = U.Id_Usuario AND U.Estado = 1
-		WHERE TAU.Estado = 1 AND TAU.Id_Tipo = ".$tipo." ORDER BY 2
+		WHERE TAU.Estado = 1 AND TAU.Id_Tipo IN (".$tipos.") ORDER BY 2
 		")->queryAll();
 
 		$i = 0;

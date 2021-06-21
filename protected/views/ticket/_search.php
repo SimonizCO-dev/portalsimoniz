@@ -84,7 +84,9 @@
 	            ?>
 	        </div>
 	    </div>
-	    <div class="col-sm-3" id="div_novedad" style="display: none;">
+	</div>
+	<div class="row">
+	    <div class="col-sm-6" id="div_novedad" style="display: none;">
 	        <div class="form-group">
 	          <?php echo $form->label($model,'Id_Novedad', array('class' => 'control-label')); ?>
 	          <?php echo $form->error($model,'Id_Novedad', array('class' => 'badge badge-warning float-right')); ?>
@@ -93,7 +95,9 @@
 	                'name'=>'Ticket[Id_Novedad]',
 	                'id'=>'Ticket_Id_Novedad',
 	                'value' => $model->Id_Novedad,
-	                'htmlOptions'=>array(),
+	                'htmlOptions'=>array(
+	                	'multiple'=>'multiple',
+	                ),
 	                'options'=>array(
 	                    'placeholder'=>'Seleccione...',
 	                    'width'=> '100%',
@@ -103,7 +107,7 @@
 	          ?>
 	        </div>
 	    </div>
-	    <div class="col-sm-3" id="div_novedad_det" style="display: none;">
+	    <div class="col-sm-6" id="div_novedad_det" style="display: none;">
 	        <div class="form-group">
 	          <?php echo $form->label($model,'Id_Novedad_Det', array('class' => 'control-label')); ?>
 	          <?php echo $form->error($model,'Id_Novedad_Det', array('class' => 'badge badge-warning float-right')); ?>
@@ -111,7 +115,9 @@
 	              $this->widget('ext.select2.ESelect2',array(
 	                'name'=>'Ticket[Id_Novedad_Det]',
 	                'id'=>'Ticket_Id_Novedad_Det',
-	                'htmlOptions'=>array(),
+	                'htmlOptions'=>array(
+	                	'multiple'=>'multiple',
+	                ),
 	                'options'=>array(
 	                    'placeholder'=>'Seleccione...',
 	                    'width'=> '100%',
@@ -122,7 +128,28 @@
 	        </div>
 	    </div>
 	</div>
-
+	<div class="row">
+	    <div class="col-sm-6" id="div_usuarios_nov" style="display: none;">
+	        <div class="form-group">
+	          <?php echo $form->label($model,'Id_Usuario_Asig', array('class' => 'control-label')); ?>
+	          <?php echo $form->error($model,'Id_Usuario_Asig', array('class' => 'badge badge-warning float-right')); ?>
+	          <?php
+	              $this->widget('ext.select2.ESelect2',array(
+	                'name'=>'Ticket[Id_Usuario_Asig]',
+	                'id'=>'Ticket_Id_Usuario_Asig',
+	                'htmlOptions'=>array(
+	                	'multiple'=>'multiple',
+	                ),
+	                'options'=>array(
+	                    'placeholder'=>'Seleccione...',
+	                    'width'=> '100%',
+	                    'allowClear'=>true,
+	                ),
+	              ));
+	          ?>
+	        </div>
+	    </div>
+	</div>
 	<div class="row">
 		<div class="col-sm-3">
 		    <div class="form-group">
@@ -222,18 +249,19 @@
 	          data: data,
 	          dataType: 'json',
 	          success: function(data){ 
-	          	$("#Ticket_Id_Novedad").val('').trigger('change');
 	            $("#Ticket_Id_Novedad").html('');
-	            $("#Ticket_Id_Novedad").append('<option value=""></option>');
 	            $.each(data, function(i,item){
 	                $("#Ticket_Id_Novedad").append('<option value="'+data[i].id+'">'+data[i].text+'</option>');
 	            });
+	            $("#Ticket_Id_Novedad").val('').trigger('change');
 	            $("#div_novedad").show();
 	          }
 	        });
 	      }else{
 	        $("#Ticket_Id_Novedad").val('').trigger('change');
 	        $("#div_novedad").hide();
+	        $("#Ticket_Id_Novedad_Det").val('').trigger('change');
+	        $("#div_novedad_det").hide();
 	      }
 	    });
 
@@ -247,18 +275,59 @@
 	          data: data,
 	          dataType: 'json',
 	          success: function(data){ 
-	          	$("#Ticket_Id_Novedad_Det").val('').trigger('change');
 	            $("#Ticket_Id_Novedad_Det").html('');
-	            $("#Ticket_Id_Novedad_Det").append('<option value=""></option>');
 	            $.each(data, function(i,item){
 	                $("#Ticket_Id_Novedad_Det").append('<option value="'+data[i].id+'">'+data[i].text+'</option>');
 	            });
+	            $("#Ticket_Id_Novedad_Det").val('').trigger('change');
 	            $("#div_novedad_det").show();
 	          }
 	        });
+	        var data = {novedades: vlr, det_novedades: new Array("")}
+	        $.ajax({ 
+	          type: "POST", 
+	          url: "<?php echo Yii::app()->createUrl('ticket/getusuariosxnovedad'); ?>",
+	          data: data,
+	          dataType: 'json',
+	          success: function(data){ 
+	            $("#Ticket_Id_Usuario_Asig").html('');
+	            $.each(data, function(i,item){
+	                $("#Ticket_Id_Usuario_Asig").append('<option value="'+data[i].id+'">'+data[i].text+'</option>');
+	            });
+	            $("#Ticket_Id_Usuario_Asig").val('').trigger('change');
+	            $("#div_usuarios_nov").show();
+	          }
+	        });
 	      }else{
-	        $("#Ticket_Id_Novedad_Det").val('').trigger('change');
+	      	$("#Ticket_Id_Novedad_Det").val('').trigger('change');
 	        $("#div_novedad_det").hide();
+	        $("#Ticket_Id_Usuario_Asig").val('').trigger('change');
+	        $("#div_usuarios_nov").hide();
+	      }
+	    });
+
+	    $("#Ticket_Id_Novedad_Det").change(function () {
+	      vlr = $("#Ticket_Id_Novedad").val();
+	      vlr_det = $("#Ticket_Id_Novedad").val();
+	      if(vlr_det != ""){
+	        var data = {novedades: vlr, det_novedades: vlr_det}
+	        $.ajax({ 
+	          type: "POST", 
+	          url: "<?php echo Yii::app()->createUrl('ticket/getusuariosxnovedad'); ?>",
+	          data: data,
+	          dataType: 'json',
+	          success: function(data){ 
+	            $("#Ticket_Id_Usuario_Asig").html('');
+	            $.each(data, function(i,item){
+	                $("#Ticket_Id_Usuario_Asig").append('<option value="'+data[i].id+'">'+data[i].text+'</option>');
+	            });
+	            $("#Ticket_Id_Usuario_Asig").val('').trigger('change');
+	            $("#div_usuarios_nov").show();
+	          }
+	        });
+	      }else{
+	        $("#Ticket_Id_Usuario_Asig").val('').trigger('change');
+	        $("#div_usuarios_nov").hide();
 	      }
 	    });
     });

@@ -28,19 +28,19 @@ class TicketController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('view'),
+				'actions'=>array('view','det'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','getnovedades','getnovedadesdet','getnovedadesxuser','getnovedadesdetxuser'),
+				'actions'=>array('create','update','getnovedades','getnovedadesdet','getnovedadesxuser','getnovedadesdetxuser','getusuariosxnovedad'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','asigt'),
+				'actions'=>array('admin','asigt','cticket'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('cticket','fticket'),
+				'actions'=>array('fticket'),
 				'users'=>array('*'),
 			),
 			array('deny',  // deny all users
@@ -70,6 +70,26 @@ class TicketController extends Controller
 	}
 
 	/**
+	 * Displays a particular model.
+	 * @param integer $id the ID of the model to be displayed
+	 */
+	public function actionDet($id)
+	{
+		
+		$model = $this->loadModel($id);
+
+		//hist 
+		$hist=new HistTicket('hist');
+		$hist->unsetAttributes();  // clear any default values
+		$hist->Id_Ticket = $id;
+
+		$this->render('det',array(
+			'model'=>$model,
+			'hist'=>$hist,
+		));
+	}
+
+	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
@@ -77,6 +97,11 @@ class TicketController extends Controller
 	{
 		$model=new Ticket;
 		$model->scenario = 'create';
+
+		//historico de tickets creados por usuario logueado
+		$tickets=new Ticket('search');
+		$tickets->unsetAttributes();  // clear any default values
+		$tickets->Id_Usuario_Creacion = Yii::app()->user->getState('id_user');
 
 		//$q_grupos=Dominio::model()->findAll(array('condition'=>'Estado=:estado AND Id_Padre ='.Yii::app()->params->grupos_act, 'params'=>array(':estado'=>1)));
 
@@ -118,6 +143,7 @@ class TicketController extends Controller
 		$this->render('create',array(
 			'model'=>$model,
 			'grupos'=>$grupos,
+			'tickets'=>$tickets,
 		));
 	}
 
@@ -393,11 +419,11 @@ class TicketController extends Controller
 
 	public function actionGetNovedadesDetXUser()
 	{	
-		$novedad = $_POST['novedad'];
+		$novedades = implode(",", $_POST['novedad']);;
 		$user = Yii::app()->user->getState('id_user');
 
 		$q_nov = Yii::app()->db->createCommand("SELECT DISTINCT NTU.Id_Novedad FROM T_PR_NOVEDAD_TICKET_USUARIO NTU 
-		INNER JOIN T_PR_NOVEDAD_TICKET NT ON NTU.Id_Novedad = NT.Id_Novedad AND NT.Estado = 1 AND NT.Id_Novedad_Padre = ".$novedad."
+		INNER JOIN T_PR_NOVEDAD_TICKET NT ON NTU.Id_Novedad = NT.Id_Novedad AND NT.Estado = 1 AND NT.Id_Novedad_Padre IN (".$novedades.")
 		WHERE NTU.Estado = 1 AND NTU.Id_Usuario = ".$user)->queryAll();
 	
 		$i = 0;
@@ -411,6 +437,35 @@ class TicketController extends Controller
 
 		//se retorna un json con las opciones
 		echo json_encode($array_novedades);
+
+	}
+
+	public function actionGetUsuariosXNovedad()
+	{	
+		$novedades = implode(",", $_POST['novedades']);
+		$det_novedades = implode(",", $_POST['det_novedades']);
+
+		if($det_novedades != ""){
+			$det = ','.$det_novedades;
+		}else{
+			$det = '';
+		}
+
+		$q_user = Yii::app()->db->createCommand("
+		SELECT DISTINCT NTU.Id_Usuario, U.Nombres FROM T_PR_NOVEDAD_TICKET_USUARIO NTU 
+		INNER JOIN T_PR_USUARIO U ON NTU.Id_Usuario = U.Id_Usuario AND U.Estado = 1
+		WHERE NTU.Estado = 1 AND NTU.Id_Novedad IN (".$novedades.$det.") ORDER BY 2
+		")->queryAll();
+
+		$i = 0;
+		$array_u = array();
+		foreach ($q_user as $u) {
+			$array_u[$i] = array('id' => $u['Id_Usuario'],  'text' => $u['Nombres']);	
+    		$i++; 
+	    }
+
+		//se retorna un json con las opciones
+		echo json_encode($array_u);
 
 	}
 
@@ -434,12 +489,12 @@ class TicketController extends Controller
 			$nueva_novedad = new HistTicket;
 			$nueva_novedad->Id_Ticket = $id;
 			$nueva_novedad->Texto = $texto_novedad;
-			$nueva_novedad->Id_Usuario_Registro = Yii::app()->user->getState('id_user');
+			$nueva_novedad->Id_Usuario_Registro =  Yii::app()->user->getState('id_user');
 			$nueva_novedad->Fecha_Registro = date('Y-m-d H:i:s');
 			$nueva_novedad->save();
 			
 			//AJAX
-			if($opc == 1){
+			if($opc == 1){ 
 				$res = 1;
 				$msg = "Se asignó el ticket ID ".$id." correctamente.";
 				$resp = array('res' => $res, 'msg' => $msg);
@@ -472,72 +527,79 @@ class TicketController extends Controller
 
 	}
 
-	public function actionCTicket($token)
+	public function actionCTicket($id)
 	{
 		
-		if(!Yii::app()->user->isGuest) {
-			$vista = 1;	
-		}else{
-			$vista = 0;
-		}
+		$modelticket = Ticket::model()->findByAttributes(array('Id_Ticket' => $id, 'Estado' => 4));
 
-		$id = intval(base64_decode($token));
+		if(!is_null($modelticket)){
 
-		if (is_numeric($id)){
-			$modelticket = Ticket::model()->findByAttributes(array('Id_Ticket' => $id, 'Estado' => 4));
-
-			if(!is_null($modelticket)){
-
-				$opc = 1;
-				
-			}else{
-				$opc = 0;
-				Yii::app()->user->setFlash('warning', "La encuesta es invalida o ya fue diligenciada.");	
-			}
-
+			$opc = 1;
+			
 		}else{
 			$opc = 0;
-			Yii::app()->user->setFlash('warning', "La encuesta es invalida o ya fue diligenciada.");	
+			Yii::app()->user->setFlash('warning', "La solicitud es invalida o la calificación ya fue enviada.");	
 		}
 
 		if($opc == 0){
-			$this->render('cticket',array('vista'=> $vista, 'opc'=> 0, 'modelticket'=> array()));
+			$this->render('cticket',array('opc'=> 0, 'modelticket'=> array()));
 		}else{
-			$this->render('cticket',array('vista'=> $vista, 'opc'=> 1, 'modelticket'=> $modelticket));
+			$this->render('cticket',array('opc'=> 1, 'modelticket'=> $modelticket));
 		}		
 	
 	}
 
-	public function actionFTicket($id, $v, $c)
+	public function actionFTicket($id, $c)
     {
         
-        $model=$this->loadModel($id);
-        $model->Calificacion = $c;
-        $model->Fecha_Calificacion = date('Y-m-d H:i:s');
-        $model->Estado = 5;
+    	if(!Yii::app()->user->isGuest) {
+			$v = 1;	
+		}else{
+			$v = 0;
+		}
 
-        if($model->save()){
-            if($v == 0){
+
+        $model=$this->loadModel($id);
+
+        if($model->Estado == 4){
+
+	        $model->Calificacion = $c;
+	        $model->Fecha_Calificacion = date('Y-m-d H:i:s');
+	        $model->Estado = 5;
+
+	        if($model->save()){
+	            if($v == 0){
+	                //Vista sin login
+	                Yii::app()->user->setFlash('success', "Se envío la calificación del ticket ( ID ".$id." ).");
+	                $this->redirect(array('site/login'));
+	            }else{
+	                //Vista logueado
+	                Yii::app()->user->setFlash('success', "Se envío la calificación del ticket ( ID ".$id." ).");
+	                $this->redirect(array('ticket/create'));
+	            }
+	        }else{
+	            if($v == 0){
+	                //Vista sin login
+	                Yii::app()->user->setFlash('warning', "Error al enviar calificación del ticket ( ID ".$id." ).");
+	                $this->redirect(array('site/login'));
+	            }else{
+	                //Vista logueado
+	                Yii::app()->user->setFlash('warning', "Error al enviar calificación del ticket ( ID ".$id." ).");
+	               	$this->redirect(array('ticket/create'));   
+	            }
+	        }
+	    }else{
+	    	if($v == 0){
                 //Vista sin login
-                Yii::app()->user->setFlash('success', "Se envío la calificación del ticket ( ID ".$id." ).");
+                Yii::app()->user->setFlash('warning', "La solicitud es invalida o la calificación ya fue enviada.");
                 $this->redirect(array('site/login'));
             }else{
                 //Vista logueado
-                Yii::app()->user->setFlash('success', "Se envío la calificación del ticket ( ID ".$id." ).");
-                $this->redirect(array('site/info'));
+                Yii::app()->user->setFlash('warning', "La solicitud es invalida o la calificación ya fue enviada.");
+               	$this->redirect(array('ticket/create'));   
             }
-        }else{
-            if($v == 0){
-                //Vista sin login
-                Yii::app()->user->setFlash('warning', "Error al enviar calificación del ticket ( ID ".$id." ).");
-                $this->redirect(array('site/login'));
-            }else{
-                //Vista logueado
-                Yii::app()->user->setFlash('warning', "Error al enviar calificación del ticket ( ID ".$id." ).");
-               	$this->redirect(array('site/info'));   
-            }
-        }      
-    
+	    }
+
     }
 
 }

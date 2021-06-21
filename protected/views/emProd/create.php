@@ -12,13 +12,13 @@ $(function() {
 	var textExtensionesValidas = "(.pdf)";
 	var idInput = "valid_sop";
 	var idMsg = "error_sop";
-	var pesoPermitido = 5120;
+	var pesoPermitido = 10240;
 
 	$("#valida_form").click(function() {
-      var form = $("#reg-imp-form");
+      var form = $("#em-prod-form");
       var settings = form.data('settings') ;
 
-      var soporte = $('#RegImp_sop').val();
+      var soporte = $('#EmProd_sop').val();
 
       if(soporte == ''){
       	$('#error_sop').html('Soporte es requerido.');
@@ -55,7 +55,7 @@ $(function() {
       });
   	});
 
-  	$("#RegImp_sop").change(function () {
+  	$("#EmProd_sop").change(function () {
 
 		$('#error_sop').html('');
 	  	$('#error_sop').hide();
@@ -73,6 +73,6 @@ $(function() {
 	
 </script>
 
-<h4>Creación declaración de importación</h4>
+<h4>Creación emisión de producto</h4>
 
 <?php $this->renderPartial('_form', array('model'=>$model)); ?>

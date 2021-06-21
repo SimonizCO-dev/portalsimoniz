@@ -83,7 +83,9 @@
 	                'name'=>'Actividad[Id_Tipo]',
 	                'id'=>'Actividad_Id_Tipo',
 	                'value' => $model->Id_Tipo,
-	                'htmlOptions'=>array(),
+	                'htmlOptions'=>array(
+	                	'multiple'=>'multiple',
+	                ),
 	                'options'=>array(
 	                    'placeholder'=>'Seleccione...',
 	                    'width'=> '100%',
@@ -102,7 +104,9 @@
             		$this->widget('ext.select2.ESelect2',array(
 						'name'=>'Actividad[user_enc]',
 						'id'=>'Actividad_user_enc',
-						'htmlOptions'=>array(),
+						'htmlOptions'=>array(
+							'multiple'=>'multiple',
+						),
 					  	'options'=>array(
     						'placeholder'=>'Seleccione...',
     						'width'=> '100%',
@@ -237,17 +241,16 @@
 	          data: data,
 	          dataType: 'json',
 	          success: function(data){ 
-	          	$("#Actividad_user_enc").val('').trigger('change');
 	            $("#Actividad_user_enc").html('');
-	            $("#Actividad_user_enc").append('<option value=""></option>');
 	            $.each(data, function(i,item){
 	                $("#Actividad_user_enc").append('<option value="'+data[i].id+'">'+data[i].text+'</option>');
 	            });
+	            $("#Actividad_user_enc").val('').trigger('change');
 	            $("#div_usuario").show();
 	          }
 	        });
 	      }else{
-	        $("#Actividad_user_enc").val('').trigger('change');
+	        $("#Actividad_user_enc").val('');
 	        $("#div_usuario").hide();
 	      }
 	    });

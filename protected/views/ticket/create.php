@@ -122,6 +122,6 @@ $(function() {
 
 </script>
 
-<h4>Registro de ticket</h4>
+<h4>Resumen de tickets</h4>
 
-<?php $this->renderPartial('_form', array('model'=>$model, 'lista_grupos'=>$lista_grupos)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model, 'lista_grupos'=>$lista_grupos, 'tickets'=>$tickets)); ?>

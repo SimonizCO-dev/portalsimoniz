@@ -24,10 +24,10 @@
   	<?php if($model->Soporte != null){ ?>
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-soporte"><i class="fas fa-image"></i> Ver Soporte</button>
    	<?php } ?>
-   	<?php if($model->Estado == 1){ ?>
-        <button type="button" class="btn btn-primary btn-sm" id="asig_t"><i class="fas fa-ticket-alt"></i> Tomar este ticket</button>
+   	<?php if($model->Estado == 4){ ?>
+        <button type="button" class="btn btn-primary btn-sm" onclick="location.href = '<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=ticket/cticket&id='.$model->Id_Ticket; ?>';"><i class="fas fa-ticket-alt"></i> Calificar este ticket</button>
    	<?php } ?>
-  	<button type="button" class="btn btn-primary btn-sm" onclick="location.href = '<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=ticket/admin'; ?>';"><i class="fa fa-reply"></i> Volver</button>   
+  	<button type="button" class="btn btn-primary btn-sm" onclick="location.href = '<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=ticket/create'; ?>';"><i class="fa fa-reply"></i> Volver</button>   
   </div>
 </div>
 
@@ -209,21 +209,3 @@ $this->widget('zii.widgets.grid.CGridView', array(
   <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
-
-<script type="text/javascript">
-
-$(function() {
-
-    $("#asig_t").click(function() {
-
-        var opcion = confirm("Esta seguro de asignarse este ticket ? ");
-        if (opcion == true) {
-            showloader();
-            location.href = '<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=ticket/asigt&id='.$model->Id_Ticket.'&opc=2'; ?>';   
-        } 
-        
-    });
-
- });    
-
-</script>
