@@ -570,11 +570,11 @@ class TicketController extends Controller
 	        if($model->save()){
 	            if($v == 0){
 	                //Vista sin login
-	                Yii::app()->user->setFlash('success', "Se envío la calificación del ticket ( ID ".$id." ).");
+	                Yii::app()->user->setFlash('success', "Se envió la calificación del ticket ( ID ".$id." ).");
 	                $this->redirect(array('site/login'));
 	            }else{
 	                //Vista logueado
-	                Yii::app()->user->setFlash('success', "Se envío la calificación del ticket ( ID ".$id." ).");
+	                Yii::app()->user->setFlash('success', "Se envió la calificación del ticket ( ID ".$id." ).");
 	                $this->redirect(array('ticket/create'));
 	            }
 	        }else{

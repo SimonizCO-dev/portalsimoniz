@@ -88,10 +88,7 @@ class EmProdController extends Controller
 
                 $usuarios = EmProdUsuario::model()->findByPk(1)->Id_Users_Notif;
 
-                $criteria = new CDbCriteria();
-				$criteria->addCondition("Id_Usuario IN (:usuarios)");
-				$criteria->params = array(':usuarios' => $usuarios);
-				$usuarios_notif = Usuario::model()->findAll($criteria);
+				$usuarios_notif = Yii::app()->db->createCommand("SELECT Id_Usuario, Correo, Estado FROM T_PR_USUARIO WHERE Id_Usuario IN (".$usuarios.")")->queryAll();
 
 				//se recorren el parametro para saber usuarios
 
@@ -99,24 +96,24 @@ class EmProdController extends Controller
 
 				foreach ($usuarios_notif as $us) {
 
-					if($us->Estado == 1){
+					if($us['Estado'] == 1){
 						$nuevo_usuario_validador = new EmProdVal;
 						$nuevo_usuario_validador->Id_Em_Prod = $model->Id_Em_Prod;
-						$nuevo_usuario_validador->Id_Usuario = $us->Id_Usuario;
+						$nuevo_usuario_validador->Id_Usuario = $us['Id_Usuario'];
 						$nuevo_usuario_validador->Estado = 0;
 						if($nuevo_usuario_validador->save()){
 							//despues de agregar usuario en lista de validación de la emision de producto se notifica via email
-							$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us->Id_Usuario, $us->Correo);	
+							$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us['Id_Usuario'], $us['Correo']);	
 							$notif_env = $notif_env + $resp;
 						}
 					}
 				}
 
 				if($notif_env == 1){
-					Yii::app()->user->setFlash('success', "Emisión de producto creada correctamente, se envio 1 notificación de validación.");
+					Yii::app()->user->setFlash('success', "Emisión de producto creada correctamente, se envió 1 notificación de validación.");
 					$this->redirect(array('admin'));
 				}else{
-					Yii::app()->user->setFlash('success', "Emisión de producto actualizada correctamente, se enviaron ".$resp." notificaciones de validación.");
+					Yii::app()->user->setFlash('success', "Emisión de producto creada correctamente, se enviaron ".$notif_env." notificaciones de validación.");
 					$this->redirect(array('admin'));
 
 				} 
@@ -175,10 +172,7 @@ class EmProdController extends Controller
 
                 	$usuarios = EmProdUsuario::model()->findByPk(1)->Id_Users_Notif;
 
-	                $criteria = new CDbCriteria();
-					$criteria->addCondition("Id_Usuario IN (:usuarios)");
-					$criteria->params = array(':usuarios' => $usuarios);
-					$usuarios_notif = Usuario::model()->findAll($criteria);
+					$usuarios_notif = Yii::app()->db->createCommand("SELECT Id_Usuario, Correo, Estado FROM T_PR_USUARIO WHERE Id_Usuario IN (".$usuarios.")")->queryAll();
 
 					//se recorren el parametro para saber usuarios
 
@@ -186,24 +180,24 @@ class EmProdController extends Controller
 
 					foreach ($usuarios_notif as $us) {
 
-						if($us->Estado == 1){
+						if($us['Estado'] == 1){
 							$nuevo_usuario_validador = new EmProdVal;
 							$nuevo_usuario_validador->Id_Em_Prod = $model->Id_Em_Prod;
-							$nuevo_usuario_validador->Id_Usuario = $us->Id_Usuario;
+							$nuevo_usuario_validador->Id_Usuario = $us['Id_Usuario'];
 							$nuevo_usuario_validador->Estado = 0;
 							if($nuevo_usuario_validador->save()){
 								//despues de agregar usuario en lista de validación de la emision de producto se notifica via email
-								$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us->Id_Usuario, $us->Correo);	
+								$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us['Id_Usuario'], $us['Correo']);	
 								$notif_env = $notif_env + $resp;
 							}
 						}
 					}
 
 					if($notif_env == 1){
-						Yii::app()->user->setFlash('success', "Emisión de producto creada correctamente, se envio 1 notificación de validación.");
+						Yii::app()->user->setFlash('success', "Emisión de producto creada correctamente, se envió 1 notificación de validación.");
 						$this->redirect(array('admin'));
 					}else{
-						Yii::app()->user->setFlash('success', "Emisión de producto actualizada correctamente, se enviaron ".$resp." notificaciones de validación.");
+						Yii::app()->user->setFlash('success', "Emisión de producto actualizada correctamente, se enviaron ".$notif_env." notificaciones de validación.");
 						$this->redirect(array('admin'));
 
 					}
@@ -331,10 +325,7 @@ class EmProdController extends Controller
 
         $usuarios = EmProdUsuario::model()->findByPk(1)->Id_Users_Notif;
 
-        $criteria = new CDbCriteria();
-		$criteria->addCondition("Id_Usuario IN (:usuarios)");
-		$criteria->params = array(':usuarios' => $usuarios);
-		$usuarios_notif = Usuario::model()->findAll($criteria);
+        $usuarios_notif = Yii::app()->db->createCommand("SELECT Id_Usuario, Correo, Estado FROM T_PR_USUARIO WHERE Id_Usuario IN (".$usuarios.")")->queryAll();
 
 		//se recorren el parametro para saber usuarios
 
@@ -344,7 +335,7 @@ class EmProdController extends Controller
 
 			$criteria = new CDbCriteria();
 			$criteria->addCondition("Id_Em_Prod =:Id_Em_Prod AND Id_Usuario =:Id_Usuario");
-			$criteria->params = array(':Id_Em_Prod' => $id, ':Id_Usuario' => $us->Id_Usuario);
+			$criteria->params = array(':Id_Em_Prod' => $id, ':Id_Usuario' => $us['Id_Usuario']);
 			$val = EmProdVal::model()->find($criteria);
 
 			//se verifica si el usuario aun no ha visto el documento
@@ -352,17 +343,17 @@ class EmProdController extends Controller
 			if(!is_null($val)){
 				if($val->Estado == 0){
 					//se notifica via email
-					$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us->Id_Usuario, $us->Correo);	
+					$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us['Id_Usuario'], $us['Correo']);	
 					$notif_env = $notif_env + $resp;
 				}
 			}else{
 				$nuevo_usuario_validador = new EmProdVal;
 				$nuevo_usuario_validador->Id_Em_Prod = $model->Id_Em_Prod;
-				$nuevo_usuario_validador->Id_Usuario = $us->Id_Usuario;
+				$nuevo_usuario_validador->Id_Usuario = $us['Id_Usuario'];
 				$nuevo_usuario_validador->Estado = 0;
 				if($nuevo_usuario_validador->save()){
 					//despues de agregar usuario en lista de validación de la emision de producto se notifica via email
-					$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us->Id_Usuario, $us->Correo);	
+					$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us['Id_Usuario'], $us['Id_Usuario']);	
 					$notif_env = $notif_env + $resp;
 				}
 			}
@@ -373,11 +364,11 @@ class EmProdController extends Controller
 			$this->redirect(array('emprod/update&id='.$id)); 
 		}
 		if($notif_env == 1){
-			Yii::app()->user->setFlash('success', "Se envio 1 notificación de validación.");
+			Yii::app()->user->setFlash('success', "Se envió 1 notificación de validación.");
 			$this->redirect(array('emprod/update&id='.$id)); 
 		}
 		if($notif_env > 1){
-			Yii::app()->user->setFlash('success', "Se enviaron ".$resp." notificaciones de validación.");
+			Yii::app()->user->setFlash('success', "Se enviaron ".$notif_env." notificaciones de validación.");
 			$this->redirect(array('emprod/update&id='.$id)); 
 		}
                
