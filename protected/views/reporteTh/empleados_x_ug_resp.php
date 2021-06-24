@@ -176,6 +176,7 @@ foreach ($query1 as $reg1) {
   $Fila = $Fila + 1;
 
 }
+
 /*fin contenido tabla*/
 
 //se configura el ancho de cada columna en automatico solo funciona en el rango A-Z

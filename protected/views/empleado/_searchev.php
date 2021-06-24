@@ -15,7 +15,7 @@
 	    <div class="col-sm-3">
 	    	<div class="form-group">
 	          	<?php echo $form->label($model,'Id_Empleado'); ?>
-			    <?php echo $form->numberField($model,'Id_Empleado', array('class' => 'form-control', 'autocomplete' => 'off', 'type' => 'number')); ?>
+			    <?php echo $form->numberField($model,'Id_Empleado', array('class' => 'form-control form-control-sm', 'autocomplete' => 'off', 'type' => 'number')); ?>
 	        </div>
 	    </div>
 	    <div class="col-sm-3">
@@ -39,13 +39,13 @@
 	    <div class="col-sm-3">
 	    	<div class="form-group">
 	          	<?php echo $form->label($model,'Identificacion'); ?>
-			    <?php echo $form->numberField($model,'Identificacion', array('class' => 'form-control', 'autocomplete' => 'off', 'type' => 'number')); ?>
+			    <?php echo $form->numberField($model,'Identificacion', array('class' => 'form-control form-control-sm', 'autocomplete' => 'off', 'type' => 'number')); ?>
 	        </div>
 	    </div>
 	    <div class="col-sm-3">
 	    	<div class="form-group">
 	          	<?php echo $form->label($model,'Apellido'); ?>
-			    <?php echo $form->textField($model,'Apellido', array('class' => 'form-control', 'autocomplete' => 'off')); ?>
+			    <?php echo $form->textField($model,'Apellido', array('class' => 'form-control form-control-sm', 'autocomplete' => 'off')); ?>
 	        </div>
 	    </div>
 	</div>
@@ -53,7 +53,7 @@
 		<div class="col-sm-3">
 	    	<div class="form-group">
 	          	<?php echo $form->label($model,'Nombre'); ?>
-			    <?php echo $form->textField($model,'Nombre', array('class' => 'form-control', 'autocomplete' => 'off')); ?>
+			    <?php echo $form->textField($model,'Nombre', array('class' => 'form-control form-control-sm', 'autocomplete' => 'off')); ?>
 	        </div>
 	    </div>
 	    <div class="col-sm-3">
@@ -87,9 +87,11 @@
 	        </div>
 	    </div>
 	</div>
-	<div class="btn-group" style="padding-bottom: 2%">
-		<button type="button" class="btn btn-success" onclick="resetfields();"><i class="fa fa-eraser"></i> Limpiar filtros</button>
-		<button type="submit" class="btn btn-success" id="yt0"><i class="fa fa-search"></i> Buscar</button>
+	<div class="row mb-2">
+	  	<div class="col-sm-6">  
+     		<button type="button" class="btn btn-primary btn-sm" onclick="resetfields();"><i class="fa fa-eraser"></i> Limpiar filtros</button>
+			<button type="submit" class="btn btn-primary btn-sm" id="yt0"><i class="fa fa-search"></i> Buscar</button>
+	  	</div>
 	</div>
 
 <?php $this->endWidget(); ?>
@@ -103,7 +105,10 @@
 		$('#Empleado_Nombre').val('');
 		$('#Empleado_Apellido').val('');
 		$('#Empleado_Id_Empresa').val('').trigger('change');
-		$('#yt0').click();
+		$('#empleado-grid').yiiGridView('update', {
+			data: $('.search-form form').serialize()
+		});
+		return false;
 	}
 	
 </script>

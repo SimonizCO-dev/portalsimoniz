@@ -31,10 +31,6 @@ class EmProdUsuarioController extends Controller
 				'actions'=>array('update'),
 				'users'=>array('@'),
 			),
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin'),
-				'users'=>array('@'),
-			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
@@ -72,7 +68,7 @@ class EmProdUsuarioController extends Controller
 			$model->Fecha_Hora_Actualizacion = date('Y-m-d H:i:s');
 			if($model->save()){	
 				Yii::app()->user->setFlash('success', "Configuración actualizada correctamente.");
-				$this->redirect(array('admin'));
+				$this->redirect(array('emprod/admin'));
 			}
 		}
 
@@ -80,21 +76,6 @@ class EmProdUsuarioController extends Controller
 			'model'=>$model,
 			'usuarios'=>$usuarios,
 			'user_not'=>$user_not,
-		));
-	}
-
-	/**
-	 * Manages all models.
-	 */
-	public function actionAdmin()
-	{
-		$model=new EmProdUsuario('search');
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['EmProdUsuario']))
-			$model->attributes=$_GET['EmProdUsuario'];
-
-		$this->render('admin',array(
-			'model'=>$model,
 		));
 	}
 

@@ -97,7 +97,7 @@ $lista_empresas = CHtml::listData($empresas, 'Id_Empresa', 'Descripcion');
         ),	
 		array(
 			'class'=>'CButtonColumn',
-            'template'=>'{view}{update}{asigeval}',
+            'template'=>'{view}{update}',
             'buttons'=>array(
                 'view'=>array(
                     'label'=>'<i class="fas fa-id-badge actions text-dark"></i>',
@@ -110,13 +110,13 @@ $lista_empresas = CHtml::listData($empresas, 'Id_Empresa', 'Descripcion');
                     'options'=>array('title'=>'Actualizar'),
                     'visible'=> '(Yii::app()->user->getState("permiso_act") == true && Yii::app()->user->getState("niv_det_vis_emp") == Yii::app()->params->niv_det_vis_emp_nomina)',
                 ),
-                'asigeval'=>array(
+                /*'asigeval'=>array(
                     'label'=>'<i class="fa fa-users actions text-dark"></i>',
                     'imageUrl'=>false,
                     'options'=>array('title'=>'Asignar evaluador'),
                     'url'=>'Yii::app()->createUrl("empleado/asigeval", array("id"=>$data->Id_Empleado, "opc"=>1))',
                     'visible'=> '(Yii::app()->user->getState("permiso_act") == true && $data->Estado == 1)',
-                ),
+                ),*/
             )
 		),
 	),

@@ -23,6 +23,7 @@ $lista_usuarios = CHtml::listData($usuarios, 'Id_Usuario', 'Usuario');
     </div>
     <div class="col-sm-4 text-right">  
         <button type="button" class="btn btn-primary btn-sm" onclick="location.href = '<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=emprod/create'; ?>';"><i class="fa fa-plus"></i> Nuevo registro</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="location.href = '<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=emprodusuario/update&id=1'; ?>';"><i class="fas fa-users"></i> Revisar usuarios</button>
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-search"><i class="fa fa-filter"></i> Busqueda avanzada</button>
     </div>
 </div>

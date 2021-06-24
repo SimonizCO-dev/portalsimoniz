@@ -79,6 +79,7 @@ class EmpleadoController extends Controller
 				AND ((SELECT COUNT(*) FROM T_PR_ELEMENTO_EMPLEADO EE WHERE EE.Id_Contrato = CE.Id_Contrato AND EE.Estado IN (1,3)) > 0
 				OR (SELECT COUNT(*) FROM T_PR_HERRAMIENTA_EMPLEADO HE WHERE HE.Id_Contrato = CE.Id_Contrato AND HE.Estado IN (1,3)) > 0
 				OR (SELECT COUNT(*) FROM T_PR_CUENTA_EMPLEADO CUE WHERE CUE.Id_Contrato = CE.Id_Contrato AND CUE.Estado = 1) > 0)
+				OR (SELECT COUNT(*) FROM T_PR_EMP_EQUIPO EQE WHERE EQE.Id_Empleado = '.$id.' AND EQE.Estado = 1) > 0)
 				AND CE.Id_Empleado = '.$id.'
 			')->queryRow();
 
@@ -307,7 +308,6 @@ class EmpleadoController extends Controller
 	public function actionViewMed($id)
 	{
 		$model=$this->loadModel($id);
-
 
 		//logica visibilidad boton nuevo contrato
 		$query_contrato= Yii::app()->db->createCommand('SELECT TOP 1 Id_Contrato FROM T_PR_CONTRATO_EMPLEADO WHERE Id_Empleado = '.$id.' AND Id_M_Retiro IS NULL ORDER BY 1 DESC')->queryRow();

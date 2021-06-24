@@ -1023,7 +1023,7 @@ class UtilidadesReportesTh {
     FROM T_PR_EMPLEADO AS t1
     INNER JOIN T_PR_CONTRATO_EMPLEADO AS t2 on t2.Id_Empleado=t1.Id_Empleado AND t2.Fecha_Retiro is null
     INNER JOIN T_PR_EVALUACION_EMPLEADO AS t3 on t3.Id_Empleado=t2.Id_Empleado
-    INNER JOIN T_PR_DOMINIO AS t4 on t4.Id_Padre=252 AND t4.Id_Dominio=t3.Id_Tipo
+    INNER JOIN T_PR_DOMINIO AS t4 on t4.Id_Dominio=t3.Id_Tipo
     ORDER BY 2,4 
     ";
 

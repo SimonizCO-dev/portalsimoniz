@@ -518,12 +518,12 @@ class Empleado extends CActiveRecord
       		$criteria->addBetweenCondition('t.Fecha_Actualizacion', $fai, $faf);
     	}
 
-		if($this->usuario_creacion != ""){
-			$criteria->AddCondition("idusuariocre.Usuario = '".$this->usuario_creacion."'"); 
+		if($this->Id_Usuario_Creacion != ""){
+			$criteria->AddCondition("t.Id_Usuario_Creacion = ".$this->Id_Usuario_Creacion); 
 	    }
 
-    	if($this->usuario_actualizacion != ""){
-			$criteria->AddCondition("idusuarioact.Usuario = '".$this->usuario_actualizacion."'"); 
+    	if($this->Id_Usuario_Actualizacion != ""){
+			$criteria->AddCondition("t.Id_Usuario_Actualizacion = ".$this->Id_Usuario_Actualizacion); 
 	    }
 
 	    
