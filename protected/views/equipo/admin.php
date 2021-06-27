@@ -29,7 +29,7 @@ $('.search-form form').submit(function(){
 $lista_tipos = CHtml::listData($tipos, 'Id_Dominio', 'Dominio');
 
 //para combos de empresas
-$lista_empresas = CHtml::listData($empresas, 'Id_Empresa', 'Descripcion'); 
+$lista_empresas = CHtml::listData($empresas, 'Id_Pa_Empresa', 'Descripcion'); 
 
 //para combos de proveedores
 $lista_proveedores = CHtml::listData($proveedores, 'Id_Proveedor', 'Proveedor'); 

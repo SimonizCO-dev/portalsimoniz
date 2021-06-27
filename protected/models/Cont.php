@@ -153,7 +153,7 @@ class Cont extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'empresa' => array(self::BELONGS_TO, 'Empresa', 'Empresa'),
+			'empresa' => array(self::BELONGS_TO, 'PaEmpresa', 'Empresa'),
 			'idusuarioact' => array(self::BELONGS_TO, 'Usuario', 'Id_Usuario_Actualizacion'),
 			'idusuariocre' => array(self::BELONGS_TO, 'Usuario', 'Id_Usuario_Creacion'),
 			'periodicidad' => array(self::BELONGS_TO, 'Dominio', 'Periodicidad'),

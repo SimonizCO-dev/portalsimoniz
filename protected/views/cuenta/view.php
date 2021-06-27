@@ -54,6 +54,7 @@
     <div class="col-sm-4" id="div_tipo_cuenta" style="display: none;">
         <div class="form-group">
             <?php echo $form->label($model,'Tipo_Cuenta'); ?><br>
+            <?php echo $form->hiddenField($model,'Tipo_Cuenta', array('class' => 'form-control form-control-sm', 'autocomplete' => 'off')); ?>
             <p><?php if($model->Tipo_Cuenta != "" ){ echo $model->tipocuenta->Dominio; } ?></p>
         </div>
     </div>
@@ -206,7 +207,7 @@ $(function() {
         $('#div_observaciones').show();
         $('#div_estado').show();
         
-        var tipo_cuenta = <?php echo $model->Tipo_Cuenta; ?>;
+        var tipo_cuenta = $('#Cuenta_Tipo_Cuenta').val();
 
         if(tipo_cuenta == <?php echo Yii::app()->params->t_c_generico ?>){
             $('#div_ext').show();

@@ -78,8 +78,8 @@ class EmpleadoController extends Controller
 				WHERE CE.Id_M_Retiro IS NULL 
 				AND ((SELECT COUNT(*) FROM T_PR_ELEMENTO_EMPLEADO EE WHERE EE.Id_Contrato = CE.Id_Contrato AND EE.Estado IN (1,3)) > 0
 				OR (SELECT COUNT(*) FROM T_PR_HERRAMIENTA_EMPLEADO HE WHERE HE.Id_Contrato = CE.Id_Contrato AND HE.Estado IN (1,3)) > 0
-				OR (SELECT COUNT(*) FROM T_PR_CUENTA_EMPLEADO CUE WHERE CUE.Id_Contrato = CE.Id_Contrato AND CUE.Estado = 1) > 0)
-				OR (SELECT COUNT(*) FROM T_PR_EMP_EQUIPO EQE WHERE EQE.Id_Empleado = '.$id.' AND EQE.Estado = 1) > 0)
+				OR (SELECT COUNT(*) FROM T_PR_CUENTA_EMPLEADO CUE WHERE CUE.Id_Contrato = CE.Id_Contrato AND CUE.Estado = 1) > 0
+				OR (SELECT COUNT(*) FROM T_PR_EMP_EQUIPO EQE WHERE EQE.Id_Emp = '.$id.' AND EQE.Estado = 1) > 0)
 				AND CE.Id_Empleado = '.$id.'
 			')->queryRow();
 

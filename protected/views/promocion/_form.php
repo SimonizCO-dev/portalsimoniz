@@ -42,7 +42,7 @@
                             'results'=>'js:function(data){ return {results:data};}'                   
                         ),
                         'formatNoMatches'=> 'js:function(){ clear_select2_ajax2("Promocion_Id_Item_Padre");  return "No se encontraron resultados"; }',
-                        'formatInputTooShort' =>  'js:function(){ return "Digite más de 3 caracteres para iniciar busqueda <button type=\"button\" class=\"btn btn-success btn-xs float-right\" onclick=\"clear_select2_ajax2(\'Promocion_Id_Item_Padre\')\">Limpiar campo</button>"; }',
+                        'formatInputTooShort' =>  'js:function(){ return "Digite más de 3 caracteres para iniciar busqueda <button type=\"button\" class=\"btn btn-primary btn-xs float-right\" onclick=\"clear_select2_ajax2(\'Promocion_Id_Item_Padre\')\">Limpiar campo</button>"; }',
                     ),
                 ));
             ?>
@@ -69,7 +69,7 @@
                             'results'=>'js:function(data){ return {results:data};}'                
                         ),
                         'formatNoMatches'=> 'js:function(){ clear_select2_ajax("Promocion_comp"); return "No se encontraron resultados"; }',
-                        'formatInputTooShort' =>  'js:function(){ return "Digite más de 3 caracteres para iniciar busqueda <button type=\"button\" class=\"btn btn-success btn-xs float-right\" onclick=\"clear_select2_ajax(\'Promocion_comp\')\">Limpiar campo</button>"; }',
+                        'formatInputTooShort' =>  'js:function(){ return "Digite más de 3 caracteres para iniciar busqueda <button type=\"button\" class=\"btn btn-primary btn-xs float-right\" onclick=\"clear_select2_ajax(\'Promocion_comp\')\">Limpiar campo</button>"; }',
                     ),
                 ));
                 ?>

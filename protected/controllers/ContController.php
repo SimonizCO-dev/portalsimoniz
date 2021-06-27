@@ -97,7 +97,7 @@ class ContController extends Controller
 	{
 		$model=new Cont;
 
-		$empresas=Empresa::model()->findAll(array('order'=>'Descripcion', 'condition'=>'Id_Empresa != 0 AND Estado=:estado', 'params'=>array(':estado'=>1)));
+		$empresas=PaEmpresa::model()->findAll(array('order'=>'Descripcion', 'condition'=>'Estado=:estado', 'params'=>array(':estado'=>1)));
 
 		$period =Dominio::model()->findAll(array('order'=>'Dominio', 'condition'=>'Estado=:estado AND Id_Padre = '.Yii::app()->params->periodicidad, 'params'=>array(':estado'=>1)));
 
@@ -137,7 +137,7 @@ class ContController extends Controller
 	{
 		$model=$this->loadModel($id);
 
-		$empresas=Empresa::model()->findAll(array('order'=>'Descripcion', 'condition'=>'Id_Empresa != 0 AND Estado=:estado', 'params'=>array(':estado'=>1)));
+		$empresas=PaEmpresa::model()->findAll(array('order'=>'Descripcion', 'condition'=>'Estado=:estado', 'params'=>array(':estado'=>1)));
 
 		$period=Dominio::model()->findAll(array('order'=>'Dominio', 'condition'=>'Estado=:estado AND Id_Padre = '.Yii::app()->params->periodicidad, 'params'=>array(':estado'=>1)));
 
@@ -173,7 +173,7 @@ class ContController extends Controller
 		$model=new Cont('search');
 		$model->unsetAttributes();  // clear any default values
 
-		$empresas=Empresa::model()->findAll(array('order'=>'Descripcion', 'condition'=>'Id_Empresa != 0'));
+		$empresas=PaEmpresa::model()->findAll(array('order'=>'Descripcion'));
 
 		$period=Dominio::model()->findAll(array('order'=>'Dominio', 'condition'=>'Id_Padre = '.Yii::app()->params->periodicidad));
 
