@@ -20,8 +20,8 @@ spl_autoload_register(array('YiiBase','autoload'));
 //se reciben los parametros para el reporte
 
 if (isset($model['id_empleado'])) { $id_empleado = $model['id_empleado']; } else { $id_empleado = ""; }
-if (isset($model['fecha_inicial'])) { $fecha_inicial = $model['fecha_inicial']; } else { $fecha_inicial = ""; }
-if (isset($model['fecha_final'])) { $fecha_final = $model['fecha_final']; } else { $fecha_final = ""; }
+if (isset($model['fecha_inicial_reg'])) { $fecha_inicial = $model['fecha_inicial_reg']; } else { $fecha_inicial = ""; }
+if (isset($model['fecha_final_reg'])) { $fecha_final = $model['fecha_final_reg']; } else { $fecha_final = ""; }
 if (isset($model['motivo_ausencia'])) { $motivo_ausencia = $model['motivo_ausencia']; } else { $motivo_ausencia = ""; }
 $empresa = $model['empresa'];
 
@@ -99,10 +99,10 @@ if($motivo_ausencia != null){
 $criterio_fec = "";
 
 if($fecha_inicial != null && $fecha_final != null){
-  $criterio_fec .= "Criterio de búsqueda:  Fecha: de ".$fecha_inicial." al ".$fecha_final;
+  $criterio_fec .= "Criterio de búsqueda:  Fecha de creación: de ".$fecha_inicial." al ".$fecha_final;
 }else{
   if($fecha_inicial != null && $fecha_final == null){
-    $criterio_fec .= "Criterio de búsqueda:  Fecha: ".$fecha_inicial;
+    $criterio_fec .= "Criterio de búsqueda:  Fecha de creación: ".$fecha_inicial;
   }
 }
 
@@ -347,9 +347,10 @@ if($opcion == 2){
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('L1', 'Descontar FDS');
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('M1', 'Observaciones');
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('N1', 'Notas');
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('O1', 'Fecha de creación');
 
-  $objPHPExcel->getActiveSheet(0)->getStyle('A1:N1')->getAlignment()->setHorizontal($alignment_center);
-  $objPHPExcel->getActiveSheet(0)->getStyle('A1:N1')->getFont()->setBold(true);
+  $objPHPExcel->getActiveSheet(0)->getStyle('A1:O1')->getAlignment()->setHorizontal($alignment_center);
+  $objPHPExcel->getActiveSheet(0)->getStyle('A1:O1')->getFont()->setBold(true);
 
   /*Inicio contenido tabla*/
 
@@ -391,6 +392,8 @@ if($opcion == 2){
       $notas = "-";
     }
 
+    $fecha_creacion    = $reg1['Fecha_Creacion'];
+
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$Fila, $tipo_ident);
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$Fila, $ident);
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$Fila, $empleado);
@@ -405,12 +408,13 @@ if($opcion == 2){
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('L'.$Fila, $descontar_FDS);
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('M'.$Fila, $observaciones);
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('N'.$Fila, $notas);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValue('O'.$Fila, $fecha_creacion);
     
     $objPHPExcel->getActiveSheet(0)->getStyle('H'.$Fila)->getNumberFormat()->setFormatCode('0');
     $objPHPExcel->getActiveSheet(0)->getStyle('I'.$Fila)->getNumberFormat()->setFormatCode('#,#0.0');  
     $objPHPExcel->getActiveSheet(0)->getStyle('A'.$Fila.':G'.$Fila)->getAlignment()->setHorizontal($alignment_left);
     $objPHPExcel->getActiveSheet(0)->getStyle('H'.$Fila.':I'.$Fila)->getAlignment()->setHorizontal($alignment_right);
-    $objPHPExcel->getActiveSheet(0)->getStyle('J'.$Fila.':N'.$Fila)->getAlignment()->setHorizontal($alignment_left);
+    $objPHPExcel->getActiveSheet(0)->getStyle('J'.$Fila.':O'.$Fila)->getAlignment()->setHorizontal($alignment_left);
 
     $Fila = $Fila + 1;
 

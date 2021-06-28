@@ -31,7 +31,7 @@ class ReporteTh extends CFormModel
         // will receive user inputs.
         return array(
             array('fecha_inicial, fecha_final', 'safe'),
-            array('empresa, fecha_inicial, fecha_final, opcion_exp', 'required','on'=>'ausencias'),
+            array('empresa, fecha_inicial_reg, fecha_final_reg, opcion_exp', 'required','on'=>'ausencias'),
             array('empresa, opcion_exp', 'required','on'=>'hijos'),
             array('opcion_exp', 'required','on'=>'empleados_activos'),
             array('empresa, fecha_inicial, fecha_final, opcion_exp', 'required','on'=>'disciplinarios'),

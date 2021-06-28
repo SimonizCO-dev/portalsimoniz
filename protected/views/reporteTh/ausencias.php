@@ -54,16 +54,16 @@ $lista_ausencias = CHtml::listData($motivos_ausencia, 'Id_Dominio', 'Dominio');
     </div>
     <div class="col-sm-3">
       <div class="form-group">
-        <?php echo $form->error($model,'fecha_inicial', array('class' => 'badge badge-warning float-right')); ?>
-        <?php echo $form->label($model,'fecha_inicial'); ?>
-        <?php echo $form->textField($model,'fecha_inicial', array('class' => 'form-control form-control-sm', 'readonly' => true)); ?>
+        <?php echo $form->error($model,'fecha_inicial_reg', array('class' => 'badge badge-warning float-right')); ?>
+        <?php echo $form->label($model,'fecha_inicial_reg'); ?>
+        <?php echo $form->textField($model,'fecha_inicial_reg', array('class' => 'form-control form-control-sm', 'readonly' => true)); ?>
         </div>
     </div>
     <div class="col-sm-3">
       <div class="form-group">
-        <?php echo $form->error($model,'fecha_final', array('class' => 'badge badge-warning float-right')); ?>
-        <?php echo $form->label($model,'fecha_final'); ?>
-        <?php echo $form->textField($model,'fecha_final', array('class' => 'form-control form-control-sm', 'readonly' => true)); ?>
+        <?php echo $form->error($model,'fecha_final_reg', array('class' => 'badge badge-warning float-right')); ?>
+        <?php echo $form->label($model,'fecha_final_reg'); ?>
+        <?php echo $form->textField($model,'fecha_final_reg', array('class' => 'form-control form-control-sm', 'readonly' => true)); ?>
         </div>
     </div>
 </div>
@@ -197,22 +197,22 @@ $(function() {
       weekStart: 1
   };
 
-  $("#ReporteTh_fecha_inicial").datepicker({
+  $("#ReporteTh_fecha_inicial_reg").datepicker({
       language: 'es',
       autoclose: true,
       orientation: "right bottom",
   }).on('changeDate', function (selected) {
     var minDate = new Date(selected.date.valueOf());
-    $('#ReporteTh_fecha_final').datepicker('setStartDate', minDate);
+    $('#ReporteTh_fecha_final_reg').datepicker('setStartDate', minDate);
   });
 
-  $("#ReporteTh_fecha_final").datepicker({
+  $("#ReporteTh_fecha_final_reg").datepicker({
       language: 'es',
       autoclose: true,
       orientation: "right bottom",
   }).on('changeDate', function (selected) {
     var maxDate = new Date(selected.date.valueOf());
-    $('#ReporteTh_fecha_inicial').datepicker('setEndDate', maxDate);
+    $('#ReporteTh_fecha_inicial_reg').datepicker('setEndDate', maxDate);
   });
 
 });
@@ -220,8 +220,8 @@ $(function() {
 function reporte_pantalla(){
 
   var motivo_ausencia = $("#ReporteTh_motivo_ausencia").val();
-  var fecha_inicial = $("#ReporteTh_fecha_inicial").val();
-  var fecha_final = $("#ReporteTh_fecha_final").val();
+  var fecha_inicial = $("#ReporteTh_fecha_inicial_reg").val();
+  var fecha_final = $("#ReporteTh_fecha_final_reg").val();
   var empresa = $("#ReporteTh_empresa").val();
   var id_empleado = $("#ReporteTh_id_empleado").val();
 
