@@ -30,7 +30,7 @@ class VentasController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform actions
-				'actions'=>array('pedidospenddesreqtop','naf','fleteguia','uploadfleteguia','registroguia','uploadguia','seguimientodoc','uploadseguimientodoc','analisisventas','ventasperiodoprom','ventaempleado','feeterpelcons','feeterpeldet','segrutasmarcacoord','histlibped','consultafactelect','consultafactelectpant','seguimientorutas','clientexfecha','diferenciasrutas','diferenciasrutaspant','listap','vendedores','vendedorespant','pedidospenddesreqlinea','pedidospenddesreqmarca','nivelserviciopedidoxmarca','nivelserviciopedidoxev','costoxitempos','venposentr','venposentrpant','venposfalt','venposfaltpant','rentiteml560','rentitem','rentcriterios560','rentcriterios','rentxcliente560','rentxcliente','rentxestructura560','revisioncomercial','rentinvlinea','rentinvmarca','rentmarcaiteml560','rentinvoracle','clientescrmsiesa','docsclientespotenciales','pqrsdetalle','clientespot','consolidadoun'),
+				'actions'=>array('pedidospenddesreqtop','naf','fleteguia','uploadfleteguia','registroguia','uploadguia','seguimientodoc','uploadseguimientodoc','analisisventas','ventasperiodoprom','ventaempleado','feeterpelcons','feeterpeldet','segrutasmarcacoord','histlibped','consultafactelect','consultafactelectpant','seguimientorutas','clientexfecha','diferenciasrutas','diferenciasrutaspant','listap','vendedores','vendedorespant','pedidospenddesreqlinea','pedidospenddesreqmarca','nivelserviciopedidoxmarca','nivelserviciopedidoxev','costoxitempos','venposentr','venposentrpant','venposfalt','venposfaltpant','rentiteml560','rentitem','rentcriterios560','rentcriterios','rentxcliente560','rentxcliente','rentxestructura560','revisioncomercial','rentinvlinea','rentinvmarca','rentmarcaiteml560','rentinvoracle','clientescrmsiesa','docsclientespotenciales','pqrsdetalle','clientespot','consolidadoun','consultapagos','consultapagospant','cruceantcli'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -1266,6 +1266,43 @@ class VentasController extends Controller
 		$this->render('consolidado_un',array(
 			'model'=>$model,
 			'lista_un'=>$lista_un,		
+		));
+	}
+
+	public function actionConsultaPagos()
+	{		
+		$model=new Ventas;
+		$model->scenario = 'consulta_pagos';
+
+		if(isset($_POST['Ventas']))
+		{
+			$model=$_POST['Ventas'];
+			$this->renderPartial('consulta_pagos_resp',array('model' => $model));	
+		}
+
+		$this->render('consulta_pagos',array(
+			'model'=>$model,
+		));
+	}
+
+	public function actionConsultaPagosPant()
+	{		
+		$resultados = UtilidadesReportes::consultapagospantalla();
+		echo $resultados;
+	}
+
+	public function actionCruceAntCli()
+	{		
+		$model=new Ventas;
+		$model->scenario = 'cruce_ant_cli';
+
+		if(isset($_POST['Ventas']))
+		{
+			$this->renderPartial('cruce_ant_cli_resp',array('model' => $_POST['Ventas']));	
+		}
+
+		$this->render('cruce_ant_cli',array(
+			'model'=>$model,
 		));
 	}
 	

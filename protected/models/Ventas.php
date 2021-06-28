@@ -119,6 +119,8 @@ class Ventas extends CFormModel
             array('fecha_inicial, fecha_final, des_ora_ini, des_ora_fin, opcion_exp', 'required','on'=>'rent_inv_oracle'),
             array('dias', 'required','on'=>'clientes_pot'),
             array('fecha_inicial, fecha_final, un', 'required','on'=>'consolidado_un'),
+            array('opcion_exp', 'required','on'=>'consulta_pagos'),
+            array('fecha_inicial, fecha_final, opcion_exp', 'required','on'=>'cruce_ant_cli'),
         );  
     }
 
