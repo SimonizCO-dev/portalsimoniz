@@ -30,7 +30,7 @@ class IntegController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform actions
-				'actions'=>array('estadoitems','uploadestadoitems','logmobile','logmobilepant','ingresoswebbinner','uploadingresoswebbinner','pagostiendabinner','uploadpagostiendabinner','confirmacionpagos','uploadconfirmacionpagos','auditoriapedidos','auditoriapedidospant','cambiofecpedxml','actreca','actrecapant','elimpedido','elimrecibo','listamateriales','listamaterialesdet','listamaterialespant','calidadpqrs'),
+				'actions'=>array('estadoitems','uploadestadoitems','logmobile','logmobilepant','ingresoswebbinner','uploadingresoswebbinner','pagostiendabinner','uploadpagostiendabinner','confirmacionpagos','uploadconfirmacionpagos','auditoriapedidos','auditoriapedidospant','cambiofecpedxml','actreca','actrecapant','elimpedido','elimrecibo','listamateriales','listamaterialesdet','listamaterialespant','calidadpqrs','actualizarreca'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -801,7 +801,7 @@ class IntegController extends Controller
 		{
 			
 			$command = Yii::app()->db->createCommand();
-			$sql='EXEC P_PR_CONF_ELIM_ERROR_PED';
+			$sql='EXEC P_CF_CONF_ELIM_ERROR_PED';
 			$command->setText($sql)->execute();
 
 			UtilidadesVarias::log($sql);
@@ -824,7 +824,7 @@ class IntegController extends Controller
 		{
 			
 			$command = Yii::app()->db->createCommand();
-			$sql='EXEC P_PR_CONF_ELIM_ERROR_REC';
+			$sql='EXEC P_CF_CONF_ELIM_ERROR_REC';
 			$command->setText($sql)->execute();
 
 			UtilidadesVarias::log($sql);
