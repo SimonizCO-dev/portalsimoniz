@@ -48,7 +48,7 @@ $lista_areas = CHtml::listData($areas, 'Id_Area', 'Area');
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'fact-cont-grid',
-	'dataProvider'=>$model->search3(),
+	'dataProvider'=>$model->search(),
     'pager'=>array(
         'cssFile'=>Yii::app()->getBaseUrl(true).'/css/pager.css',
     ),

@@ -76,34 +76,6 @@ class Reporte extends CFormModel
         // will receive user inputs.
         return array(
             array('fecha_inicial, fecha_final', 'safe'),
-            array('fecha_inicial, fecha_final, opcion_exp', 'required','on'=>'rent_marca'),
-            array('fecha_inicial, fecha_final, marca_inicial, marca_final, opcion_exp', 'required','on'=>'rent_marca_item'),
-            array('fecha_inicial, fecha_final, opcion_exp', 'required','on'=>'rent_oracle'),
-            array('fecha_inicial, fecha_final, des_ora_ini, des_ora_fin, opcion_exp', 'required','on'=>'rent_oracle_item'),
-            array('fecha_inicial, fecha_final, cliente_inicial, cliente_final, opcion_exp', 'required','on'=>'rent_cliente'),
-            array('fecha_inicial, fecha_final, marca_inicial, marca_final, opcion_exp', 'required','on'=>'nivel_servicio_marca'),
-            array('fecha_inicial, fecha_final, linea_inicial, linea_final, opcion_exp', 'required','on'=>'nivel_servicio_linea'),
-            array('opcion_exp', 'required','on'=>'error_ept'),
-            array('opcion_exp', 'required','on'=>'error_tal'),
-            array('fecha, opcion_exp', 'required','on'=>'error_conectores'),
-            array('opcion_exp', 'required','on'=>'verificacion_recibos'),
-            array('fecha_inicial, fecha_final, opcion_exp', 'required','on'=>'rent_marca_p'),
-            array('opcion_exp', 'required','on'=>'inv_peru'),
-            array('opcion_exp', 'required','on'=>'inv_ecuador'),
-            array('opcion_exp', 'required','on'=>'inv_cos_peru'),
-            array('opcion_exp', 'required','on'=>'inv_cos_ecuador'),
-            array('fecha_inicial, fecha_final, marca_inicial, marca_final, opcion_exp', 'required','on'=>'rent_inv_marca_p'),
-            array('fecha_inicial, fecha_final, marca_inicial, marca_final, opcion_exp', 'required','on'=>'pedidos_pend_des_marca_p'),
-            array('marca, estado, opcion_exp', 'required','on'=>'pedidos_acum_marca_p'),
-            array('consecutivo', 'required','on'=>'act_ept'),
-            array('fecha_inicial, fecha_final, opcion_exp', 'required','on'=>'fact_tiendas_web'),
-            array('fecha_inicial, fecha_final, opcion_exp', 'required','on'=>'desp_tiendas_web'),
-            
-            array('c_o, tipo, consecutivo', 'required','on'=>'remision_tu_go'),
-            array('tipo, consecutivo', 'required','on'=>'elim_error_trans'),
-            array('fecha, opcion_exp', 'required','on'=>'error_transf'),
-            array('n_oc, opcion_exp', 'required','on'=>'log_crossdocking'),
-            
             array('tipo, cons_inicial, cons_final', 'required','on'=>'comp_inc'),
         );  
     }
@@ -163,81 +135,6 @@ class Reporte extends CFormModel
         return $desc['DESCR'];
 
     }
-
-
-    /*public function searchByCliente2($filtro) {
-        
-        $resp = Yii::app()->db->createCommand("
-            SELECT TOP 10 C_ROWID_CLIENTE, C_NIT_CLIENTE,C_NOMBRE_CLIENTE FROM TH_CLIENTES WHERE C_CIA = 2 AND (C_NIT_CLIENTE LIKE '".$filtro."%' OR C_NOMBRE_CLIENTE LIKE '%".$filtro."%') GROUP BY C_ROWID_CLIENTE, C_NIT_CLIENTE,C_NOMBRE_CLIENTE ORDER BY C_NOMBRE_CLIENTE
-        ")->queryAll();
-        return $resp;
-        
-    }
-    */
-    
-    /*public function searchByClienteCart($filtro) {
-        
-        $resp = Yii::app()->db->createCommand("SELECT DISTINCT TOP 10 t2001.f200_razon_social AS CLIENTE FROM UnoEE1.dbo.t201_mm_clientes WITH (NOLOCK) INNER JOIN UnoEE1.dbo.t200_mm_terceros AS t2001 WITH (NOLOCK) ON t2001.f200_rowid = f201_rowid_tercero WHERE f200_id_cia = 2 AND t2001.f200_razon_social LIKE '%".$filtro."%' order by CLIENTE
-        ")->queryAll();
-        return $resp;
-        
-    }
-
-    public function searchByClienteCartNit($filtro) {
-        
-        $resp = Yii::app()->db->createCommand("SELECT DISTINCT TOP 10 t2001.f200_nit AS NIT, t2001.f200_razon_social AS CLIENTE FROM UnoEE1.dbo.t201_mm_clientes WITH (NOLOCK) INNER JOIN UnoEE1.dbo.t200_mm_terceros AS t2001 WITH (NOLOCK) ON t2001.f200_rowid = f201_rowid_tercero WHERE f200_id_cia = 2 AND (t2001.f200_nit LIKE '%".$filtro."%' OR t2001.f200_razon_social LIKE '%".$filtro."%') order by CLIENTE
-        ")->queryAll();
-        return $resp;
-        
-    }*/
-
-    /*
-
-    public function searchByItem($filtro) {
-        
-        $resp = Yii::app()->db->createCommand("
-            SELECT DISTINCT TOP 10  
-            f120_id AS ID,
-            CONCAT(f120_id,' - ',f120_descripcion) AS DESCR
-            FROM UnoEE1..t120_mc_items
-            INNER JOIN UnoEE1..t121_mc_items_extensiones ON f120_rowid = f121_rowid_item
-            WHERE f120_id_cia = 2 AND (f120_id LIKE '%".$filtro."%' OR f120_descripcion  LIKE '%".$filtro."%') ORDER BY DESCR 
-        ")->queryAll();
-        return $resp;
-        
-    }
-
-    public function searchById($filtro) {
- 
-        $resp = Yii::app()->db->createCommand("
-
-            SELECT
-            f120_id AS ID,
-            CONCAT(f120_id,' - ',f120_descripcion) AS DESCR
-            FROM UnoEE1..t120_mc_items
-            INNER JOIN UnoEE1..t121_mc_items_extensiones ON f120_rowid = f121_rowid_item
-            WHERE f120_id_cia = 2 AND f120_id = '".$filtro."'")->queryAll();
-        return $resp;
-
-    }
-
-    public function DescItem($id_item) {
-        
-        $q = Yii::app()->db->createCommand("
-            SELECT  
-            f120_id AS ID,
-            CONCAT(f120_id,' - ',f120_descripcion) AS DESCR
-            FROM UnoEE1..t120_mc_items
-            INNER JOIN UnoEE1..t121_mc_items_extensiones ON f120_rowid = f121_rowid_item
-            WHERE f120_id_cia = 2 AND f120_id = '".$id_item."' 
-        ")->queryRow();
-        
-        return $q['DESCR'];
-        
-    }
-
-    */
-
 
     /**
      * Declares attribute labels.
