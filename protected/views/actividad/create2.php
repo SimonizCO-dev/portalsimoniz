@@ -125,7 +125,7 @@ $(function() {
         var data = {tipo: vlr}
         $.ajax({ 
           type: "POST", 
-          url: "<?php echo Yii::app()->createUrl('actividad/getusuarios'); ?>",
+          url: "<?php echo Yii::app()->createUrl('actividad/getusuariosact'); ?>",
           data: data,
           dataType: 'json',
           success: function(data){ 

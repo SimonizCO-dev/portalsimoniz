@@ -28,7 +28,7 @@ class ActividadController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','create2','update','gettipos','getusuarios','getcalendar'),
+				'actions'=>array('create','create2','update','gettipos','getusuarios','getusuariosact','getcalendar'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -201,7 +201,7 @@ class ActividadController extends Controller
 	    }
 
 		$q_tipos = Yii::app()->db->createCommand("SELECT TA.Id_Tipo, TA.Tipo FROM T_PR_TIPO_ACT TA 
-		LEFT JOIN T_PR_TIPO_ACT_USUARIO TAU ON TAU.Id_Tipo = TA.Id_Tipo AND TAU.Estado = 1
+		INNER JOIN T_PR_TIPO_ACT_USUARIO TAU ON TAU.Id_Tipo = TA.Id_Tipo AND TAU.Estado = 1
 		WHERE TA.Estado = 1 AND TA.Id_Grupo = ".$model->Id_Grupo." AND TAU.Id_Usuario = ".Yii::app()->user->getState('id_user')." AND (SELECT COUNT (*) FROM T_PR_TIPO_ACT C WHERE C.Padre = TA.Id_Tipo) = 0 ORDER BY 2")->queryAll();
 
 		$tipos = array();
@@ -211,7 +211,7 @@ class ActividadController extends Controller
 
 	    $q_usuarios = Yii::app()->db->createCommand("
 		SELECT TAU.Id_Usuario, U.Nombres FROM T_PR_TIPO_ACT_USUARIO TAU 
-		LEFT JOIN T_PR_USUARIO U ON TAU.Id_Usuario = U.Id_Usuario AND U.Estado = 1
+		INNER JOIN T_PR_USUARIO U ON TAU.Id_Usuario = U.Id_Usuario AND U.Estado = 1
 		WHERE TAU.Estado = 1 AND TAU.Id_Tipo = ".$model->Id_Tipo." AND TAU.Id_Usuario != ".$model->Id_Usuario." ORDER BY 2
 		")->queryAll();
 
@@ -461,6 +461,29 @@ class ActividadController extends Controller
 		SELECT DISTINCT TAU.Id_Usuario, U.Nombres FROM T_PR_TIPO_ACT_USUARIO TAU 
 		INNER JOIN T_PR_USUARIO U ON TAU.Id_Usuario = U.Id_Usuario AND U.Estado = 1
 		WHERE TAU.Estado = 1 AND TAU.Id_Tipo IN (".$tipos.") ORDER BY 2
+		")->queryAll();
+
+		$i = 0;
+		$array_u = array();
+		foreach ($q_user as $u) {
+			$array_u[$i] = array('id' => $u['Id_Usuario'],  'text' => $u['Nombres']);	
+    		$i++; 
+	    }
+
+		//se retorna un json con las opciones
+		echo json_encode($array_u);
+
+	}
+
+
+	public function actionGetUsuariosAct()
+	{	
+		$tipo = $_POST['tipo'];
+
+		$q_user = Yii::app()->db->createCommand("
+		SELECT DISTINCT TAU.Id_Usuario, U.Nombres FROM T_PR_TIPO_ACT_USUARIO TAU 
+		INNER JOIN T_PR_USUARIO U ON TAU.Id_Usuario = U.Id_Usuario AND U.Estado = 1
+		WHERE TAU.Estado = 1 AND TAU.Id_Tipo = ".$tipo." ORDER BY 2
 		")->queryAll();
 
 		$i = 0;
