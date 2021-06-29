@@ -318,9 +318,8 @@ class UtilidadesEmpleado {
 
 		$query_contrato= Yii::app()->db->createCommand('SELECT TOP 1 Id_Contrato FROM T_PR_CONTRATO_EMPLEADO WHERE Id_Empleado = '.$id_empleado.' ORDER BY 1 DESC')->queryRow();
 
-		$id_ult_contrato = $query_contrato['Id_Contrato'];
-
-		if($id_ult_contrato != ''){
+		if(!empty($query_contrato)){
+			$id_ult_contrato = $query_contrato['Id_Contrato'];
 			$modelocontrato = ContratoEmpleado::model()->findByPk($id_ult_contrato);
 			if(is_null($modelocontrato->Id_Unidad_Gerencia)){
 				return 'SIN ASIGNAR';
@@ -337,9 +336,8 @@ class UtilidadesEmpleado {
 
 		$query_contrato= Yii::app()->db->createCommand('SELECT TOP 1 Id_Contrato FROM T_PR_CONTRATO_EMPLEADO WHERE Id_Empleado = '.$id_empleado.' ORDER BY 1 DESC')->queryRow();
 
-		$id_ult_contrato = $query_contrato['Id_Contrato'];
-
-		if($id_ult_contrato != ''){
+		if(!empty($query_contrato)){
+			$id_ult_contrato = $query_contrato['Id_Contrato'];
 			$modelocontrato = ContratoEmpleado::model()->findByPk($id_ult_contrato);
 			if(is_null($modelocontrato->Id_Area)){
 				return 'SIN ASIGNAR';
@@ -356,9 +354,8 @@ class UtilidadesEmpleado {
 
 		$query_contrato= Yii::app()->db->createCommand('SELECT TOP 1 Id_Contrato FROM T_PR_CONTRATO_EMPLEADO WHERE Id_Empleado = '.$id_empleado.' ORDER BY 1 DESC')->queryRow();
 
-		$id_ult_contrato = $query_contrato['Id_Contrato'];
-
-		if($id_ult_contrato != ''){
+		if(!empty($query_contrato)){
+			$id_ult_contrato = $query_contrato['Id_Contrato'];
 			$modelocontrato = ContratoEmpleado::model()->findByPk($id_ult_contrato);
 			if(is_null($modelocontrato->Id_Subarea)){
 				return 'SIN ASIGNAR';
@@ -375,9 +372,8 @@ class UtilidadesEmpleado {
 
 		$query_contrato= Yii::app()->db->createCommand('SELECT TOP 1 Id_Contrato FROM T_PR_CONTRATO_EMPLEADO WHERE Id_Empleado = '.$id_empleado.' ORDER BY 1 DESC')->queryRow();
 
-		$id_ult_contrato = $query_contrato['Id_Contrato'];
-
-		if($id_ult_contrato != ''){
+		if(!empty($query_contrato)){
+			$id_ult_contrato = $query_contrato['Id_Contrato'];
 			$modelocontrato = ContratoEmpleado::model()->findByPk($id_ult_contrato);
 			if(is_null($modelocontrato->Id_Cargo)){
 				return 'SIN ASIGNAR';
@@ -394,9 +390,8 @@ class UtilidadesEmpleado {
 
 		$query_contrato= Yii::app()->db->createCommand('SELECT TOP 1 Id_Contrato FROM T_PR_CONTRATO_EMPLEADO WHERE Id_Empleado = '.$id_empleado.' ORDER BY 1 DESC')->queryRow();
 
-		$id_ult_contrato = $query_contrato['Id_Contrato'];
-
-		if($id_ult_contrato != ''){
+		if(!empty($query_contrato)){
+			$id_ult_contrato = $query_contrato['Id_Contrato'];
 			$modelocontrato = ContratoEmpleado::model()->findByPk($id_ult_contrato);
 			if(is_null($modelocontrato->Id_Centro_Costo)){
 				return 'SIN ASIGNAR';
@@ -552,9 +547,8 @@ class UtilidadesEmpleado {
 
 		$query_contrato= Yii::app()->db->createCommand('SELECT TOP 1 Id_Empresa FROM T_PR_CONTRATO_EMPLEADO WHERE Id_Empleado = '.$id_empleado.' AND Id_M_Retiro IS NULL ORDER BY 1 DESC')->queryRow();
 
-		$id_ult_empresa = $query_contrato['Id_Empresa'];
-
-		if($id_ult_empresa != ''){
+		if(!empty($query_contrato)){
+			$id_ult_empresa = $query_contrato['Id_Empresa'];
 			$modelo_empresa = Empresa::model()->findByPk($id_ult_empresa);
 			return $modelo_empresa->Descripcion;
 		}else{
@@ -562,7 +556,6 @@ class UtilidadesEmpleado {
 		}
 
 	}
-
 
 	public static function compfamempleado($array){
 
