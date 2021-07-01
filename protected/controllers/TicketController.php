@@ -125,7 +125,21 @@ class TicketController extends Controller
 			$model->Fecha_Actualizacion = date('Y-m-d H:i:s');
 			$model->Estado = 1;
 
-			//print_r($_FILES['Ticket']);
+			//Se consulta el empleado ligado al usuario para saber el área
+			$usuario_reg = Usuario::model()->findByPk(Yii::app()->user->getState('id_user'));
+
+			$query_contrato= Yii::app()->db->createCommand('SELECT TOP 1 Id_Contrato FROM T_PR_CONTRATO_EMPLEADO WHERE Id_Empleado = '.$usuario_reg->Id_Emp.' ORDER BY 1 DESC')->queryRow();
+
+			if(!empty($query_contrato)){
+				$id_ult_contrato = $query_contrato['Id_Contrato'];
+				$modelocontrato = ContratoEmpleado::model()->findByPk($id_ult_contrato);
+				$area = $modelocontrato->Id_Area;
+						
+			}else{
+				$area = null;
+			}
+
+			$model->Id_Area = $area;
 
 			if($_FILES['Ticket']['name']['Soporte']  != "") {
 		        $data = 'data:image/jpg;base64,'.base64_encode(file_get_contents($_FILES['Ticket']['tmp_name']['Soporte']));
@@ -135,8 +149,39 @@ class TicketController extends Controller
 		    }
 
 			if($model->save()){
-				Yii::app()->user->setFlash('success', "Ticket ( ID ".$model->Id_Ticket." ) registrado correctamente.");
-				$this->redirect(array('create'));	
+				
+				if($model->Id_Novedad_Det != ""){
+					$nov = $model->Id_Novedad_Det;
+				}else{
+					$nov = $model->Id_Novedad;
+				}
+
+				//se consultan los usuarios por novedad para enviar correo de notificación de creación
+
+				$array_correos = array();
+				$usuarios_x_novedad_ticket = NovedadTicketUsuario::model()->FindAllByAttributes(array('Estado' => 1, 'Id_Novedad' => $nov));
+				foreach ($usuarios_x_novedad_ticket as $us) {
+					if($us->idusuario->Estado == 1){
+						$array_correos[] = $us->idusuario->Correo;
+					}
+				}
+
+				if(!empty($array_correos)){
+					$res = UtilidadesMail::enviocreacionticket($model->Id_Ticket, $array_correos);
+
+					if($res == 1){
+						Yii::app()->user->setFlash('success', "Ticket ( ID ".$model->Id_Ticket." ) registrado correctamente, se envió 1 notificación de creación.");
+						$this->redirect(array('create'));
+					}else{
+					 	Yii::app()->user->setFlash('success', "Ticket ( ID ".$model->Id_Ticket." ) registrado correctamente, se enviaron ".$res." notificaciones de creación.");
+						$this->redirect(array('create'));
+					}
+
+				}else{
+					Yii::app()->user->setFlash('success', "Ticket ( ID ".$model->Id_Ticket." ) registrado correctamente.");
+					$this->redirect(array('create'));	
+				}
+					
 			}
 		}
 
@@ -258,9 +303,24 @@ class TicketController extends Controller
 					}
 
 				}else{
+					//diferente a cerrado si hay alguna novedad
 
-					Yii::app()->user->setFlash('success', "Ticket ( ID ".$id." ) actualizado correctamente.");
-					$this->redirect(array('admin'));
+					if($flag == 1){
+
+						$correo = Usuario::model()->findByPk($model->Id_Usuario_Creacion)->Correo;
+						$res = UtilidadesMail::envionovedadticket($id, $nueva_novedad->Id, $correo);
+
+						if($res == 0){
+							Yii::app()->user->setFlash('warning', "Ticket ( ID ".$id." ) actualizado correctamente, No se pudo enviar la novedad.");
+							$this->redirect(array('admin'));
+						}else{
+						 	Yii::app()->user->setFlash('success', "Ticket ( ID ".$id." ) actualizado correctamente, Novedad de ticket enviada al correo ".$correo.".");
+							$this->redirect(array('admin'));
+						}
+					}else{
+						Yii::app()->user->setFlash('success', "Ticket ( ID ".$id." ) actualizado correctamente.");
+							$this->redirect(array('admin'));	
+					}
 				}
 			}	
 			
@@ -492,21 +552,39 @@ class TicketController extends Controller
 			$nueva_novedad->Id_Usuario_Registro =  Yii::app()->user->getState('id_user');
 			$nueva_novedad->Fecha_Registro = date('Y-m-d H:i:s');
 			$nueva_novedad->save();
+
+			$correo = Usuario::model()->findByPk($model->Id_Usuario_Creacion)->Correo;
+			$response = UtilidadesMail::envionovedadticket($id, $nueva_novedad->Id, $correo);
+
+			if($response == 1){
+				//AJAX
+				if($opc == 1){ 
+					$res = 1;
+					$msg = "Se asignó el ticket ID ".$id." correctamente, Novedad de ticket enviada al correo ".$correo.".";
+					$resp = array('res' => $res, 'msg' => $msg);
+	        		echo json_encode($resp);
+				}
+
+				//POST
+				if($opc == 2){
+					Yii::app()->user->setFlash('success', "Se asignó el ticket ( ID ".$id." ) correctamente, Novedad de ticket enviada al correo ".$correo.".");
+					$this->redirect(array('ticket/update&id='.$id));
+				}
+			}else{
+				if($opc == 1){ 
+					$res = 1;
+					$msg = "Se asignó el ticket ID ".$id." correctamente, no se envió ninguna notificación.";
+					$resp = array('res' => $res, 'msg' => $msg);
+	        		echo json_encode($resp);
+				}
+
+				//POST
+				if($opc == 2){
+					Yii::app()->user->setFlash('success', "Se asignó el ticket ( ID ".$id." ) correctamente, no se envió ninguna notificación.");
+					$this->redirect(array('ticket/update&id='.$id));
+				}
+			}
 			
-			//AJAX
-			if($opc == 1){ 
-				$res = 1;
-				$msg = "Se asignó el ticket ID ".$id." correctamente.";
-				$resp = array('res' => $res, 'msg' => $msg);
-        		echo json_encode($resp);
-			}
-
-			//POST
-			if($opc == 2){
-				Yii::app()->user->setFlash('success', "Se asignó el ticket ( ID ".$id." ) correctamente.");
-				$this->redirect(array('ticket/update&id='.$id));
-			}
-
 		}else{
 
 			//AJAX

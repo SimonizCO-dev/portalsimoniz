@@ -94,7 +94,7 @@ $lista_usuarios = CHtml::listData($usuarios, 'Id_Usuario', 'Nombres');
                     'label'=>'<i class="fas fa-user-check actions text-dark"></i>',
                     'imageUrl'=>false,
                     'options'=>array('title'=>'Asignarme este ticket'),
-                    'visible'=> '(Yii::app()->user->getState("permiso_act") == true && $data->Id_Usuario_Asig == "")',
+                    'visible'=> '(Yii::app()->user->getState("permiso_act") == true && $data->Id_Usuario_Asig == "" && $data->ValidUserAsig($data->Id_Ticket) == 1)',
                     'url'=>'Yii::app()->createUrl("ticket/asigt", array("id"=>$data->Id_Ticket, "opc"=>1))',                 
                     'click'=>"
                     function() {

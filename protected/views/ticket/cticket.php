@@ -23,34 +23,40 @@
 
 <hr>
 
-<p>Seleccione o pulse el emoji para calificar este servicio:</p>
+<p>Por favor califique este servicio:</p>
 
-<div class="row text-center" >
+<div class="row text-center">
     
-    <div class="col-sm-4">
+    <div class="col-sm-3">
         <div class="form-group">
             <a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=ticket/fticket&id='.$modelticket->Id_Ticket.'&c=1';?>" class="calif">
-            <h1 class="fas fa-frown text-warning" title="POR MEJORAR"></h1>
-            <p class="text-warning">POR MEJORAR</p>
+            <h3 class="fas fa-frown text-danger" title="MALO"></h3>
+            <p class="text-danger">MALO</p>
             </a>
         </div>
     </div>
     
-    <div class="col-sm-4">
+    <div class="col-sm-3">
         <div class="form-group">
             <a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=ticket/fticket&id='.$modelticket->Id_Ticket.'&c=2';?>" class="calif">
-            <h1 class="fas fa-meh text-primary" title="NEUTRO"></h1>
-            <p class="text-primary">NEUTRO</p>
+            <h3 class="fas fa-meh text-warning" title="REGULAR"></h3>
+            <p class="text-warning">REGULAR</p>
           </a>
         </div>
     </div>
-    
-    
-    <div class="col-sm-4">
+    <div class="col-sm-3">
         <div class="form-group">
             <a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=ticket/fticket&id='.$modelticket->Id_Ticket.'&c=3';?>" class="calif">
-            <h1 class="fas fa-laugh text-success" title="BUENO"></h1>
+            <h3 class="fas fa-smile text-success" title="BUENO"></h3>
             <p class="text-success">BUENO</p>
+            </a> 
+        </div>
+    </div>  
+    <div class="col-sm-3">
+        <div class="form-group">
+            <a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=ticket/fticket&id='.$modelticket->Id_Ticket.'&c=4';?>" class="calif">
+            <h3 class="fas fa-laugh text-primary" title="EXCELENTE"></h1>
+            <p class="text-primary">EXCELENTE</p>
             </a> 
         </div>
     </div>   

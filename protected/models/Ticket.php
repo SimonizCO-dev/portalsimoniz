@@ -22,6 +22,7 @@
  * @property string $Fecha_Actualizacion
  * @property string $Soporte
  * @property string $Notas
+ * @property integer $Id_Area
  *
  * @property string $Solicitud
  }*/
@@ -47,11 +48,11 @@ class Ticket extends CActiveRecord
 		return array(
 			array('Id_Tipo, Prioridad, Id_Grupo, Id_Novedad, Solicitud', 'required','on'=>'create'),
 			array('Id_Usuario_Asig, Estado', 'required','on'=>'update'),
-			array('Id_Tipo, Prioridad, Id_Grupo, Id_Novedad, Id_Novedad_Det, Id_Usuario_Asig, Calificacion, Id_Usuario_Creacion, Id_Usuario_Actualizacion', 'numerical', 'integerOnly'=>true),
+			array('Id_Tipo, Prioridad, Id_Grupo, Id_Novedad, Id_Novedad_Det, Id_Usuario_Asig, Calificacion, Id_Usuario_Creacion, Id_Usuario_Actualizacion, Id_Area', 'numerical', 'integerOnly'=>true),
 			array('Fecha_Asig, Fecha_Cierre, Fecha_Calificacion', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('Id_Grupo, Id_Tipo, Id_Novedad, Id_Novedad_Det, Solicitud, Fecha_Asig, Id_Usuario_Asig, Fecha_Cierre, Calificacion, Fecha_Calificacion, Id_Usuario_Creacion, Fecha_Creacion, Id_Usuario_Actualizacion, Fecha_Actualizacion, Estado, orderby', 'safe', 'on'=>'search'),
+			array('Id_Grupo, Id_Tipo, Id_Novedad, Id_Novedad_Det, Solicitud, Fecha_Asig, Id_Usuario_Asig, Fecha_Cierre, Calificacion, Fecha_Calificacion, Id_Usuario_Creacion, Fecha_Creacion, Id_Usuario_Actualizacion, Fecha_Actualizacion, Estado, Id_Area, orderby', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -119,17 +120,42 @@ class Ticket extends CActiveRecord
 		        $texto_calif = '<h4 class="fas fa-meh-blank text-muted" title="SIN CALIFICAR"></h4>';
 		        break;
 		    case 1:
-		        $texto_calif = '<h4 class="fas fa-frown text-warning" title="POR MEJORAR"></h4>';
+		        $texto_calif = '<h4 class="fas fa-frown text-danger" title="MALO"></h4>';
 		        break;
 		    case 2:
-		        $texto_calif = '<h4 class="fas fa-meh text-primary" title="NEUTRO"></h4>';
+		        $texto_calif = '<h4 class="fas fa-meh text-warning" title="REGULAR"></h4>';
 		        break;
 		    case 3:
 		        $texto_calif = '<h4 class="fas fa-smile text-success" title="BUENO"></h4>';
 		        break;
+		    case 4:
+		        $texto_calif = '<h4 class="fas fa-laugh text-primary" title="EXCELENTE"></h4>';
+		        break;
 		}
 
 		return $texto_calif;
+
+	}
+
+	public function ValidUserAsig($id){
+
+		$model=Ticket::model()->findByPk($id);
+
+		//Si el ticket tiene detalle de novedad 
+		if($model->Id_Novedad_Det != ""){
+			$id_nov = $model->Id_Novedad_Det;
+		}else{
+			$id_nov =$model->Id_Novedad;
+		}
+
+		$valid_usuario = NovedadTicketUsuario::model()->FindByAttributes(array('Id_Novedad' => $id_nov, 'Id_Usuario' => Yii::app()->user->getState('id_user'), 'Estado' => 1));
+
+		if(!empty($valid_usuario)){
+			return 1;
+		}else{
+			return 0;
+		}
+		
 
 	}
 
@@ -147,6 +173,7 @@ class Ticket extends CActiveRecord
 			'idgrupo' => array(self::BELONGS_TO, 'Dominio', 'Id_Grupo'),
 			'idnovedad' => array(self::BELONGS_TO, 'NovedadTicket', 'Id_Novedad'),
 			'idnovedaddet' => array(self::BELONGS_TO, 'NovedadTicket', 'Id_Novedad_Det'),
+			'area' => array(self::BELONGS_TO, 'Area', 'Id_Area'),
 		);
 	}
 

@@ -108,13 +108,13 @@ class UtilidadesMail {
 			</head>
 			<body>
 			    <center>
-			        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 60%;">
+			        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 80%;">
 			            <tr>
 			                <td style="background-color: #ffffff;">
 			                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
 			                        <tr>
 			                            <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-			                                <img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/>
+			                                <center><img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/></center>
 			                                <h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">'.UtilidadesMail::horamensaje().'</h1>
 			                                <p>A continuación se listaran los datos correspondientes al documento: </p><br>
 			                                <strong>Áreas asociadas: </strong><p>'.$areas.'</p>
@@ -237,13 +237,13 @@ class UtilidadesMail {
 		</head>
 		<body>
 		    <center>
-		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 60%;">
+		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 80%;">
 		            <tr>
 		                <td style="background-color: #ffffff;">
 		                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
 		                        <tr>
 		                            <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-		                            	<img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/>
+		                            	<center><img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/></center>
 		                            	<h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">'.UtilidadesMail::horamensaje().'</h1>
 		                                <p>Se Adjunta documento PDF con detalle de comisión.</p>
 		                                <hr>
@@ -340,13 +340,13 @@ class UtilidadesMail {
 		</head>
 		<body>
 		    <center>
-		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 60%;">
+		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 80%;">
 		            <tr>
 		                <td style="background-color: #ffffff;">
 		                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
 		                        <tr>
 		                            <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-		                            	<img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/>
+		                            	<center><img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/></center>
 		                            	<h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">'.UtilidadesMail::horamensaje().'</h1>
 		                                <p>Se Adjunta documento PDF con detalle de WIP.</p>
 		                                <hr>
@@ -517,13 +517,13 @@ class UtilidadesMail {
 		</head>
 		<body>
 		    <center>
-		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 60%;">
+		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 80%;">
 		            <tr>
 		                <td style="background-color: #ffffff;">
 		                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
 		                        <tr>
 		                            <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-		                            	<img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/>
+		                            	<center><img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/></center>
 		                            	<h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">'.UtilidadesMail::horamensaje().'</h1>
 		                                '.$m.'
 		                                <hr>
@@ -617,13 +617,13 @@ class UtilidadesMail {
 		</head>
 		<body>
 		    <center>
-		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 60%;">
+		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 80%;">
 		            <tr>
 		                <td style="background-color: #ffffff;">
 		                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
 		                        <tr>
 		                            <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-		                            	<img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/>
+		                            	<center><img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/></center>
 		                            	<h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">'.UtilidadesMail::horamensaje().'</h1>
 		                                <h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">Ha solicitado el restablecimiento de password.</h1>
 		                                <p>El vendedor '.$modelo_pedido->idusuario->Nombres.' ha solicitado la revisión del pedido '.$id.'.</p>
@@ -768,13 +768,13 @@ class UtilidadesMail {
 		</head>
 		<body>
 		    <center>
-		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 60%;">
+		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 80%;">
 		            <tr>
 		                <td style="background-color: #ffffff;">
 		                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
 		                        <tr>
 		                            <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-		                            	<img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/>
+		                            	<center><img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/></center>
 		                            	<h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">'.UtilidadesMail::horamensaje().'</h1>
 		                                '.$m.'
 		                                <hr>
@@ -867,13 +867,13 @@ class UtilidadesMail {
 		</head>
 		<body>
 		    <center>
-		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 60%;">
+		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 80%;">
 		            <tr>
 		                <td style="background-color: #ffffff;">
 		                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
 		                        <tr>
 		                            <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-		                            	<img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/>
+		                            	<center><img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/></center>
 		                            	<h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">'.UtilidadesMail::horamensaje().'</h1>
 		                                <h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">Ha solicitado el restablecimiento de password.</h1>
 		                                <p>Haga click <a href="'.$url.'"/>aqui</a> para continuar con el proceso, este link tiene 15 minutos de validez.</p>
@@ -919,6 +919,233 @@ class UtilidadesMail {
         
 	}
 
+	public static function enviocreacionticket($id, $array_emails) {
+
+		set_time_limit(0);
+		
+		// Se inactiva el autoloader de yii
+		spl_autoload_unregister(array('YiiBase','autoload'));  
+
+		require_once(Yii::app()->basePath . '\extensions\PHPMailer\src\PHPMailer.php');
+		require_once(Yii::app()->basePath . '\extensions\PHPMailer\src\SMTP.php');
+		require_once(Yii::app()->basePath . '\extensions\PHPMailer\src\Exception.php');
+
+		//cuando se termina la accion relacionada con la libreria se activa el autoloader de yii
+		spl_autoload_register(array('YiiBase','autoload'));
+
+		$host = Yii::app()->params->env_mail_host;
+		$port = Yii::app()->params->env_mail_port;
+		$smtpsecure = Yii::app()->params->env_mail_smtpsecure;
+		$smtpauth = Yii::app()->params->env_mail_smtpauth;
+		$smtpdebug = Yii::app()->params->env_mail_smtpdebug;
+		$username = Yii::app()->params->env_mail_cuenta;
+		$password = Yii::app()->params->env_mail_password;
+		$correo_rem = Yii::app()->params->env_mail_cuenta_rem;
+		$desc_correo_rem = Yii::app()->params->env_mail_desc_cuenta_rem;
+
+		$logo = 'data:image/png;base64,'.base64_encode(file_get_contents(Yii::app()->getBaseUrl(true)."/images/login-logo.png", false, stream_context_create(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false)))));
+
+		$ticket = Ticket::model()->findByPk($id);
+
+		$fecha_creacion = UtilidadesVarias::textofechahora($ticket->Fecha_Creacion);
+		$usuario = $ticket->idusuariocre->Nombres;
+		$area_usuario_sol = $ticket->area->Area;
+		$tipo = $ticket->DescTipo($ticket->Id_Tipo);
+		$prioridad = $ticket->DescPrioridad($ticket->Prioridad);
+		$grupo = $ticket->idgrupo->Dominio;
+		$nov = $ticket->idnovedad->Novedad;
+		$nov_det = ($ticket->Id_Novedad_Det == "") ? "-" : $ticket->idnovedaddet->Novedad;
+		$desc_caso = $ticket->Solicitud;
+
+		$asunto = 'El ticket ( ID '.$id.' ) ha sido creado';
+		$mensaje = '
+		<!DOCTYPE html>
+		<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+		<head>
+		    <meta charset="utf-8">
+		    <meta name="viewport" content="width=device-width">
+		    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+		    <meta name="x-apple-disable-message-reformatting">
+		</head>
+		<body>
+		    <center>
+		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 80%;">
+		            <tr>
+		                <td style="background-color: #ffffff;">
+		                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+		                        <tr>
+		                            <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+		                            	<center><center><img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/></center></center>
+		                                <h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">'.UtilidadesMail::horamensaje().'</h1>
+		                                <p>El ticket ( ID '.$id.' ) ha sido creado:</p>
+		                                <p>A continuación encontrara los datos relacionados: </p><br>
+		                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+		                        			<tr style="padding-bottom:2%;">
+		                        				<td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"><strong>Fecha de creación: </strong><p>'.$fecha_creacion.'</p></td>
+		                        				<td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"><strong>Usuario que solicita: </strong><p>'.$usuario.'</p></td>
+					                        </tr>
+					                        <tr style="padding-bottom:2%;">
+		                        				<td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"><strong>Área usuario que solicita: </strong><p>'.$area_usuario_sol.'</p></td>
+		                        				<td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"><strong>Tipo: </strong><p>'.$tipo.'</p></td>
+					                        </tr>
+					                        <tr style="padding-bottom:2%;">
+		                        				<td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"><strong>Prioridad: </strong><p>'.$prioridad.'</p></td>
+		                        				<td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"><strong>Área / Grupo: </strong><p>'.$grupo.'</p></td>
+					                        </tr>
+					                        <tr style="padding-bottom:2%;">
+		                        				<td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"><strong>Novedad: </strong><p>'.$nov.'</p></td>
+		                        				<td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"><strong>Detalle: </strong><p>'.$nov_det.'</p></td>
+					                        </tr>
+					                        <tr>
+		                        				<td colspan="2" style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;"><strong>Descripción del caso: </strong><p>'.$desc_caso.'</p></td>				          
+		                        			</tr>
+		                        		</table>                 
+		                                <hr>
+		                            </td>
+		                        </tr>
+		                    </table>
+		                </td>
+		            </tr>
+		            <tr style="padding: 40px 0; text-align: center">
+		                </tr>
+		        </table>
+		    </center>
+		</body>
+		</html>
+		';	
+		
+		$mail = new PHPMailer\PHPMailer\PHPMailer;
+		
+		$mail->IsSMTP();
+		$mail->CharSet = 'UTF-8';
+
+		$mail->Host 	  = $host;
+		$mail->Port       = $port;
+		$mail->SMTPSecure = $smtpsecure;
+		$mail->SMTPAuth   = $smtpauth;
+		$mail->SMTPDebug  = $smtpdebug;
+		$mail->Username   = $username;
+		$mail->Password   = $password;
+		$mail->From       = $correo_rem;
+		
+		$mail->isHTML(true);
+		$mail->Subject = $asunto;
+		$mail->Body = $mensaje;
+
+		$num_notif = 0;
+
+		foreach ($array_emails as $llave => $email) {
+            $mail->addAddress($email);
+            $num_notif++;
+        }
+
+		if(!$mail->send()){
+			return 0;
+		}else{
+		 	return $num_notif;
+		}
+	
+	}
+
+	public static function envionovedadticket($id, $id_novedad, $correo) {
+
+		set_time_limit(0);
+		
+		// Se inactiva el autoloader de yii
+		spl_autoload_unregister(array('YiiBase','autoload'));  
+
+		require_once(Yii::app()->basePath . '\extensions\PHPMailer\src\PHPMailer.php');
+		require_once(Yii::app()->basePath . '\extensions\PHPMailer\src\SMTP.php');
+		require_once(Yii::app()->basePath . '\extensions\PHPMailer\src\Exception.php');
+
+		//cuando se termina la accion relacionada con la libreria se activa el autoloader de yii
+		spl_autoload_register(array('YiiBase','autoload'));
+
+		$host = Yii::app()->params->env_mail_host;
+		$port = Yii::app()->params->env_mail_port;
+		$smtpsecure = Yii::app()->params->env_mail_smtpsecure;
+		$smtpauth = Yii::app()->params->env_mail_smtpauth;
+		$smtpdebug = Yii::app()->params->env_mail_smtpdebug;
+		$username = Yii::app()->params->env_mail_cuenta;
+		$password = Yii::app()->params->env_mail_password;
+		$correo_rem = Yii::app()->params->env_mail_cuenta_rem;
+		$desc_correo_rem = Yii::app()->params->env_mail_desc_cuenta_rem;
+
+		$logo = 'data:image/png;base64,'.base64_encode(file_get_contents(Yii::app()->getBaseUrl(true)."/images/login-logo.png", false, stream_context_create(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false)))));
+
+		$ticket = Ticket::model()->findByPk($id);
+
+		$desc_caso = $ticket->Solicitud;
+			
+		$novedad = HistTicket::model()->findByPk($id_novedad)->Texto;
+
+		$asunto = 'El ticket ( ID '.$id.' ) tiene una novedad';
+		$mensaje = '
+		<!DOCTYPE html>
+		<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+		<head>
+		    <meta charset="utf-8">
+		    <meta name="viewport" content="width=device-width">
+		    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+		    <meta name="x-apple-disable-message-reformatting">
+		</head>
+		<body>
+		    <center>
+		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 80%;">
+		            <tr>
+		                <td style="background-color: #ffffff;">
+		                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+		                        <tr>
+		                            <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
+		                            	<center><img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/></center>
+		                                <h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">'.UtilidadesMail::horamensaje().'</h1>
+
+		                                <p>El ticket ( ID '.$id.' ) tiene una novedad:</p>
+		                                <p>A continuación encontrara las novedades de este ticket: </p><br>
+		                                <strong>Novedad: </strong><p>'.$novedad.'</p>
+		                            </td>
+		                        </tr>
+		                    </table>
+		                </td>
+		            </tr>
+		            <tr style="padding: 40px 0; text-align: center">
+		                </tr>
+		        </table>
+		    </center>
+		</body>
+		</html>
+		';		
+		
+		$mail = new PHPMailer\PHPMailer\PHPMailer;
+		
+		$mail->IsSMTP();
+		$mail->CharSet = 'UTF-8';
+
+		$mail->Host 	  = $host;
+		$mail->Port       = $port;
+		$mail->SMTPSecure = $smtpsecure;
+		$mail->SMTPAuth   = $smtpauth;
+		$mail->SMTPDebug  = $smtpdebug;
+		$mail->Username   = $username;
+		$mail->Password   = $password;
+		$mail->From       = $correo_rem;
+		
+		$mail->isHTML(true);
+		$mail->Subject = $asunto;
+
+		$mail->Body = $mensaje;
+		$mail->IsHTML(true);
+		
+        $mail->addAddress($correo);
+
+        if(!$mail->send()){
+			return 0;
+		}else{
+		 	return 1;
+		}
+        
+	}
+
 	public static function enviocalificacionticketcerrado($id, $correo) {
 
 		set_time_limit(0);
@@ -948,19 +1175,23 @@ class UtilidadesMail {
 		$ticket = Ticket::model()->findByPk($id);
 
 		$desc_caso = $ticket->Solicitud;
+		if($ticket->Notas != ""){ $notas = $ticket->Notas; }else{ $notas="-"; }
 
-		$por_mejorar = 'data:image/png;base64,'.base64_encode(file_get_contents(Yii::app()->getBaseUrl(true)."/images/1.png", false, stream_context_create(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false)))));
-		$url_por_mejorar = Yii::app()->getBaseUrl(true).'/index.php?r=ticket/fticket&id='.$id.'&c=1';
+		$malo = 'data:image/png;base64,'.base64_encode(file_get_contents(Yii::app()->getBaseUrl(true)."/images/1.png", false, stream_context_create(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false)))));
+		$url_malo = Yii::app()->getBaseUrl(true).'/index.php?r=ticket/fticket&id='.$id.'&c=1';
 
-		$neutro = 'data:image/png;base64,'.base64_encode(file_get_contents(Yii::app()->getBaseUrl(true)."/images/2.png", false, stream_context_create(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false)))));
-		$url_neutro = Yii::app()->getBaseUrl(true).'/index.php?r=ticket/fticket&id='.$id.'&c=2';
+		$regular = 'data:image/png;base64,'.base64_encode(file_get_contents(Yii::app()->getBaseUrl(true)."/images/2.png", false, stream_context_create(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false)))));
+		$url_regular = Yii::app()->getBaseUrl(true).'/index.php?r=ticket/fticket&id='.$id.'&c=2';
 
 
 		$bueno = 'data:image/png;base64,'.base64_encode(file_get_contents(Yii::app()->getBaseUrl(true)."/images/3.png", false, stream_context_create(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false)))));
 		$url_bueno = Yii::app()->getBaseUrl(true).'/index.php?r=ticket/fticket&id='.$id.'&c=3';
 
+		$excelente = 'data:image/png;base64,'.base64_encode(file_get_contents(Yii::app()->getBaseUrl(true)."/images/4.png", false, stream_context_create(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false)))));
+		$url_excelente = Yii::app()->getBaseUrl(true).'/index.php?r=ticket/fticket&id='.$id.'&c=4';
 
-		if($ticket->Notas != ""){ $notas = $ticket->Notas; }else{ $notas="-"; }
+
+		
 
 		$url = Yii::app()->getBaseUrl(true).'/index.php?r=ticket/cticket&token='.base64_encode($id);
 			
@@ -976,13 +1207,13 @@ class UtilidadesMail {
 		</head>
 		<body>
 		    <center>
-		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 60%;">
+		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 80%;">
 		            <tr>
 		                <td style="background-color: #ffffff;">
 		                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
 		                        <tr>
 		                            <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-		                            	<img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/>
+		                            	<center><img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/></center>
 		                                <h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">'.UtilidadesMail::horamensaje().'</h1>
 		                                <h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">Califica nuestro servicio.</h1>
 		                                <p>El ticket ( ID '.$id.' ) ha sido cerrado:</p>
@@ -990,10 +1221,11 @@ class UtilidadesMail {
 		                                <strong>Descripción del caso: </strong><p>'.$desc_caso.'</p>
 		                                <strong>Notas: </strong><p>'.$notas.'</p>
 		                                <hr>
-		                                <p>Seleccione o haga click en el emoji para calificar este servicio:</p>
-		                                <a href="'.$url_por_mejorar.'"/><img src="'.$por_mejorar.'" alt="POR MEJORAR" title="POR MEJORAR"/></a>
-									    <a href="'.$url_neutro.'"/><img src="'.$neutro.'" alt="NEUTRO" title="NEUTRO"/></a>
+		                                <p>Por favor califique este servicio:</p>
+		                                <a href="'.$url_malo.'"/><img src="'.$malo.'" alt="MALO" title="MALO"/></a>
+									    <a href="'.$url_regular.'"/><img src="'.$regular.'" alt="REGULAR" title="REGULAR"/></a>
 									    <a href="'.$url_bueno.'"/><img src="'.$bueno.'" alt="BUENO" title="BUENO"/></a>
+									    <a href="'.$url_excelente.'"/><img src="'.$excelente.'" alt="EXCELENTE" title="EXCELENTE"/></a>
 		                            </td>
 		                        </tr>
 		                    </table>
@@ -1082,16 +1314,16 @@ class UtilidadesMail {
 		</head>
 		<body>
 		    <center>
-		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 60%;">
+		        <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); transition: 0.3s; width: 80%;">
 		            <tr>
 		                <td style="background-color: #ffffff;">
 		                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
 		                        <tr>
 		                            <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-		                            	<img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/>
+		                            	<center><img src="'.$logo.'" alt="'.CHtml::encode(Yii::app()->name).'" title="'.CHtml::encode(Yii::app()->name).'"/></center>
 		                            	<h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">'.UtilidadesMail::horamensaje().'</h1>
 		                                <p>Se Adjunta documento PDF con detalle de emisión de producto (ID '.$id.').</p>
-		                                <p>Haga click <a href="'.$url.'"/>aqui</a> para marcar el documento como visto.</p>
+		                                <a href="'.$url.'"/><h3>Haga click aqui para marcar el documento como visto.</h3></a>
 		                                <hr>
 		                            </td>
 		                        </tr>
@@ -1126,7 +1358,7 @@ class UtilidadesMail {
 		
         $mail->addAddress($correo);
 
-        $mail->AddAttachment($ruta_doc, "Emision Producto ".$id.'.pdf');
+        $mail->AddAttachment($ruta_doc, "Emisión Producto ".$id.'.pdf');
 
         if(!$mail->send()){
 			return 0;
