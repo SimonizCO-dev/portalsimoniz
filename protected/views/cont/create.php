@@ -3,7 +3,7 @@
 /* @var $model Cont */
 
 //para combos de empresas
-$lista_empresas = CHtml::listData($empresas, 'Id_Empresa', 'Descripcion');
+$lista_empresas = CHtml::listData($empresas, 'Id_Pa_Empresa', 'Descripcion');
 
 //para combos de tipos de periodicidad
 $lista_period = CHtml::listData($period, 'Id_Dominio', 'Dominio');

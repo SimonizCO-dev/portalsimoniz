@@ -746,7 +746,7 @@ class IntegController extends Controller
 		{
 			
 			$command = Yii::app()->db->createCommand();
-			$sql='EXEC P_PR_CONF_MOBILE_PED_ERROR';
+			$sql='EXEC P_CF_CONF_MOBILE_PED_ERROR';
 			$command->setText($sql)->execute();
 
 			Yii::app()->user->setFlash('success', "El proceso se ejecuto correctamente.");

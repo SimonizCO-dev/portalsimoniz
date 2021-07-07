@@ -18,7 +18,7 @@
 
 <div class="row mb-2">
   <div class="col-sm-6">
-    <h4>Eliminación de recibos</h4>
+    <h4>Actualización de recibos</h4>
   </div>
   <div class="col-sm-6 text-right">
   	<?php echo $form->hiddenField($model,'opc', array('class' => 'form-control', 'readonly' => true, 'value' => 1)); ?>
