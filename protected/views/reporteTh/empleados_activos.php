@@ -127,6 +127,9 @@ $(function() {
       });
   });
 
+  $("#ReporteTh_empresa > option").prop("selected","selected");// Select All Options
+  $("#ReporteTh_empresa").trigger("change");// Trigger change to select 2
+
   //variables para el lenguaje del datepicker
   $.fn.datepicker.dates['es'] = {
       days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],

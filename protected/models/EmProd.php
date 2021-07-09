@@ -45,6 +45,24 @@ class EmProd extends CActiveRecord
 	}
 
 
+	public function ResumenUsers($id){
+        
+  		//se busca el mismo nombre de usuario con id diferente al registro afectado
+        $criteria=new CDbCriteria;
+		$criteria->condition='Id_Em_Prod=:Id_Em_Prod';
+		$criteria->params=array(':Id_Em_Prod'=>$id);
+		$total= count(EmProdVal::model()->findAll($criteria));
+
+		$criteria=new CDbCriteria;
+		$criteria->condition='Id_Em_Prod=:Id_Em_Prod AND Estado=:Estado';
+		$criteria->params=array(':Id_Em_Prod'=>$id,':Estado'=>1);
+		$val= count(EmProdVal::model()->findAll($criteria));
+
+		return $total.' / '.$val;
+    
+    }
+
+
 	/**
 	 * @return array relational rules.
 	 */
@@ -66,12 +84,13 @@ class EmProd extends CActiveRecord
 		return array(
 			'Id_Em_Prod' => 'ID',
 			'Documento' => 'Documento',
-			'Notas' => 'Notas',
+			'Notas' => 'Nombre de emisión',
 			'Id_Usuario_Creacion' => 'Usuario que creo',
 			'Fecha_Creacion' => 'Fecha de creación',
 			'Id_Usuario_Actualizacion' => 'Ultimo usuario que actualizó',
 			'Fecha_Actualizacion' => 'Ultima fecha de actualización',
 			'sop' => 'Soporte',
+			'val_us' => 'Usuarios Not. / Validación',
 		);
 	}
 

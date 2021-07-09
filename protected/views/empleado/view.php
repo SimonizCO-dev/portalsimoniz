@@ -88,16 +88,18 @@ function calcularEdad(fecha) {
             <ul class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 48px, 0px);">
             <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=empleado/update&id='.$model->Id_Empleado; ?>">Actualizar datos de empleado</a></li>
             <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=nucleoEmpleado/create&e='.$model->Id_Empleado; ?>">Registro de pariente</a></li>
-            <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=formacionEmpleado/create&e='.$model->Id_Empleado; ?>">Registro de estudio</a></li>
+            <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=formacionEmpleado/create&e='.$model->Id_Empleado; ?>">Registro de estudio</a></li>   
             <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=evaluacionEmpleado/create&e='.$model->Id_Empleado; ?>">Registro de evaluación</a></li>
             <?php if ($asociacion_elementos == 0 && $upd_th == true) { ?>  
                 <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=contratoEmpleado/create&e='.$model->Id_Empleado; ?>">Registro de contrato</a></li>
             <?php } else { ?>
+                <?php if ($asociacion_elementos == 1 && $upd_th == true) { ?>  
                 <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=turnoEmpleado/create&e='.$model->Id_Empleado; ?>">Registro de turno</a></li>
                 <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=ausenciaEmpleado/create&e='.$model->Id_Empleado; ?>">Registro de ausencia</a></li>
                 <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=disciplinarioEmpleado/create&e='.$model->Id_Empleado.'&opc=1'; ?>">Registro llamado de atención</a></li>
                 <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=disciplinarioEmpleado/create&e='.$model->Id_Empleado.'&opc=2'; ?>">Registro de sanción</a></li>
                 <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=disciplinarioEmpleado/create&e='.$model->Id_Empleado.'&opc=3'; ?>">Registro de comparendo</a></li>
+                <?php } ?>
                 <?php if ($ter_cont == 1 && $upd_th == true) { ?>  
                     <li class="dropdown-item small"><a href="<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=contratoEmpleado/terminacion&e='.$model->Id_Empleado; ?>">Terminación de contrato</a></li>
                 <?php } ?>

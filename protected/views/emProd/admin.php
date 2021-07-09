@@ -38,6 +38,10 @@ $lista_usuarios = CHtml::listData($usuarios, 'Id_Usuario', 'Usuario');
 	'columns'=>array(
 		'Id_Em_Prod',
 		'Notas',
+        array(
+            'name' => 'val_us',
+            'value' => '$data->ResumenUsers($data->Id_Em_Prod)',
+        ),
 		array(
             'class'=>'CButtonColumn',
             'template'=>'{update}',

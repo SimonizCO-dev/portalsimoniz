@@ -80,7 +80,6 @@ $objPHPExcel->setActiveSheetIndex(0)->setCellValue('L1', 'Cargo');
 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('M1', 'Centro de costo');
 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('N1', 'Fec. ingreso');
 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('O1', 'Salario');
-$objPHPExcel->setActiveSheetIndex(0)->setCellValue('P1', 'Salario flexible ?');
 
 $objPHPExcel->getActiveSheet(0)->getStyle('A1:P1')->getAlignment()->setHorizontal($alignment_center);
 $objPHPExcel->getActiveSheet(0)->getStyle('A1:P1')->getFont()->setBold(true);
@@ -166,12 +165,10 @@ foreach ($query1 as $reg1) {
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('M'.$Fila, $cc);
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('N'.$Fila, $fecha_ingreso);
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('O'.$Fila, $salario);
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('P'.$Fila, $sf);
   
   $objPHPExcel->getActiveSheet(0)->getStyle('A'.$Fila.':N'.$Fila)->getAlignment()->setHorizontal($alignment_left);
   $objPHPExcel->getActiveSheet(0)->getStyle('O'.$Fila)->getNumberFormat()->setFormatCode('0');
   $objPHPExcel->getActiveSheet(0)->getStyle('O'.$Fila)->getAlignment()->setHorizontal($alignment_right);
-  $objPHPExcel->getActiveSheet(0)->getStyle('P'.$Fila)->getAlignment()->setHorizontal($alignment_left);
   
   $Fila = $Fila + 1;
 

@@ -86,13 +86,6 @@
             <?php echo '<p>'.number_format($model->Salario, 0).'</p>'; ?> 
         </div>
     </div>
-    <div class="col-sm-4">
-        <div class="form-group">
-            <?php echo $form->label($model,'Salario_Flexible', array('class' => 'control-label')); ?>
-            <?php echo $form->error($model,'Salario_Flexible', array('class' => 'badge badge-warning float-right')); ?>
-            <?php echo '<p>'.$salario_flexible.'</p>'; ?>  
-        </div>
-    </div>
 </div>
 <div class="row">
     <div class="col-sm-4">

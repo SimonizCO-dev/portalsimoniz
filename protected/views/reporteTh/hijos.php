@@ -153,6 +153,9 @@ $(function() {
       });
   });
 
+  $("#ReporteTh_empresa > option").prop("selected","selected");// Select All Options
+  $("#ReporteTh_empresa").trigger("change");// Trigger change to select 2
+
 });
 
 function reporte_pantalla(){

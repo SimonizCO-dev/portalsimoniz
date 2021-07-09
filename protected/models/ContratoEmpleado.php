@@ -59,7 +59,7 @@ class ContratoEmpleado extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('Id_Empresa, Id_Unidad_Gerencia, Id_Area, Id_Subarea, Id_Cargo, Fecha_Ingreso, Salario, Id_Centro_Costo, Salario_Flexible', 'required', 'on' => 'create, update'),
+			array('Id_Empresa, Id_Unidad_Gerencia, Id_Area, Id_Subarea, Id_Cargo, Fecha_Ingreso, Salario, Id_Centro_Costo', 'required', 'on' => 'create, update'),
 			array('Fecha_Liquidacion', 'required', 'on' => 'update2'),
 			array('Fecha_Retiro, Id_M_Retiro', 'required', 'on' => 'terminacion'),
 			array('Id_Empleado, Id_Cargo, Id_Area, Id_Empresa, Id_M_Retiro, Id_Usuario_Creacion, Id_Usuario_Actualizacion, Salario, Id_Turno, Id_Grupo, Id_Con_Ex_Ocup, Id_Centro_Costo, Salario_Flexible', 'numerical', 'integerOnly'=>true),

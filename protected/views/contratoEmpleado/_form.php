@@ -184,27 +184,6 @@
             <?php echo $form->numberField($model,'Salario', array('class' => 'form-control form-control-sm', 'autocomplete' => 'off', 'type' => 'number')); ?>
         </div>
     </div>
-    <div class="col-sm-4">
-        <div class="form-group">
-            <?php echo $form->label($model,'Salario_Flexible', array('class' => 'control-label')); ?>
-            <?php echo $form->error($model,'Salario_Flexible', array('class' => 'badge badge-warning float-right')); ?>
-            <?php $estados2 = Yii::app()->params->estados2; ?>
-            <?php
-                $this->widget('ext.select2.ESelect2',array(
-                    'name'=>'ContratoEmpleado[Salario_Flexible]',
-                    'id'=>'ContratoEmpleado_Salario_Flexible',
-                    'data'=>$estados2,
-                    'value' => $model->Salario_Flexible,
-                    'htmlOptions'=>array(),
-                    'options'=>array(
-                        'placeholder'=>'Seleccione...',
-                        'width'=> '100%',
-                        'allowClear'=>true,
-                    ),
-                ));
-            ?>
-        </div>
-    </div>
 </div>
 <div class="row">
     <div class="col-sm-4">
