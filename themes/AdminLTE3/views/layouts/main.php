@@ -414,7 +414,7 @@ $(function() {
   $('.timepicker').timepicker({
       template: false,
       showInputs: true,
-      minuteStep: 15,
+      minuteStep: 5,
       defaultTime: false,
       timeFormat: 'h:mm p',
       //showMeridian: false
