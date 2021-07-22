@@ -41,7 +41,7 @@ $query_e ="
   @TIPO = '".$ti."'
 ";
 
-UtilidadesVarias::log($query);
+UtilidadesVarias::log($query_e);
 
 $data_e = Yii::app()->db->createCommand($query_e)->queryAll();
 
