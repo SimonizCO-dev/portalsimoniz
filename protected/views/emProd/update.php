@@ -83,15 +83,14 @@ $(function() {
 	
 </script>
 
-
 <div class="row mb-2">
     <div class="col-sm-4">
         <h4>Detalle emisión de producto</h4>
     </div>
     <div class="col-sm-8 text-right">  
         <button type="button" class="btn btn-primary btn-sm" onclick="location.href = '<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=emprod/admin'; ?>';"><i class="fa fa-reply"></i> Volver</button>
-        <button type="button" class="btn btn-primary btn-sm" id="toogle_button"><i class="fa fa-low-vision"></i> Ver / ocultar doc.</button>
-	    <button type="button" class="btn btn-primary btn-sm" id="download"><i class="fas fa-file-pdf"></i> Descargar documento </button>
+        <button type="button" class="btn btn-primary btn-sm" id="toogle_button"><i class="fa fa-low-vision"></i> Ver / ocultar emisión</button>
+	    <button type="button" class="btn btn-primary btn-sm" id="download"><i class="fas fa-file-pdf"></i> Descargue e imprima aquí la emisión</button>
 	    <div style="display: none;">
 	        <a href="<?php echo Yii::app()->getBaseUrl(true).'/files/portal_reportes/emision_prod/'.$model->Documento; ?>" download="<?php echo $model->Documento; ?>" style="display: none;" id="link"></a>
 	    </div>

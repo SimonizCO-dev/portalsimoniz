@@ -12,7 +12,13 @@
 <p>Utilice los filtros para optimizar la busqueda:</p>
 
 	<div class="row">
-	    <div class="col-sm-3">
+		<div class="col-sm-3">
+	    	<div class="form-group">
+	          	<?php echo $form->label($model,'Codigo'); ?>
+			    <?php echo $form->textField($model,'Codigo', array('class' => 'form-control form-control-sm', 'autocomplete' => 'off')); ?>
+	        </div>
+	    </div> 
+	    <div class="col-sm-9">
 	    	<div class="form-group">
 	          	<?php echo $form->label($model,'Notas'); ?>
 			    <?php echo $form->textField($model,'Notas', array('class' => 'form-control form-control-sm', 'autocomplete' => 'off')); ?>

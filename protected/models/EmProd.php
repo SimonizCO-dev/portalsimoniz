@@ -5,6 +5,7 @@
  *
  * The followings are the available columns in table 'TH_EM_PROD':
  * @property integer $Id_Em_Prod
+ * @property string $Codigo
  * @property string $Notas
  * @property integer $Id_Usuario_Creacion
  * @property string $Fecha_Creacion
@@ -18,6 +19,8 @@
 class EmProd extends CActiveRecord
 {
 	public $sop;
+	public $val_us;
+	public $estado;
 
 	/**
 	 * @return string the associated database table name
@@ -35,12 +38,12 @@ class EmProd extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('Notas', 'required'),
+			array('Codigo, Notas', 'required'),
 			array('Id_Usuario_Creacion, Id_Usuario_Actualizacion', 'numerical', 'integerOnly'=>true),
 			array('Documento', 'length', 'max'=>200),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('Id_Reg_Imp, Notas, Id_Usuario_Creacion, Fecha_Creacion, Id_Usuario_Actualizacion, Fecha_Actualizacion, item', 'safe', 'on'=>'search'),
+			array('Id_Reg_Imp, Codigo, Notas, Id_Usuario_Creacion, Fecha_Creacion, Id_Usuario_Actualizacion, Fecha_Actualizacion, item', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -61,6 +64,29 @@ class EmProd extends CActiveRecord
 		return $total.' / '.$val;
     
     }
+
+
+    public function DescEstado($id, $user){
+        
+  		$criteria = new CDbCriteria();
+		$criteria->addCondition("Id_Em_Prod = :Id_Em_Prod AND Id_Usuario = :Id_Usuario");
+		$criteria->params = array(':Id_Em_Prod' => $id, ':Id_Usuario' => $user);
+		$model = EmProdVal::model()->find($criteria);
+
+		if(!is_null($model)){
+			if($model->Estado == 0){
+				$texto_estado = '<p class="fas fa-clock text-warning" title="SIN REVISAR"></p>';
+			}else{
+				$texto_estado = '<p class="fas fa-check text-success" title="VISTO"></p>';
+			}
+		}else{
+			$texto_estado = '<p class="fas fa-minus text-secondary" title="N/A"></p>';
+		}
+
+    	return $texto_estado;
+    }
+
+
 
 
 	/**
@@ -84,13 +110,15 @@ class EmProd extends CActiveRecord
 		return array(
 			'Id_Em_Prod' => 'ID',
 			'Documento' => 'Documento',
-			'Notas' => 'Nombre de emisión',
+			'Codigo' => 'Código',
+			'Notas' => 'Notas',
 			'Id_Usuario_Creacion' => 'Usuario que creo',
 			'Fecha_Creacion' => 'Fecha de creación',
 			'Id_Usuario_Actualizacion' => 'Ultimo usuario que actualizó',
 			'Fecha_Actualizacion' => 'Ultima fecha de actualización',
 			'sop' => 'Soporte',
 			'val_us' => 'Usuarios Not. / Validación',
+			'estado' => 'Estado',
 		);
 	}
 
@@ -117,6 +145,7 @@ class EmProd extends CActiveRecord
 
 
 		$criteria->compare('t.Id_Em_Prod',$this->Id_Em_Prod);
+		$criteria->compare('t.Codigo',$this->Codigo,true);
 		$criteria->compare('t.Notas',$this->Notas,true);
 
 		if($this->Id_Usuario_Creacion != ""){

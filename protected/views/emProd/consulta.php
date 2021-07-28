@@ -12,17 +12,6 @@ $('.search-form form').submit(function(){
 });
 ");
 
-//usuarios para registro
-
-$u_reg = EmProdUsuario::model()->findByPk(1)->Id_Users_Notif;
-$usuarios_reg = explode(",", $u_reg);
-
-if(in_array(Yii::app()->user->getState('id_user'), $usuarios_reg)){
-    $vis = 1;
-}else{
-    $vis = 0;
-}
-
 //para combos de usuarios
 $lista_usuarios = CHtml::listData($usuarios, 'Id_Usuario', 'Usuario'); 
 
@@ -30,14 +19,9 @@ $lista_usuarios = CHtml::listData($usuarios, 'Id_Usuario', 'Usuario');
 
 <div class="row mb-2">
     <div class="col-sm-6">
-        <h4>Administración emisiones de producto I + D + I</h4>
+        <h4>Consulta emisiones de producto I + D + I</h4>
     </div>
-    <div class="col-sm-6 text-right">
-        <?php if($vis == 1){ ?>  
-        <button type="button" class="btn btn-primary btn-sm" onclick="location.href = '<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=emprod/create'; ?>';"><i class="fa fa-plus"></i> Nuevo registro</button>
-        <button type="button" class="btn btn-primary btn-sm" onclick="location.href = '<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=emprodusuario/update&id=1'; ?>';"><i class="fas fa-users"></i> Usuarios registro</button>
-        <button type="button" class="btn btn-primary btn-sm" onclick="location.href = '<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=emprodusuario/update&id=2'; ?>';"><i class="fas fa-users"></i> Usuarios validación</button>
-        <?php } ?>
+    <div class="col-sm-6 text-right">  
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-search"><i class="fa fa-filter"></i> Busqueda avanzada</button>
     </div>
 </div>
@@ -51,21 +35,22 @@ $lista_usuarios = CHtml::listData($usuarios, 'Id_Usuario', 'Usuario');
     'enableSorting' => false,
 	'columns'=>array(
 		'Id_Em_Prod',
-		'Codigo',
-        'Notas',
+        'Codigo',
+		'Notas',
         array(
-            'name' => 'val_us',
-            'value' => '$data->ResumenUsers($data->Id_Em_Prod)',
+            'name' => 'estado',
+            'type'=>'html',
+            'value' => '$data->DescEstado($data->Id_Em_Prod, Yii::app()->user->getState("id_user"))',
         ),
 		array(
             'class'=>'CButtonColumn',
-            'template'=>'{update}',
+            'template'=>'{view}',
             'buttons'=>array(
-                'update'=>array(
-                    'label'=>'<i class="fa fa-pen actions text-dark"></i>',
+                'view'=>array(
+                    'label'=>'<i class="fa fa-eye actions text-dark"></i>',
                     'imageUrl'=>false,
                     'options'=>array('title'=>'Visualizar'),
-                    'visible'=> '(Yii::app()->user->getState("permiso_act") == true) && ('.$vis.' == 1)',
+                    'visible'=> '(Yii::app()->user->getState("permiso_act") == true)',
                 ),
             )
         ),

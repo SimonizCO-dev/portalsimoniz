@@ -20,16 +20,23 @@
 )); ?>
 
 <div class="row">
-	 <div class="col-sm-8">
+		<div class="col-sm-3">
+        <div class="form-group">
+          <?php echo $form->label($model,'Codigo', array('class' => 'control-label')); ?>
+          <?php echo $form->error($model,'Codigo', array('class' => 'badge badge-warning float-right')); ?>
+          <?php echo $form->textField($model,'Codigo', array('class' => 'form-control form-control-sm', 'maxlength' => 20, 'autocomplete' => 'off', 'onkeyup' => 'convert_may(this)')); ?>
+        </div>
+    </div>
+	 	<div class="col-sm-9">
 		  <div class="form-group">
         <?php echo $form->error($model,'Notas', array('class' => 'badge badge-warning float-right')); ?>
 			  <?php echo $form->label($model,'Notas'); ?>
-			  <?php echo $form->textArea($model,'Notas',array('class' => 'form-control form-control-sm', 'rows'=>3, 'cols'=>50, 'onkeyup' => 'convert_may(this)')); ?>
+			  <?php echo $form->textArea($model,'Notas',array('class' => 'form-control form-control-sm', 'rows'=>3, 'cols'=>50, 'maxlength'=>500, 'onkeyup' => 'convert_may(this)')); ?>
 		  </div>
-	 </div>
+	 	</div>
 </div>
 <div class="row">
-  <div class="col-sm-8">
+  <div class="col-sm-9">
     <div class="form-group">
       <?php echo $form->label($model,'sop', array('class' => 'control-label')); ?>
       <div class="badge badge-warning float-right" id="error_sop" style="display: none;"></div><br>

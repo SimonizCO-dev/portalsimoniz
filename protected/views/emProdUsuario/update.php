@@ -43,6 +43,6 @@ $(function() {
 
 </script>
 
-<h4>Actualización de usuarios para notificación de emisión</h4>
+<h4>Configuración de usuarios emisiones de producto</h4>
 
 <?php $this->renderPartial('_form', array('model'=>$model, 'lista_usuarios'=>$lista_usuarios)); ?>

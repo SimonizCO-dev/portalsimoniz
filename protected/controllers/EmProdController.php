@@ -28,11 +28,11 @@ class EmProdController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('view','create','update'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin', 'envionotif'),
+				'actions'=>array('admin', 'consulta', 'envionotif','viewdoc2'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -43,6 +43,36 @@ class EmProdController extends Controller
 				'users'=>array('*'),
 			),
 		);
+	}
+
+	/**
+	 * Displays a particular model.
+	 * @param integer $id the ID of the model to be displayed
+	 */
+	public function actionView($id)
+	{
+		
+		$model = $this->loadModel($id);
+
+		$criteria = new CDbCriteria();
+		$criteria->addCondition("Id_Em_Prod = :Id_Em_Prod AND Id_Usuario = :Id_Usuario");
+		$criteria->params = array(':Id_Em_Prod' => $id, ':Id_Usuario' => Yii::app()->user->getState('id_user'));
+		$model_u = EmProdVal::model()->find($criteria);
+
+		if(!is_null($model_u)){
+			if($model_u->Estado == 0){
+				$val = 1;
+			}else{
+				$val = 0;
+			}
+		}else{
+			$val = 0;
+		}
+
+		$this->render('view',array(
+			'model'=>$model,
+			'val'=>$val,
+		));
 	}
 
 	/**
@@ -86,7 +116,7 @@ class EmProdController extends Controller
             if($model->save()){
                 $documento_subido->saveAs(Yii::app()->basePath.'/../files/portal_reportes/emision_prod/'.$model->Documento);
 
-                $usuarios = EmProdUsuario::model()->findByPk(1)->Id_Users_Notif;
+                $usuarios = EmProdUsuario::model()->findByPk(2)->Id_Users_Notif;
 
 				$usuarios_notif = Yii::app()->db->createCommand("SELECT Id_Usuario, Correo, Estado FROM T_PR_USUARIO WHERE Id_Usuario IN (".$usuarios.")")->queryAll();
 
@@ -103,7 +133,7 @@ class EmProdController extends Controller
 						$nuevo_usuario_validador->Estado = 0;
 						if($nuevo_usuario_validador->save()){
 							//despues de agregar usuario en lista de validación de la emision de producto se notifica via email
-							$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us['Id_Usuario'], $us['Correo']);	
+							$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us['Id_Usuario'], $us['Correo'], 1);	
 							$notif_env = $notif_env + $resp;
 						}
 					}
@@ -170,7 +200,7 @@ class EmProdController extends Controller
 					$criteria->params = array(':Id_Em_Prod' => $id);
 					$del_usuarios_notif = EmProdVal::model()->deleteAll($criteria);
 
-                	$usuarios = EmProdUsuario::model()->findByPk(1)->Id_Users_Notif;
+                	$usuarios = EmProdUsuario::model()->findByPk(2)->Id_Users_Notif;
 
 					$usuarios_notif = Yii::app()->db->createCommand("SELECT Id_Usuario, Correo, Estado FROM T_PR_USUARIO WHERE Id_Usuario IN (".$usuarios.")")->queryAll();
 
@@ -187,7 +217,7 @@ class EmProdController extends Controller
 							$nuevo_usuario_validador->Estado = 0;
 							if($nuevo_usuario_validador->save()){
 								//despues de agregar usuario en lista de validación de la emision de producto se notifica via email
-								$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us['Id_Usuario'], $us['Correo']);	
+								$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us['Id_Usuario'], $us['Correo'], 2);	
 								$notif_env = $notif_env + $resp;
 							}
 						}
@@ -234,6 +264,24 @@ class EmProdController extends Controller
 	}
 
 	/**
+	 * Manages all models.
+	 */
+	public function actionConsulta()
+	{
+		$model=new EmProd('search');
+		$usuarios=Usuario::model()->findAll(array('order'=>'Usuario'));
+
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['EmProd']))
+			$model->attributes=$_GET['EmProd'];
+
+		$this->render('consulta',array(
+			'model'=>$model,
+			'usuarios'=>$usuarios,
+		));
+	}
+
+	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
@@ -269,7 +317,6 @@ class EmProdController extends Controller
 		}else{
 			$v = 0;
 		}
-
 
         $criteria = new CDbCriteria();
 		$criteria->addCondition("Id_Em_Prod = :Id_Em_Prod AND Id_Usuario = :Id_Usuario");
@@ -316,6 +363,42 @@ class EmProdController extends Controller
 
     }
 
+    public function actionViewDoc2($id, $u)
+    {
+        
+        $criteria = new CDbCriteria();
+		$criteria->addCondition("Id_Em_Prod = :Id_Em_Prod AND Id_Usuario = :Id_Usuario");
+		$criteria->params = array(':Id_Em_Prod' => $id, ':Id_Usuario' => $u);
+		$model = EmProdVal::model()->find($criteria);
+
+        if($model->Estado == 0){
+
+	        $model->Estado = 1;
+	        $model->Fecha_Actualizacion = date('Y-m-d H:i:s');
+
+	        if($model->save()){
+	            
+	            //Vista logueado
+	            Yii::app()->user->setFlash('success', "Se marco como vista la emisión de producto ( ID ".$id." ).");
+	            $this->redirect(array('emprod/view&id='.$id)); 
+	            
+	        }else{
+	            
+	            //Vista logueado
+	            Yii::app()->user->setFlash('warning', "Error al marcar como vista la emisión de producto ( ID ".$id." ).");
+	           	$this->redirect(array('emprod/view&id='.$id));    
+	            
+	        }
+	    }else{
+
+	        //Vista logueado
+	        Yii::app()->user->setFlash('warning', "La solicitud es invalida o el documento ya se marco como visto");
+	       	$this->redirect(array('emprod/view&id='.$id));    
+            
+	    }
+
+    }
+
     public function actionEnvioNotif($id)
 	{
 		$model=$this->loadModel($id);
@@ -323,7 +406,7 @@ class EmProdController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);		
 
-        $usuarios = EmProdUsuario::model()->findByPk(1)->Id_Users_Notif;
+        $usuarios = EmProdUsuario::model()->findByPk(2)->Id_Users_Notif;
 
         $usuarios_notif = Yii::app()->db->createCommand("SELECT Id_Usuario, Correo, Estado FROM T_PR_USUARIO WHERE Id_Usuario IN (".$usuarios.")")->queryAll();
 
@@ -343,7 +426,7 @@ class EmProdController extends Controller
 			if(!is_null($val)){
 				if($val->Estado == 0){
 					//se notifica via email
-					$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us['Id_Usuario'], $us['Correo']);	
+					$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us['Id_Usuario'], $us['Correo'], 3);	
 					$notif_env = $notif_env + $resp;
 				}
 			}else{
@@ -353,7 +436,7 @@ class EmProdController extends Controller
 				$nuevo_usuario_validador->Estado = 0;
 				if($nuevo_usuario_validador->save()){
 					//despues de agregar usuario en lista de validación de la emision de producto se notifica via email
-					$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us['Id_Usuario'], $us['Id_Usuario']);	
+					$resp = UtilidadesMail::envionotifemisionproducto($model->Id_Em_Prod, $us['Id_Usuario'], $us['Id_Usuario'], 1);	
 					$notif_env = $notif_env + $resp;
 				}
 			}

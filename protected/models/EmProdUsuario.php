@@ -74,7 +74,7 @@ class EmProdUsuario extends CActiveRecord
 	{
 		return array(
 			'Id' => 'ID',
-			'Id_Users_Notif' => 'Usuarios para notif.',
+			'Id_Users_Notif' => 'Usuarios',
 			'Id_Usuario_Creacion' => 'Usuario que creo',
 			'Fecha_Hora_Creacion' => 'Fecha de creación',
 			'Id_Usuario_Actualizacion' => 'Ultimo usuario que actualizo',
