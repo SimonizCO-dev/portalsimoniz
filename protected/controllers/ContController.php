@@ -14,7 +14,7 @@ class ContController extends Controller
 	public function filters()
 	{
 		return array(
-			'accessControl', // perform access control for CRUD operations
+			#'accessControl', // perform access control for CRUD operations
 			'postOnly + delete', // we only allow deletion via POST request
 		);
 	}
@@ -213,6 +213,36 @@ class ContController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+	/*public function actionCreate(){
+		$model=new Cont;
+
+		$this->renderPartial('excel',array('model' => $model));	
+	}*/
+
+	public function actionExport(){
+    	
+    	$model=new Cont('search');
+	    $model->unsetAttributes();  // clear any default values
+	    
+	  
+
+    	$dp = $model->search();
+		$dp->setPagination(false);
+ 
+		$data = $dp->getData();
+
+		Yii::app()->user->setState('cvendedores-export',$data);
+	}
+
+	public function actionCsv()
+	{
+		#$data = Yii::app()->user->getState('cvendedores-export');
+		$model=new Cont;
+		/*$this->renderPartial('excel',array('data' => $model));	*/
+
+	
+		$this->renderPartial('excel',array('data' => $model));
 	}
 
 	public function actionViewRes()

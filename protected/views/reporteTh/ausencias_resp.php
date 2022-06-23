@@ -275,6 +275,18 @@ if($opcion == 1){
           $notas = "-";
         }
 
+        if($reg1['Fecha_Inicial'] != ""){
+          $fecha_inicial = $reg1['Fecha_Inicial']; 
+        }else{
+          $fecha_inicial = "-";
+        }
+
+        if($reg1['Fecha_Final'] != ""){
+          $fecha_final = $reg1['Fecha_Final']; 
+        }else{
+          $fecha_final = "-";
+        }
+
         $this->SetFont('Arial','',6);
         $this->Cell(30,3,utf8_decode($tipo_ident),0,0,'L');
         $this->Cell(20,3,utf8_decode($ident),0,0,'L');

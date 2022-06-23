@@ -68,6 +68,7 @@ class CControlCmsController extends Controller
 		$model=new CControlCms('search');
 
 		$tipos = Yii::app()->db->createCommand("SELECT d.Id_Dominio, d.Dominio FROM T_PR_DOMINIO d WHERE Id_Padre = ".Yii::app()->params->tipos_comision." AND Estado = 1 ORDER BY d.Dominio")->queryAll();
+		
 
 		$usuarios=Usuario::model()->findAll(array('order'=>'Usuario'));
 
@@ -125,6 +126,8 @@ class CControlCmsController extends Controller
 	public function actionGenRepLiq($id, $opc)
 	{
 		$model = CControlCms::model()->findByAttributes(array('ID_BASE' => $id)); 
+		//print_r($model);die();
+		
 		$this->renderPartial('gen_rep_liq',array('id' => $model->ID_BASE, 'opc' => $opc));
 	}
 
@@ -249,9 +252,14 @@ class CControlCmsController extends Controller
 	public function actionEnvioNotifLiq()
 	{
 		$id_base = $_POST['id_base'];
+		#$id_base = 194;
 		$cadena_emails_adic = $_POST['cadena_emails_adic'];
+		
+		#$cadena_emails_adic = 'andres.arias@simonizco.com';
+		
 
 		//se genera un documento con detalle x vendedor y si van correos adic. tambien general
+		
 		$this->renderPartial('save_pdf_liq_det',array('id' => $id_base, 'cadena_emails_adic' => $cadena_emails_adic));	
 		
 	}

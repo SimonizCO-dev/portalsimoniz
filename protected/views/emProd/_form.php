@@ -2,6 +2,10 @@
 /* @var $this RegImpController */
 /* @var $model RegImp */
 /* @var $form CActiveForm */
+
+$lista_perfiles = CHtml::listData($m_usuarios, 'Id_Usuario', 'Nombres'); 
+
+
 ?>
 
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -34,6 +38,30 @@
 			  <?php echo $form->textArea($model,'Notas',array('class' => 'form-control form-control-sm', 'rows'=>3, 'cols'=>50, 'maxlength'=>500, 'onkeyup' => 'convert_may(this)')); ?>
 		  </div>
 	 	</div>
+</div>
+<div class="row">
+  <div class="col-sm-6">
+        <div class="form-group">
+            <?php echo $form->label($model,'Id_Users_Notif', array('class' => 'control-label')); ?>
+            <?php echo $form->error($model,'Id_Users_Notif', array('class' => 'badge badge-warning float-right')); ?>
+            <?php
+                $this->widget('ext.select2.ESelect2',array(
+                    'name'=>'EmProd[Id_Users_Notif]',
+                    'id'=>'emprod_id_users_notif',
+                    'data'=>$lista_perfiles,
+                    'htmlOptions'=>array(
+                        'multiple'=>'multiple',
+                    ),
+                    'options'=>array(
+                        'placeholder'=>'Seleccione...',
+                        'width'=> '100%',
+                        'allowClear'=>true,
+                    ),
+                ));
+            ?>
+        </div>
+    </div>
+
 </div>
 <div class="row">
   <div class="col-sm-9">

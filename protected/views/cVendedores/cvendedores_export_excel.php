@@ -2,6 +2,7 @@
 /* @var $this PromocionController */
 /* @var $model Promocion */
 
+
 set_time_limit(0);
 
 spl_autoload_unregister(array('YiiBase','autoload'));  
@@ -109,6 +110,7 @@ foreach (range(0, $nCols) as $col) {
 }
 
 $n = 'Vendedores_'.date('Y_m_d_H_i_s');
+
 
 header('Content-Type: application/vnd.ms-excel');
 header('Content-Disposition: attachment;filename="'.$n.'.xlsx"');

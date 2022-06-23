@@ -154,6 +154,7 @@ class ElementoController extends Controller
 		$id_subarea = $_POST['id_subarea'];
 		$id_cargo = $_POST['id_cargo'];
 
+	
 		$opc_sugeridos = UtilidadesElemento::getelementossugerido($id_contrato, $id_area, $id_subarea, $id_cargo);
 		echo $opc_sugeridos;
 	}

@@ -51,6 +51,8 @@ $query ="
   @FECHA_FIN = N'".$FechaM2."'
 ";
 
+// die($query);
+
 UtilidadesVarias::log($query);
 
 //EXCEL

@@ -71,13 +71,12 @@ class ComisionController extends Controller
  	}
 
 	public function actionLiquidacion()
-	{		
+	{	
+		
 		$model=new Comision;
 		$model->scenario = 'liquidacion';
 
-		/*$ins_bd1 = Yii::app()->db->createCommand("
-			EXEC P_CF_CMS_INS_RECIBOS
-		")->execute();
+		/*	$ins_bd1 = Yii::app()->db->createCommand("EXEC P_CF_CMS_INS_RECIBOS")->execute();
 
 		$ins_bd2 = Yii::app()->db->createCommand("
 			EXEC P_CF_CMS_INS_VENTAS
@@ -87,6 +86,7 @@ class ComisionController extends Controller
 			EXEC P_CF_CMS_INS_VENTAS_DET
 		")->execute();*/
 
+	
 		$tipos = Yii::app()->db->createCommand("SELECT d.Id_Dominio, d.Dominio FROM T_PR_DOMINIO d WHERE Id_Padre = ".Yii::app()->params->tipos_comision." AND Estado = 1 ORDER BY d.Dominio")->queryAll();
 
 		$this->render('liquidacion',array(
@@ -120,7 +120,7 @@ class ComisionController extends Controller
 
 		$anio = intval($_POST['anio']);
 
-		if($mes < 10){
+		if ($mes < 10){
 			$mes = '0'.$mes;
 		}
 
@@ -130,9 +130,9 @@ class ComisionController extends Controller
 		$desc_tipo = Dominio::model()->findByPk($tip)->Dominio;
 
 		$liq = intval($_POST['liquidacion']);
-		if($liq == 1){
+		if ($liq == 1){
 			$desc_liq = "INDIVIDUAL";
-		}else{
+		} else {
 			$desc_liq = "TODOS LOS VENDEDORES";	
 		}
 
@@ -152,12 +152,12 @@ class ComisionController extends Controller
 		/*LIQUIDAR ACELERADOR*/
 		$liq_acel = Yii::app()->db->createCommand("SET NOCOUNT ON EXEC P_CF_CMS_EJEC_ACEL_VEND @ID1 = ".$id.", @VENDEDOR1 = ".$vendedor.", @PERIODO = ".$periodo)->queryRow();
 
-		$RES = $liq_acel['RES'];
-		
-		if($RES == 1){
+		$RES = $liq_acel['RES'];		
+
+		if ($RES == 1){
 			/*LIQUIDAR VENTAS*/
 			$liq_vent = Yii::app()->db->createCommand("EXEC P_CF_CMS_EJEC_VENT_VEND @ID = ".$id.", @VENDEDOR = ".$vendedor.", @PERIODO = ".$periodo)->query();
-
+			
 			/*LIQUIDAR RECAUDOS*/
 			$liq_recau = Yii::app()->db->createCommand("EXEC P_CF_CMS_EJEC_REC_VEND @ID = ".$id.", @VENDEDOR = ".$vendedor.", @PERIODO = ".$periodo)->query();
 
@@ -172,9 +172,13 @@ class ComisionController extends Controller
 		//VERIFICACIÓN DE INSERCION POR LA LIQUIDACIÓN
 		$est_liq = Yii::app()->db->createCommand("EXEC P_CF_CMS_CONS_ID_INSERT @ROWID = ".$id)->queryRow();
 
+		/*$resp = array('res' => '', 'msg' =>$id. ' '.$vendedor.' '.$periodo);
+			echo json_encode($resp);
+			return;*/
+			
 		$VALID = $est_liq['VR1'];
 
-		if($VALID == 1){
+		if ($VALID == 1){
 			//SI GENERO RESULTADOS LA LIQUIDACION
 			$new_liq = new CControlCms;
 			$new_liq->ID_BASE = $id;
@@ -182,7 +186,7 @@ class ComisionController extends Controller
 			$new_liq->ANIO = intval($_POST['anio']);
 			$new_liq->TIPO = $tip;
 			$new_liq->LIQUIDACION = $liq;
-			if($vendedor != 0 && $vendedor != ""){
+			if ($vendedor != 0 && $vendedor != ""){
 				$new_liq->VENDEDOR = $vendedor;
 			}
 			$new_liq->OBSERVACION = $observaciones;
@@ -191,7 +195,7 @@ class ComisionController extends Controller
 			$new_liq->ID_USUARIO_ACTUALIZACION = Yii::app()->user->getState('id_user');
 			$new_liq->FECHA_CREACION = date('Y-m-d H:i:s');
 			$new_liq->FECHA_ACTUALIZACION = date('Y-m-d H:i:s');
-			if($new_liq->save()){
+			if ($new_liq->save()){
 
 				$res = 1;
 				$msg = "La ejecución del proceso con los siguientes parametros:<br><br>
@@ -207,7 +211,7 @@ class ComisionController extends Controller
 
 			}
 
-		}else{
+		} else {
 
 			$res = 0;
 			$msg = "La ejecución del proceso con los siguientes parametros:<br><br>
@@ -250,7 +254,7 @@ class ComisionController extends Controller
 
 		$anio = intval($_POST['anio']);
 
-		if($mes < 10){
+		if ($mes < 10){
 			$mes = '0'.$mes;
 		}
 
@@ -260,9 +264,10 @@ class ComisionController extends Controller
 		$desc_tipo = Dominio::model()->findByPk($tip)->Dominio;
 
 		$liq = intval($_POST['liquidacion']);
-		if($liq == 1){
+
+		if ($liq == 1){
 			$desc_liq = "INDIVIDUAL";
-		}else{
+		} else {
 			$desc_liq = "TODOS LOS VENDEDORES";	
 		}
 
@@ -274,17 +279,24 @@ class ComisionController extends Controller
 		$q_next_id = Yii::app()->db->createCommand("EXEC P_CF_CMS_EJEC_ID_VEND")->queryRow();
 
 		$id = $q_next_id['id'];
-
+		
 		//se valida si hay otra ejecución en curso
 		$v = Yii::app()->db->createCommand("SET NOCOUNT ON EXEC P_CF_CMS_EJEC_VAL_VEND @Tipo= ".$tip)->queryRow();
 
-		$response = $v['VAL'];
+		$response = 1;//$v['VAL'];
 	
-		if($response == 1){
-
+		/*$resp = array('res' => '', 'msg' =>$tip);
+		echo json_encode($resp);
+		return;*/
+		
+ 		/*Estaba en 1 el condicional */
+		if ($response == 1){
+			/*$resp = array('res' => '', 'msg' =>$tip);
+			echo json_encode($resp);
+			return;*/
 			$q_vendedores = Yii::app()->db->createCommand("SELECT ROWID FROM T_PR_C_VENDEDORES WHERE TIPO = ".$tip." AND ESTADO = 'ACTIVO'")->queryAll();
-
-			if(!empty($q_vendedores)){
+		
+			if (!empty($q_vendedores)){
 
 				//$i = 0;
 
@@ -297,32 +309,48 @@ class ComisionController extends Controller
 
 					$RES = $liq_acel['RES'];
 				
-					if($RES == 1){
+			
+
+					if ($RES == 1){
 
 						/*LIQUIDAR VENTAS*/
 						$liq_vent = Yii::app()->db->createCommand("EXEC P_CF_CMS_EJEC_VENT_VEND @ID = ".$id.", @VENDEDOR = ".$vend.", @PERIODO = ".$periodo)->query();
+					/*	$resp = array('res' => '', 'msg' =>$tip);
+						echo json_encode($resp);
+						return;*/
 						
 						/*LIQUIDAR RECAUDOS*/
 						$liq_recau = Yii::app()->db->createCommand("EXEC P_CF_CMS_EJEC_REC_VEND @ID = ".$id.", @VENDEDOR = ".$vend.", @PERIODO = ".$periodo)->query();
 
 						/*LIQUIDAR AJUSTES*/
 						$liq_recau = Yii::app()->db->createCommand("EXEC P_CF_CMS_EJEC_AJUS_REC_VEND @ID = ".$id.", @VENDEDOR = ".$vend.", @PERIODO = ".$periodo)->query();
-
+						
 						$act_liq = Yii::app()->db->createCommand("EXEC P_CF_CMS_EJEC_ACT_LIQ  @ROWID = ".$vend)->query();		
+	
 					}
 				}
 
+				/*$resp = array('res' => '', 'msg' =>$vend.' '.$id.' '.$periodo);
+				echo json_encode($resp);
+				return;*/
 			$del_int = Yii::app()->db->createCommand("EXEC P_CF_CMS_EJEC_RET_LIQ")->query();
-
+			
 			}
 		}
 
+		// $resp = array('res' => '', 'msg' => $id.' '.$periodo);
+		// echo json_encode($resp);
+		// return;
+
 		//VERIFICACIÓN DE INSERCION POR LA LIQUIDACIÓN
+		//echo 'Valor: '. $id;die();
+
 		$est_liq = Yii::app()->db->createCommand("EXEC P_CF_CMS_CONS_ID_INSERT @ROWID = ".$id)->queryRow();
+		// $est_liq = Yii::app()->db->createCommand("EXEC P_CF_CMS_CONS_ID_INSERT @ROWID = 309")->queryRow();
 
 		$VALID = $est_liq['VR1'];
 
-		if($VALID == 1){
+		if ($VALID == 1){
 			//SI GENERO RESULTADOS LA LIQUIDACION
 			$new_liq = new CControlCms;
 			$new_liq->ID_BASE = $id;
@@ -330,7 +358,7 @@ class ComisionController extends Controller
 			$new_liq->ANIO = intval($_POST['anio']);
 			$new_liq->TIPO = $tip;
 			$new_liq->LIQUIDACION = $liq;
-			if($vendedor != 0 && $vendedor != ""){
+			if ($vendedor != 0 && $vendedor != ""){
 				$new_liq->VENDEDOR = $vendedor;
 			}
 			$new_liq->OBSERVACION = $observaciones;
@@ -339,7 +367,8 @@ class ComisionController extends Controller
 			$new_liq->ID_USUARIO_ACTUALIZACION = Yii::app()->user->getState('id_user');
 			$new_liq->FECHA_CREACION = date('Y-m-d H:i:s');
 			$new_liq->FECHA_ACTUALIZACION = date('Y-m-d H:i:s');
-			if($new_liq->save()){
+			
+			if ($new_liq->save()){
 
 				$res = 1;
 				$msg = "La ejecución del proceso con los siguientes parametros:<br><br>
@@ -349,12 +378,12 @@ class ComisionController extends Controller
 				<strong>Liquidación: </strong>".$desc_liq."<br>
 				<strong>Observaciones: </strong>".$observaciones."<br><br>
 				<strong>Genero la liquidación con ID ".$id."</strong><br>";
-				$resp = array('res' => $res, 'msg' => $msg);
+				$resp = array('res' => $res, 'msg' => $msg, 'id' => $id);
         		echo json_encode($resp);
 
 			}
 
-		}else{
+		} else {
 
 			$res = 0;
 			$msg = "La ejecución del proceso con los siguientes parametros:<br><br>
@@ -363,12 +392,12 @@ class ComisionController extends Controller
 			<strong>Tipo: </strong>".$desc_tipo."<br>
 			<strong>Liquidación: </strong>".$desc_liq."<br>
 			<strong>Observaciones: </strong>".$observaciones."<br><br>
-			<strong>No genero ninguna liquidación.</strong>";
-			$resp = array('res' => $res, 'msg' => $msg);
-    		echo json_encode($resp);	
+			<strong>Genero la liquidación con ID ".$id."</strong><br>
+			<strong>No genero ningunas liquidación.</strong>";
+			$resp = array('res' => $res, 'msg' => $msg, 'id' => $id);
+    		echo json_encode($resp);
 		
 		}
-
 	}
 
 	public function actionAjuste()
@@ -407,7 +436,7 @@ class ComisionController extends Controller
 
 		$VALID = $est_ajuste['VR1'];
 
-		if($VALID == 1){
+		if ($VALID == 1){
 			//SI GENERO El AJUSTE
 			
 			$res = 1;
@@ -415,7 +444,7 @@ class ComisionController extends Controller
 			$resp = array('res' => $res, 'msg' => $msg);
     		echo json_encode($resp);
 
-		}else{
+		} else {
 
 			$res = 0;
 			$msg = "No se pudo realizar el ajuste del recibo.";
@@ -458,7 +487,7 @@ class ComisionController extends Controller
  		$tipo = $_POST['tipo'];
  		$id_docto = $_POST['documento'];
 
- 		if($tipo == 1){
+ 		if ($tipo == 1){
 			
 			//FACTURA
  			$sql_hist_docto = "
@@ -612,7 +641,7 @@ class ComisionController extends Controller
 
  		}
 
- 		if($tipo == 2){
+ 		if ($tipo == 2){
  			
  			//RECIBO
  			$sql_hist_docto = "

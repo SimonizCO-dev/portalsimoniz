@@ -1296,6 +1296,8 @@ class UtilidadesMail {
 		$logo = 'data:image/png;base64,'.base64_encode(file_get_contents(Yii::app()->getBaseUrl(true)."/images/login-logo.png", false, stream_context_create(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false)))));
 
 		$modelo_emision = EmProd::model()->findByPk($id);
+		
+		$nota=$modelo_emision->Notas;
 
 		$ruta_doc = Yii::app()->basePath.'/../files/portal_reportes/emision_prod/'.$modelo_emision->Documento;
 
@@ -1303,7 +1305,9 @@ class UtilidadesMail {
 
 		$usuarios = EmProdUsuario::model()->findByPk(1)->Id_Users_Notif;
 
-        $usuarios_notif = Yii::app()->db->createCommand("SELECT Id_Usuario, Correo, Estado FROM T_PR_USUARIO WHERE Id_Usuario IN (".$usuarios.")")->queryAll();
+        $usuarios_notif = Yii::app()->db->createCommand("SELECT Id_Usuario, Correo, Estado FROM T_PR_USUARIO WHERE Id_Usuario IN (".Yii::app()->user->getState('id_user').")")->queryAll();
+
+		//$q_con = Yii::app()->db->createCommand("SELECT TOP 1 Correo FROM T_PR_USUARIO where Id_Usuario=".Yii::app()->user->getState('id_user'))->queryRow();
 
         $correos_sol = '';
 
@@ -1314,7 +1318,7 @@ class UtilidadesMail {
         }
 
 		if($opc == 1){
-			$asunto = 'Se ha cargado una nueva emisión de producto';
+			$asunto = "Se ha cargado la emisión del producto (".$nota.")";
 			$texto1 = 'VALIDE AQUI LA EMISIÓN.';
 			$texto2 = 'Tiene una semana para marcar como vista esta emisión, si no tenemos respuesta tomaremos este documento como visto.';
 			$texto3 = 'En caso de dudas / comentarios dirigirse a: .';
@@ -1322,7 +1326,7 @@ class UtilidadesMail {
 		}
 
 		if($opc == 2){
-			$asunto = 'Se ha actualizado una emisión de producto';
+			$asunto = "Se ha actualizado una emisión de producto (".$nota.")";
 			$texto1 = 'VALIDE AQUI LA EMISIÓN.';
 			$texto2 = 'Tiene una semana para validar esta emisión, si no tenemos respuesta, daremos por validado que revisó la información.';
 			$texto3 = 'En caso de dudas / comentarios dirigirse a:';
@@ -1330,7 +1334,7 @@ class UtilidadesMail {
 		}
 
 		if($opc == 3){
-			$asunto = 'Recordatorio revisión emisión de producto';
+			$asunto = "Recordatorio revisión emisión de producto (".$nota.")";
 			$texto1 = 'VALIDE AQUI LA EMISIÓN.';
 			$texto2 = 'Tiene una semana para marcar como vista esta emisión, si no tenemos respuesta tomaremos este documento como visto.';
 			$texto3 = 'En caso de dudas / comentarios dirigirse a:';
@@ -1360,7 +1364,7 @@ class UtilidadesMail {
 		                            	</center>
 		                            	<h1 style="margin: 0 0 10px; font-size: 25px; line-height: 30px; color: #333333; font-weight: normal;">'.UtilidadesMail::horamensaje().'</h1>
 		                            		       
-		                                <p>Se Adjunta documento PDF con detalle de emisión de producto (ID '.$id.').</p>
+		                                <p>Se Adjunta documento PDF con detalle de emisión de producto ('.$nota.').</p>
 		                                <a href="'.$url.'"/><h3>'.$texto1.'</h3></a>
 		                                <p>'.$texto2.'</p>
 		                                <p>'.$texto3.'</p>

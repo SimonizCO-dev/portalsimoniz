@@ -21,7 +21,6 @@ class EmProd extends CActiveRecord
 	public $sop;
 	public $val_us;
 	public $estado;
-	public $Id_Users_Notif;
 
 	/**
 	 * @return string the associated database table name
@@ -40,8 +39,6 @@ class EmProd extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('Codigo, Notas', 'required'),
-			array('Id_Users_Notif', 'safe'),
-			
 			array('Id_Usuario_Creacion, Id_Usuario_Actualizacion', 'numerical', 'integerOnly'=>true),
 			array('Documento', 'length', 'max'=>200),
 			// The following rule is used by search().

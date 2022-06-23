@@ -14,14 +14,19 @@ class UtilidadesElemento {
 		$criteria->params=array(':Id_Area'=>$id_area,':Id_Subarea'=>$id_subarea,':Id_Cargo'=>$id_cargo,':Estado'=> 1);
 		$sugerido=Sugerido::model()->find($criteria);
 
+/*	echo $id_subarea.' '.$id_cargo.' '.$id_area;
+		die();*/
 		//subareas y areas asignadas a usuario
 		$array_subareas =Yii::app()->user->getState('array_subareas');
 		$array_areas =Yii::app()->user->getState('array_areas');
 
+		
 		if(!empty($sugerido)){
 
+			
 			$id_sugerido = $sugerido->Id_Sugerido;
 
+		
 	        $area = Area::model()->findByPk($id_area)->Area;
 	        $subarea = Subarea::model()->findByPk($id_subarea)->Subarea;
 			$cargo = Cargo::model()->findByPk($id_cargo)->Cargo;
@@ -46,6 +51,7 @@ class UtilidadesElemento {
 
 	        $flag = 0; 
 
+			
 	        foreach ($elementos_sugerido as $es) {
 
 	        	//se determina si el usuario tiene la subarea y area del elemento asignado para ser manipulado, si no se muestra el elemento con check disabled
@@ -64,12 +70,17 @@ class UtilidadesElemento {
 
 			        	$texto_area_elemento = $modelo_area_elemento->idelemento->Elemento.' ('.$modelo_area_elemento->idsubarea->Subarea.' / '.$modelo_area_elemento->idarea->Area.')';
         	
+						
 			        	$criteria=new CDbCriteria;
 						$criteria->condition='Id_Contrato=:Id_Contrato AND Id_A_Elemento = :Id_A_Elemento AND Estado=:Estado';
 						$criteria->params=array(':Id_Contrato'=>$id_contrato,':Id_A_Elemento'=>$id_elemento,':Estado'=> 3);
 
+						
 						$elemento_emp_asig_pend = ElementoEmpleado::model()->find($criteria);
-
+					
+						
+						
+						
 						$criteria2=new CDbCriteria;
 						$criteria2->condition='Id_Contrato=:Id_Contrato AND Id_A_Elemento = :Id_A_Elemento AND Estado=:Estado';
 						$criteria2->params=array(':Id_Contrato'=>$id_contrato,':Id_A_Elemento'=>$id_elemento,':Estado'=> 1);

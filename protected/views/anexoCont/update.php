@@ -14,8 +14,9 @@ $(function() {
 	var idInput = "valid_sop";
 	var idMsg = "error_sop";
 	var pesoPermitido = 10240;
-
+    
 	$("#valida_form").click(function() {
+        
       var form = $("#anexo-cont-form");
       var settings = form.data('settings') ;
 
@@ -63,7 +64,9 @@ $(function() {
 	    }   
 	});
 
-	renderPdfByUrl('<?php echo Yii::app()->getBaseUrl(true).'/files/panel_adm/docs_contratos/'.$model->Doc_Soporte; ?>');
+
+
+	renderPdfByUrl('<?php echo Yii::app()->getBaseUrl(true).'/files/panel_adm/docs_contratos/'.str_replace("#","",$model->Doc_Soporte); ?>');
 
 	$('#toogle_button').click(function(){
    

@@ -116,19 +116,26 @@ $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D1', 'Género');
 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E1', 'Fec. nacimiento');
 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F1', 'E-mail');
 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G1', 'Teléfono(s)');
-$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H1', 'Grado escolaridad');
-$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I1', 'Persona contacto');
-$objPHPExcel->setActiveSheetIndex(0)->setCellValue('J1', 'Teléfono(s) contacto');
-$objPHPExcel->setActiveSheetIndex(0)->setCellValue('K1', 'Empresa');
-$objPHPExcel->setActiveSheetIndex(0)->setCellValue('L1', 'Unidad de gerencia');
-$objPHPExcel->setActiveSheetIndex(0)->setCellValue('M1', 'Área');
-$objPHPExcel->setActiveSheetIndex(0)->setCellValue('N1', 'Subárea');
-$objPHPExcel->setActiveSheetIndex(0)->setCellValue('O1', 'Cargo');
-$objPHPExcel->setActiveSheetIndex(0)->setCellValue('P1', 'Fec. ingreso');
-$objPHPExcel->setActiveSheetIndex(0)->setCellValue('Q1', 'Salario');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('H1', 'Dirección');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('I1', 'Grado escolaridad');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('J1', 'Persona contacto');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('K1', 'Teléfono(s) contacto');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('L1', 'Empresa');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('M1', 'Unidad de gerencia');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('N1', 'Área');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('O1', 'Subárea');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('P1', 'Cargo');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('Q1', 'Fec. ingreso');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('R1', 'Salario');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('S1', 'Talla overol');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('T1', 'Talla camisa');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('U1', 'Talla zapato');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('V1', 'Talla pantalon');
+$objPHPExcel->setActiveSheetIndex(0)->setCellValue('W1', 'Talla bata');
 
-$objPHPExcel->getActiveSheet(0)->getStyle('A1:Q1')->getAlignment()->setHorizontal($alignment_center);
-$objPHPExcel->getActiveSheet(0)->getStyle('A1:Q1')->getFont()->setBold(true);
+
+$objPHPExcel->getActiveSheet(0)->getStyle('A1:W1')->getAlignment()->setHorizontal($alignment_center);
+$objPHPExcel->getActiveSheet(0)->getStyle('A1:W1')->getFont()->setBold(true);
 
 /*Inicio contenido tabla*/
 
@@ -154,6 +161,12 @@ foreach ($query1 as $reg1) {
     $telefono = $reg1 ['Telefono']; 
   }else{
     $telefono = "-";
+  }
+
+  if($reg1 ['Direccion'] != ""){
+    $direccion = $reg1 ['Direccion']; 
+  }else{
+    $direccion = "-";
   }
 
   if($reg1 ['Persona_Contacto'] != ""){
@@ -203,6 +216,37 @@ foreach ($query1 as $reg1) {
   $fecha_ingreso = $reg1 ['Fecha_Ingreso']; 
   $salario = number_format($reg1['Salario'],0);
 
+  if($reg1 ['Talla_Overol'] != ""){
+    $talla_overol = $reg1 ['Talla_Overol']; 
+  }else{
+    $talla_overol = "-";
+  }
+
+  if($reg1 ['Talla_Camisa'] != ""){
+    $talla_camisa = $reg1 ['Talla_Camisa']; 
+  }else{
+    $talla_camisa = "-";
+  }
+
+  if($reg1 ['Talla_Zapato'] != ""){
+    $talla_zapato = $reg1 ['Talla_Zapato']; 
+  }else{
+    $talla_zapato = "-";
+  }
+
+  if($reg1 ['Talla_Pantalon'] != ""){
+    $talla_pantalon = $reg1 ['Talla_Pantalon']; 
+  }else{
+    $talla_pantalon = "-";
+  }
+
+  if($reg1 ['Talla_Bata'] != ""){
+    $talla_bata = $reg1 ['Talla_Bata']; 
+  }else{
+    $talla_bata = "-";
+  }
+
+
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$Fila, $tipo_ident);
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$Fila, $ident);
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$Fila, $empleado);
@@ -210,16 +254,22 @@ foreach ($query1 as $reg1) {
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$Fila, $fecha_nacimiento);
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$Fila, $correo);
   $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$Fila, $telefono);
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$Fila, $gr_esc);
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.$Fila, $persona_contacto);
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('J'.$Fila, $tel_persona_contacto);
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('K'.$Fila, $empresa);
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('L'.$Fila, $ug);
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('M'.$Fila, $area);
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('N'.$Fila, $subarea);
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('O'.$Fila, $cargo);
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('P'.$Fila, $fecha_ingreso);
-  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('Q'.$Fila, $salario);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$Fila, $direccion);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.$Fila, $gr_esc);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('J'.$Fila, $persona_contacto);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('K'.$Fila, $tel_persona_contacto);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('L'.$Fila, $empresa);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('M'.$Fila, $ug);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('N'.$Fila, $area);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('O'.$Fila, $subarea);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('P'.$Fila, $cargo);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('Q'.$Fila, $fecha_ingreso);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('R'.$Fila, $salario);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('S'.$Fila, $talla_overol);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('T'.$Fila, $talla_camisa);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('U'.$Fila, $talla_zapato);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('V'.$Fila, $talla_pantalon);
+  $objPHPExcel->setActiveSheetIndex(0)->setCellValue('W'.$Fila, $talla_bata);
   
   $objPHPExcel->getActiveSheet(0)->getStyle('Q'.$Fila)->getNumberFormat()->setFormatCode('0');
   $objPHPExcel->getActiveSheet(0)->getStyle('A'.$Fila.':P'.$Fila)->getAlignment()->setHorizontal($alignment_left);

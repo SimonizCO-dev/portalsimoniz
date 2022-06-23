@@ -146,7 +146,7 @@ class CPtjRecaudosController extends Controller
 
 		$q = Yii::app()->db->createCommand("SELECT ROWID FROM T_PR_C_PTJ_RECAUDOS WHERE TIPO = ".$tipo." AND (('".$dia_inicial."' BETWEEN DIA_INICIAL AND DIA_FINAL) OR ('".$dia_final."' BETWEEN DIA_INICIAL AND DIA_FINAL) OR ('".$dia_inicial."' < DIA_INICIAL AND '".$dia_final."' > DIA_FINAL)) AND ESTADO = 1")->queryRow();
 		
-        $id = $q['ROWID'];
+        $id = (!empty($q)?$q['ROWID']:null);
 
         if(!is_null($id)){
         	$valid = 0;

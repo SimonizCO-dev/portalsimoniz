@@ -109,8 +109,6 @@ class ReporteCController extends Controller
 		if(isset($_POST['ReporteC']))
 		{
 
-
-			
 			$opc = $_POST['ReporteC']['opc'];
 
 			if($opc == 1){
@@ -268,7 +266,6 @@ class ReporteCController extends Controller
 
 		if(isset($_POST['ReporteC']))
 		{
-		
 			$model=$_POST['ReporteC'];
 			$this->renderPartial('verificacion_recibos_resp',array('model' => $model));	
 		}
@@ -281,14 +278,13 @@ class ReporteCController extends Controller
 	public function actionVerificacionRecibosPant()
 	{		
 
-		$fecha_inicial = $_POST['fecha_inicial'];
-		$resultados = UtilidadesReportesC::verificacionrecibospantallaFecha($fecha_inicial);
-		
+		$resultados = UtilidadesReportesC::verificacionrecibospantalla();
+
 		echo $resultados;
 	}
 
 	public function actionControlRecibos()
-	{
+	{		
 		$model=new ReporteC;
 		$model->scenario = 'control_recibos';
 

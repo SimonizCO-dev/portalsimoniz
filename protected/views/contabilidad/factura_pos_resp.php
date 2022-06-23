@@ -342,6 +342,7 @@ class PDF extends FPDF{
                     $exc = $exc + $info_item[5];
                 }
 
+                
                 //$venta = $venta + $info_item[5];
                 $descuentos = $descuentos + $info_item[6];
                 $iva = $iva + $info_item[7];

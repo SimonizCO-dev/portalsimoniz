@@ -39,7 +39,7 @@ $query ="
   EXEC P_PR_FIN_CT_CIRCULAR_SD_CLIENTE_ACT
   @RUTA = N'".$ruta."',
   @ESTADO = N'".$estado."'
-";
+";//die($query);
 
 UtilidadesVarias::log($query);
 

@@ -89,6 +89,16 @@ class EmProdController extends Controller
 		//se obtiene el consecutivo para el siguiente WIP
 
 		$q_con = Yii::app()->db->createCommand("SELECT TOP 1 Id_Em_Prod FROM T_PR_EM_PROD ORDER BY Id_Em_Prod DESC")->queryRow();
+		$m_usuarios=Usuario::model()->findAll(array('order'=>'Usuario', 'condition'=>'Estado=:estado', 'params'=>array(':estado'=>1)));
+		$usuariosEmail = EmProdUsuario::model()->findByPk(1)->id_Users_Email;
+	
+		$array_user_email = array();
+		//opciones activas en el combo usuarios de notif.
+		$a_user_email =  explode(",",$usuariosEmail);
+		foreach ($a_user_email as $un => $id) {
+			array_push($array_user_email, $id);
+		}
+		$user_correos = json_encode($array_user_email);
 
 		if(!empty($q_con)){
 				
@@ -113,10 +123,19 @@ class EmProdController extends Controller
             $nombre_archivo = "Emision_Prod_{$n}.pdf"; 
             $model->Documento = $nombre_archivo;
  
+		
+
             if($model->save()){
                 $documento_subido->saveAs(Yii::app()->basePath.'/../files/portal_reportes/emision_prod/'.$model->Documento);
-
-                $usuarios = EmProdUsuario::model()->findByPk(2)->Id_Users_Notif;
+				$Variable='';				
+				foreach($model->Id_Users_Notif as $row=>$key){					
+					$Variable.=','.$key;
+				}
+				
+			#	die($Variable);-
+				EmProdUsuario::model()->updateAll(array('id_Users_Email'=>ltrim($Variable,",")),'id=1');
+           
+                $usuarios = EmProdUsuario::model()->findByPk(1)->id_Users_Email;
 
 				$usuarios_notif = Yii::app()->db->createCommand("SELECT Id_Usuario, Correo, Estado FROM T_PR_USUARIO WHERE Id_Usuario IN (".$usuarios.")")->queryAll();
 
@@ -152,6 +171,8 @@ class EmProdController extends Controller
 
 		$this->render('create',array(
 			'model'=>$model,
+			'm_usuarios'=>$m_usuarios,
+			'user_email'=>$user_correos
 		));
 	}
 
@@ -250,6 +271,7 @@ class EmProdController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		
 		$model=new EmProd('search');
 		$usuarios=Usuario::model()->findAll(array('order'=>'Usuario'));
 
@@ -257,28 +279,44 @@ class EmProdController extends Controller
 		if(isset($_GET['EmProd']))
 			$model->attributes=$_GET['EmProd'];
 
+			$SQL="update T_PR_EM_PROD_USUARIO set  id_Users_Email=id_Users_Email_bk";
+			Yii::app()->db->createCommand($SQL)->execute();
 		$this->render('admin',array(
 			'model'=>$model,
 			'usuarios'=>$usuarios,
 		));
 	}
 
+	public function actionEliminar($id)
+	{
+		die("prueba");
+		
+	}
 	/**
 	 * Manages all models.
 	 */
-	public function actionConsulta()
+	public function actionConsulta($id=0,$cons=0)
 	{
-		$model=new EmProd('search');
-		$usuarios=Usuario::model()->findAll(array('order'=>'Usuario'));
+		if ($cons==0){
+				$model=new EmProd('search');
+				$usuarios=Usuario::model()->findAll(array('order'=>'Usuario'));
 
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['EmProd']))
-			$model->attributes=$_GET['EmProd'];
+				$model->unsetAttributes();  // clear any default values
+				if(isset($_GET['EmProd']))
+					$model->attributes=$_GET['EmProd'];
 
-		$this->render('consulta',array(
-			'model'=>$model,
-			'usuarios'=>$usuarios,
-		));
+				$this->render('consulta',array(
+					'model'=>$model,
+					'usuarios'=>$usuarios,
+				));
+		}else{
+			$SQL='delete from T_PR_EM_PROD where Id_Em_Prod='.$id;
+			
+			Yii::app()->db->createCommand($SQL)->execute();
+			Yii::app()->user->setFlash('success', "Registro Eliminado satisfactoriamente ( ID ".$id." ).");
+			$this->redirect(array('emprod/admin'));  
+		}
+	  
 	}
 
 	/**
@@ -336,7 +374,7 @@ class EmProdController extends Controller
 	            }else{
 	                //Vista logueado
 	                Yii::app()->user->setFlash('success', "Se marco como vista la emisión de producto ( ID ".$id." ).");
-	                $this->redirect(array('site/info'));
+	                $this->redirect(array('emprod/consulta'));
 	            }
 	        }else{
 	            if($v == 0){
@@ -346,7 +384,7 @@ class EmProdController extends Controller
 	            }else{
 	                //Vista logueado
 	                Yii::app()->user->setFlash('warning', "Error al marcar como vista la emisión de producto ( ID ".$id." ).");
-	               	$this->redirect(array('site/info'));   
+	               	$this->redirect(array('emprod/consulta'));   
 	            }
 	        }
 	    }else{

@@ -145,9 +145,11 @@ class CPtjCumpController extends Controller
 		$cum_final = $_POST['cum_final'];
 
 		$q = Yii::app()->db->createCommand("SELECT ROWID FROM T_PR_C_PTJ_CUMPLIMIENTO WHERE TIPO = ".$tipo." AND (('".$cum_inicial."' BETWEEN CUM_INICIAL AND CUM_FINAL) OR ('".$cum_final."' BETWEEN CUM_INICIAL AND CUM_FINAL) OR ('".$cum_inicial."' < CUM_INICIAL AND '".$cum_final."' > CUM_FINAL)) AND ESTADO = 1")->queryRow();
-		
-        $id = $q['ROWID'];
 
+     
+        $id = (!empty($q)?$q['ROWID']:null);
+
+		
         if(!is_null($id)){
         	$valid = 0;
         	$id_row = $id;
@@ -160,6 +162,7 @@ class CPtjCumpController extends Controller
 		$data['id'] = $id_row;
 
 		echo json_encode($data);
+	
 	
 	}
 }

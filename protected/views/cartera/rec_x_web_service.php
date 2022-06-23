@@ -39,7 +39,7 @@
       <button type="button" class="btn btn-primary btn-sm" onclick="resetfields();"><i class="fa fa-eraser"></i> Limpiar filtros</button>
       <button type="button" class="btn btn-primary btn-sm" id="valida_form"><i class="fas fa-file-excel"></i> Generar</button>
     </div>
-</div>    
+</div>
 
 
 <?php $this->endWidget(); ?>

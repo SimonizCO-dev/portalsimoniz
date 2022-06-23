@@ -2,6 +2,8 @@
 /* @var $this ContController */
 /* @var $model Cont */
 
+
+
 Yii::app()->clientScript->registerScript('search', "
 $('.search-form form').submit(function(){
     $('#cont-grid').yiiGridView('update', {
@@ -10,6 +12,22 @@ $('.search-form form').submit(function(){
     $('#modal-search').modal('hide');
     return false;
 });
+
+$('#export-excel').on('click',function() {
+    $.fn.yiiGridView.export();
+});
+$.fn.yiiGridView.export = function() {
+    $.fn.yiiGridView.update('cont-grid',{ 
+        success: function() {
+            window.location = '". $this->createUrl('csv')  . "';
+            $(\".ajax-loader\").fadeIn('fast');
+            setTimeout(function(){ $(\".ajax-loader\").fadeOut('fast'); }, 10000);
+        },
+        data: $('.search-form form').serialize() + '&export=true'
+    });
+}
+
+
 ");
 
 //para combos de empresas
@@ -20,6 +38,8 @@ $lista_period = CHtml::listData($period, 'Id_Dominio', 'Dominio');
 
 ?>
 
+
+
 <div class="row mb-2">
     <div class="col-sm-6">
         <h4>Administración de contratos</h4>
@@ -27,6 +47,7 @@ $lista_period = CHtml::listData($period, 'Id_Dominio', 'Dominio');
     <div class="col-sm-6 text-right">  
         <button type="button" class="btn btn-primary btn-sm" onclick="location.href = '<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=cont/create'; ?>';"><i class="fa fa-plus"></i> Nuevo registro</button>
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-search"><i class="fa fa-filter"></i> Busqueda avanzada</button>
+        <button type="button" class="btn btn-primary btn-sm" id="export-excel"><i class="fas fa-file-excel"></i> Exportar a CSV</button>
     </div>
 </div>
 

@@ -6,7 +6,7 @@ set_time_limit(0);
 
 $query ="
   SET NOCOUNT ON
-  EXEC P_PR_CRC_CONS_RECIBOS_FECHA '".$model['fecha_inicial']."'
+  EXEC P_PR_CRC_CONS_RECIBOS
 ";
 
 spl_autoload_unregister(array('YiiBase','autoload'));  

@@ -28,6 +28,9 @@ $('.search-form form').submit(function(){
 //para combos de usuarios
 $lista_usuarios = CHtml::listData($usuarios, 'Id_Usuario', 'Usuario');
 
+
+        
+
 //para combos de areas
 $lista_areas = CHtml::listData($areas, 'Id_Area', 'Area');
 
@@ -38,7 +41,9 @@ $lista_areas = CHtml::listData($areas, 'Id_Area', 'Area');
     <h4>Control de facturas</h4>
   </div>
   <div class="col-sm-6 text-right"> 
-    <button type="button" class="btn btn-primary btn-sm" onclick="location.href = '<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=factcont/create'; ?>';"><i class="fa fa-plus"></i> Nuevo registro</button>
+      <?php if ($SoloConsulta==0){ ?>
+        <button type="button" class="btn btn-primary btn-sm" onclick="location.href = '<?php echo Yii::app()->getBaseUrl(true).'/index.php?r=factcont/create'; ?>';"><i class="fa fa-plus"></i> Nuevo registro</button>
+       <?php } ?>
     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-search"><i class="fa fa-filter"></i> Busqueda avanzada</button>
 	<button type="button" class="btn btn-primary btn-sm" id="export-excel"><i class="fas fa-file-excel"></i> Exportar a EXCEL</button>
   </div>
@@ -99,11 +104,12 @@ $lista_areas = CHtml::listData($areas, 'Id_Area', 'Area');
                     'options'=>array('title'=>'Visualizar'),
                     'url'=>'Yii::app()->createUrl("factCont/view", array("id"=>$data->Id_Fact, "opc"=> 1))',
                 ),
+                
                 'update'=>array(
                     'label'=>'<i class="fa fa-pen actions text-dark"></i>',
                     'imageUrl'=>false,
                     'options'=>array('title'=>'Actualizar'),
-                    'visible'=> '(Yii::app()->user->getState("permiso_act") == true && $data->Estado == 1)',
+                    'visible'=> '(Yii::app()->user->getState("permiso_act") == true && $data->Estado == 1 && Yii::app()->user->getState("SoloConsulta")==0)',
                 ),
             )
         ),

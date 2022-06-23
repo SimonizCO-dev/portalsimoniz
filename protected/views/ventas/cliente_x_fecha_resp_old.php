@@ -156,9 +156,9 @@ if(!empty($q1)){
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('Z'.$Fila, $Z);
     $objPHPExcel->getActiveSheet(0)->setCellValueExplicit('AA'.$Fila, $AA, $type_string);
     $objPHPExcel->getActiveSheet(0)->setCellValueExplicit('AB'.$Fila, $AB, $type_string);
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('AC'.$Fila, $AC, $type_string);
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('AD'.$Fila, $AD, $type_string);
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('AE'.$Fila, $AE, $type_string);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('AC'.$Fila, $AC);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('AD'.$Fila, $AD);
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('AE'.$Fila, $AE);
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AF'.$Fila, $fecha);
     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('AG'.$Fila, $AG);
 

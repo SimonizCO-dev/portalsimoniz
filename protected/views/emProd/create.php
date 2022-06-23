@@ -14,6 +14,10 @@ $(function() {
 	var idMsg = "error_sop";
 	var pesoPermitido = 10240;
 
+ 
+    $('#emprod_id_users_notif').val(<?php echo $user_email ?>).trigger('change');
+    
+    
 	$("#valida_form").click(function() {
       var form = $("#em-prod-form");
       var settings = form.data('settings') ;
@@ -75,4 +79,4 @@ $(function() {
 
 <h4>Creación emisión de producto</h4>
 
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model,'m_usuarios'=>$m_usuarios,'user_email'=>$user_email)); ?>

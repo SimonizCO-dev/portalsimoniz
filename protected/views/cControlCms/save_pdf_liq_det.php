@@ -37,14 +37,16 @@ $fecha_act= $diaesp.", ".$dianro." de ".$mesesp." de ".$anionro;
 
 /*inicio configuración array de datos*/
 
-$sql = "SELECT DISTINCT ROWID AS ID, NIT_VENDEDOR, NOMBRE_VENDEDOR, ID_VENDEDOR, EMAIL FROM T_PR_C_VENDEDORES ORDER BY NOMBRE_VENDEDOR";
+$sql = "SELECT DISTINCT ROWID AS ID, NIT_VENDEDOR, NOMBRE_VENDEDOR, ID_VENDEDOR, EMAIL FROM T_PR_C_VENDEDORES where (email is not null and email <>'')   ORDER BY NOMBRE_VENDEDOR";
 $q = Yii::app()->db->createCommand($sql)->queryAll();
+
 
 $array_liq = array();
 
 $i = 0;
 
 if(!empty($q)){
+    
     foreach ($q as $reg) {
         
         $id_vend = $reg['ID'];
@@ -53,26 +55,36 @@ if(!empty($q)){
         $email = $reg['EMAIL'];
 
         if($email != ""){
-
+        
             //ventas
             $venta = "SELECT FACTURA, FECHA, f200_nit AS NIT, f200_razon_social AS CLIENTE, VLR_SUBTOTAL, PORCENTAJE FROM T_PR_C_VENTAS LEFT JOIN UnoEE1..t350_co_docto_contable ON ROWID_FACTURA=f350_rowid LEFT JOIN UnoEE1..t200_mm_terceros ON f200_rowid=f350_rowid_tercero  WHERE ID_BASE = ".$id." AND ROWID_VENDEDOR = ".$id_vend." ORDER BY FECHA";
+            
             $q_venta = Yii::app()->db->createCommand($venta)->queryAll();
 
+
+            
             //acelerador
-            $acelerador = "SELECT T2.FACTURA, T2.FECHA, T1.ACELERADOR, T1.VLR_SUBTOTAL, T1.PORCENTAJE FROM T_PR_C_VENTAS_DET AS T1 LEFT JOIN T_PR_C_VENTAS AS T2 ON T1.ROWID_REMISION = T2.ROWID_REMISION WHERE T1.ID_BASE = ".$id." AND T1.ROWID_VENDEDOR = ".$id_vend." ORDER BY FECHA";
+            $acelerador = "SELECT T2.FACTURA, T2.FECHA, T1.ACELERADOR, T1.VLR_SUBTOTAL, T1.PORCENTAJE FROM T_PR_C_VENTAS_DET AS T1 LEFT JOIN T_PR_C_VENTAS AS T2 ON T1.ROWID_REMISION = T2.ROWID_REMISION WHERE T2.ID_BASE = ".$id." AND T1.ROWID_VENDEDOR = ".$id_vend." ORDER BY FECHA";
+            
+
             $q_acelerador = Yii::app()->db->createCommand($acelerador)->queryAll();
 
             //recaudos
             $recaudo = "SELECT * FROM T_PR_C_RECIBOS WHERE ID_BASE = ".$id." AND ROWID_VENDEDOR = ".$id_vend." ORDER BY FECHA_RECIBO";
             $q_recaudo = Yii::app()->db->createCommand($recaudo)->queryAll();
-
+            
             //ajustes
             $ajuste = "SELECT * FROM T_PR_C_AJUSTE_RECIBOS WHERE ID_BASE = ".$id." AND ROWID_VENDEDOR = ".$id_vend." ORDER BY FECHA_RECIBO";
             $q_ajuste = Yii::app()->db->createCommand($ajuste)->queryAll();
-
+             $SinInfo=0;
+             $y= 0;
+             $x= 0;
+             $q= 0;
+             $r= 0;
+             
 
             if(!empty($q_venta) || !empty($q_acelerador) || !empty($q_recaudo) || !empty($q_ajuste)){
-
+              
 
                 $array_liq[$i] = array(
                     'id_vend' => $id_vend,
@@ -229,15 +241,16 @@ if(!empty($q)){
 
                 $i++;
             
+            }else{
+                $SinInfo=1;
             }
+            
 
         }//Fin si vendedor tiene correo
     }
 }
+//die($y.'-'.$x.'-'.$q.'-'.$r);
 
-$array_liq2 = array();
-
-$s = 0;
 
 if(!empty($q)){
     foreach ($q as $reg) {
@@ -253,6 +266,7 @@ if(!empty($q)){
 
         //acelerador
         $acelerador = "SELECT T2.FACTURA, T2.FECHA, T1.ACELERADOR, T1.VLR_SUBTOTAL, T1.PORCENTAJE FROM T_PR_C_VENTAS_DET AS T1 LEFT JOIN T_PR_C_VENTAS AS T2 ON T1.ROWID_REMISION = T2.ROWID_REMISION WHERE T1.ID_BASE = ".$id." AND T1.ROWID_VENDEDOR = ".$id_vend." ORDER BY FECHA";
+       
         $q_acelerador = Yii::app()->db->createCommand($acelerador)->queryAll();
 
         //recaudos
@@ -458,6 +472,8 @@ class PDF extends FPDF{
     function Tabla(){
 
         $array_liq = $this->data;
+
+    
 
         $cont = 1;
 
@@ -881,11 +897,12 @@ $num_notif = 0;
 //se genera documento detalle general
 if($cadena_emails_adic != ""){
 
+    
     $pdf = new PDF('P','mm','A4');
     //se definen las variables extendidas de la libreria FPDF
     $pdf->setInfo($info);
     $pdf->setFechaActual($fecha_act);
-    $pdf->setData($array_liq2);
+    $pdf->setData($array_liq);
     $pdf->AliasNbPages();
     $pdf->SetAutoPageBreak(true, 40);
     $pdf->AddPage();

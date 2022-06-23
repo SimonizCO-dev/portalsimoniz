@@ -6,7 +6,6 @@
  * The followings are the available columns in table 'TH_EM_PROD_USUARIO':
  * @property integer $Id
  * @property string $Id_Users_Notif
- * @property string $id_Users_Email
  * @property integer $Id_Usuario_Creacion
  * @property string $Fecha_Hora_Creacion
  * @property integer $Id_Usuario_Actualizacion
@@ -35,8 +34,6 @@ class EmProdUsuario extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('Id_Users_Notif', 'required'),
-			array('id_Users_Email', 'safe'),
-			
 			array('Id_Usuario_Creacion, Id_Usuario_Actualizacion', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.

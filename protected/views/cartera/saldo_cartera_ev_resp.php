@@ -494,13 +494,13 @@ if($opcion == 2){
       $docs_suc_cliente = $suc_info['documentos'];
 
       $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$Fila, utf8_decode($desc_cliente));
-      $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$Fila.':D'.$Fila);
+   //   $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$Fila.':D'.$Fila);
       $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$Fila, utf8_decode($nit_cliente));
-      $objPHPExcel->setActiveSheetIndex(0)->mergeCells('E'.$Fila.':F'.$Fila);
+     // $objPHPExcel->setActiveSheetIndex(0)->mergeCells('E'.$Fila.':F'.$Fila);
       $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$Fila, utf8_decode($tel_cliente));
-      $objPHPExcel->setActiveSheetIndex(0)->mergeCells('G'.$Fila.':I'.$Fila);
+      //$objPHPExcel->setActiveSheetIndex(0)->mergeCells('G'.$Fila.':I'.$Fila);
       $objPHPExcel->setActiveSheetIndex(0)->setCellValue('J'.$Fila, utf8_decode($dir_cliente.' / '.$suc_cliente));
-      $objPHPExcel->setActiveSheetIndex(0)->mergeCells('J'.$Fila.':O'.$Fila);
+      //$objPHPExcel->setActiveSheetIndex(0)->mergeCells('J'.$Fila.':O'.$Fila);
       $objPHPExcel->getActiveSheet(0)->getStyle('A'.$Fila.':O'.$Fila)->getFont()->setBold(true);
 
       $Fila = $Fila + 1;
@@ -564,10 +564,10 @@ if($opcion == 2){
 
       $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$Fila, 'CUPO TOTAL: ');
       $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$Fila, $cupo_cliente);
-      $objPHPExcel->setActiveSheetIndex(0)->mergeCells('B'.$Fila.':C'.$Fila);
+     // $objPHPExcel->setActiveSheetIndex(0)->mergeCells('B'.$Fila.':C'.$Fila);
       $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$Fila, 'CUPO DISPONIBLE:');
       $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$Fila, $cupo_disp);
-      $objPHPExcel->setActiveSheetIndex(0)->mergeCells('E'.$Fila.':G'.$Fila);
+   //   $objPHPExcel->setActiveSheetIndex(0)->mergeCells('E'.$Fila.':G'.$Fila);
       $objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$Fila, 'TOTALES');
       $objPHPExcel->setActiveSheetIndex(0)->setCellValue('I'.$Fila, $t_s);
       $objPHPExcel->setActiveSheetIndex(0)->setCellValue('J'.$Fila, '');

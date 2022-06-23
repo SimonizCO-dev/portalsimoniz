@@ -18,15 +18,6 @@
 	),
 )); ?>
 
-<div class="row">
-  <div class="col-sm-4">
-	 <div class="form-group">
-	      <?php echo $form->error($model,'fecha_inicial', array('class' => 'badge badge-warning float-right')); ?>
-	      <?php echo $form->label($model,'A partir de:'); ?>
-	      <?php echo $form->textField($model,'fecha_inicial', array('class' => 'form-control form-control-sm', 'readonly' => true)); ?>
-      </div>
-  </div>
-</div>
 <div class="row">  
 	<div class="col-sm-4">
     	<div class="form-group">
@@ -97,36 +88,11 @@ $(function() {
       });
   });
 
-
-  $.fn.datepicker.dates['es'] = {
-      days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-      daysShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
-      daysMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá"],
-      months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-      monthsShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
-      today: "Hoy",
-      clear: "Limpiar",
-      format: "yyyy-mm-dd",
-      titleFormat: "MM yyyy",
-      weekStart: 1
-  };
-
-  $("#ReporteC_fecha_inicial").datepicker({
-      language: 'es',
-      autoclose: true,
-      orientation: "right bottom",
-  }).on('changeDate', function (selected) {
-    var minDate = new Date(selected.date.valueOf());
-    $('#ReporteC_fecha_inicial').datepicker('setStartDate', minDate);
-  });
-
 });
 
 function reporte_pantalla(){
 
-  
-  var fecha_inicial = $("#ReporteC_fecha_inicial").val();
-  var data = {fecha_inicial:fecha_inicial};
+  var data = {}
   $(".ajax-loader").fadeIn('fast');
   $.ajax({ 
     type: "POST", 

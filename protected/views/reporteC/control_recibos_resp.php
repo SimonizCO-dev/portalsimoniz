@@ -16,7 +16,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 spl_autoload_register(array('YiiBase','autoload'));
 
-
 $alignment_center = \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER;
 $alignment_left = \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT;
 $alignment_right = \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT;
@@ -57,19 +56,19 @@ for ($i=0; $i < $diff_days; $i++) {
   $r_f = $nueva_fecha.' 23:59:59';
 
   //recibos cargados
-  $rc = Yii::app()->db->createCommand("SELECT COUNT(Id_Control) AS Rec_Carg FROM TH_CONTROL_RECIBOS WHERE Fecha_Hora_Carga BETWEEN '$r_i' AND '$r_f'")->queryRow();
+  $rc = Yii::app()->db->createCommand("SELECT COUNT(Id_Control) AS Rec_Carg FROM T_PR_CONTROL_RECIBOS WHERE Fecha_Hora_Carga BETWEEN '$r_i' AND '$r_f'")->queryRow();
   $recibos_cargados = $rc['Rec_Carg'];
 
   $total_rc = $total_rc + $recibos_cargados; 
 
   //recibos verificados
-  $rv = Yii::app()->db->createCommand("SELECT COUNT(Id_Control) AS Rec_Verif FROM TH_CONTROL_RECIBOS WHERE Fecha_Hora_Verif BETWEEN '$r_i' AND '$r_f'")->queryRow();
+  $rv = Yii::app()->db->createCommand("SELECT COUNT(Id_Control) AS Rec_Verif FROM T_PR_CONTROL_RECIBOS WHERE Fecha_Hora_Verif BETWEEN '$r_i' AND '$r_f'")->queryRow();
   $recibos_verificados = $rv['Rec_Verif'];
 
   $total_rv = $total_rv + $recibos_verificados; 
 
   //recibos aplicados
-  $rv = Yii::app()->db->createCommand("SELECT COUNT(Id_Control) AS Rec_Aplic FROM TH_CONTROL_RECIBOS WHERE Fecha_Hora_Aplic BETWEEN '$r_i' AND '$r_f'")->queryRow();
+  $rv = Yii::app()->db->createCommand("SELECT COUNT(Id_Control) AS Rec_Aplic FROM T_PR_CONTROL_RECIBOS WHERE Fecha_Hora_Aplic BETWEEN '$r_i' AND '$r_f'")->queryRow();
   $recibos_aplicados = $rv['Rec_Aplic'];
 
   $total_ra = $total_ra + $recibos_aplicados; 

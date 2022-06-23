@@ -68,6 +68,7 @@ $lista_tipos = CHtml::listData($tipos, 'Id_Dominio', 'Dominio');
       <div class="form-group">
         <?php echo $form->error($model,'tipo', array('class' => 'badge badge-warning float-right')); ?>
         <?php echo $form->label($model,'tipo'); ?>
+        
         <?php
             $this->widget('ext.select2.ESelect2',array(
                 'name'=>'Comision[tipo]',

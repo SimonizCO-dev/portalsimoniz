@@ -178,10 +178,12 @@ $(function() {
 });
 
 function envionotif(id_base, cadena_emails_adic){
-
+    
+ibase=id_base;
+ccadena_emails_adic=cadena_emails_adic;
     var data = {
-      id_base: id_base, 
-      cadena_emails_adic: cadena_emails_adic
+      id_base: ibase, 
+      cadena_emails_adic: ccadena_emails_adic
     }
 
     $.ajax({ 

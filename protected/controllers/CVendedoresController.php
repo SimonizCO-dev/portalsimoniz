@@ -200,6 +200,7 @@ class CVendedoresController extends Controller
 
 	public function actionExport(){
     	
+		
     	$model=new CVendedores('search');
 	    $model->unsetAttributes();  // clear any default values
 	    
@@ -218,6 +219,7 @@ class CVendedoresController extends Controller
 	public function actionExportExcel()
 	{
 		$data = Yii::app()->user->getState('cvendedores-export');
+
 		$this->renderPartial('cvendedores_export_excel',array('data' => $data));	
 	}
 }

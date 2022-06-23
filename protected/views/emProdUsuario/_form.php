@@ -2,6 +2,7 @@
 /* @var $this FichaItemUsuarioController */
 /* @var $model FichaItemUsuario */
 /* @var $form CActiveForm */
+
 ?>
 
 <?php $form=$this->beginWidget('CActiveForm', array(

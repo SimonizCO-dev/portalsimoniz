@@ -302,6 +302,7 @@ class UtilidadesReportesTh {
                 <th>Fecha de nacimiento</th>
                 <th>E-mail</th>
                 <th>Teléfono(s)</th>
+                <th>Dirección</th>
                 <th>Grado escolaridad</th>
                 <th>Persona contacto</th>
                 <th>Teléfono(s) contacto</th>
@@ -312,6 +313,11 @@ class UtilidadesReportesTh {
                 <th>Cargo</th>
                 <th>Fecha de ingreso</th>
                 <th>Salario</th>
+                <th>Talla overol</th>
+                <th>Talla camisa</th>
+                <th>Talla zapato</th>
+                <th>Talla pantalon</th>
+                <th>Talla bata</th>
                 </tr>
               </thead>
           <tbody>';
@@ -339,6 +345,12 @@ class UtilidadesReportesTh {
               $telefono = $reg1 ['Telefono']; 
             }else{
               $telefono = "-";
+            }
+
+            if($reg1 ['Direccion'] != ""){
+              $direccion = $reg1 ['Direccion']; 
+            }else{
+              $direccion = "-";
             }
 
             if($reg1 ['Persona_Contacto'] != ""){
@@ -388,6 +400,36 @@ class UtilidadesReportesTh {
             $fecha_ingreso = $reg1 ['Fecha_Ingreso']; 
             $salario = number_format($reg1['Salario'],0);
 
+            if($reg1 ['Talla_Overol'] != ""){
+              $talla_overol = $reg1 ['Talla_Overol']; 
+            }else{
+              $talla_overol = "-";
+            }
+
+            if($reg1 ['Talla_Camisa'] != ""){
+              $talla_camisa = $reg1 ['Talla_Camisa']; 
+            }else{
+              $talla_camisa = "-";
+            }
+
+            if($reg1 ['Talla_Zapato'] != ""){
+              $talla_zapato = $reg1 ['Talla_Zapato']; 
+            }else{
+              $talla_zapato = "-";
+            }
+
+            if($reg1 ['Talla_Pantalon'] != ""){
+              $talla_pantalon = $reg1 ['Talla_Pantalon']; 
+            }else{
+              $talla_pantalon = "-";
+            }
+
+            if($reg1 ['Talla_Bata'] != ""){
+              $talla_bata = $reg1 ['Talla_Bata']; 
+            }else{
+              $talla_bata = "-";
+            }
+
             if ($i % 2 == 0){
               $clase = 'odd'; 
             }else{
@@ -403,6 +445,7 @@ class UtilidadesReportesTh {
                   <td>'.$fecha_nacimiento.'</td>
                   <td>'.$correo.'</td>
                   <td>'.$telefono.'</td>
+                  <td>'.$direccion.'</td>
                   <td>'.$gr_es.'</td>
                   <td>'.$persona_contacto.'</td>
                   <td>'.$tel_persona_contacto.'</td>
@@ -413,6 +456,11 @@ class UtilidadesReportesTh {
                   <td>'.$cargo.'</td>
                   <td>'.$fecha_ingreso.'</td>
                   <td>'.$salario.'</td>
+                  <td>'.$talla_overol.'</td>
+                  <td>'.$talla_camisa.'</td>
+                  <td>'.$talla_zapato.'</td>
+                  <td>'.$talla_pantalon.'</td>
+                  <td>'.$talla_bata.'</td>
               </tr>';
 
             $i++;

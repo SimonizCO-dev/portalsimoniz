@@ -5,6 +5,7 @@
 //para combos de usuarios
 $lista_usuarios = CHtml::listData($usuarios, 'Id_Usuario', 'Nombres');
 
+
 ?>
 
 <script type="text/javascript">

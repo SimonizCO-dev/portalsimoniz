@@ -177,16 +177,30 @@ class FactContController extends Controller
 		$usuarios=Usuario::model()->findAll(array('order'=>'Usuario'));
 		$areas = Area::model()->findAll(array('order'=>'Area'));
 
+		$SQL="SELECT id_Perfil from T_PR_PERFIL_USUARIO where id_usuario=".Yii::app()->user->getState('id_user');
+		$perfilCompras = Yii::app()->db->createCommand($SQL)->queryAll();
+
+
+		$SoloConsulta=0;
+		foreach ($perfilCompras as $per) {
+			if ($per['id_Perfil']==45)
+                $SoloConsulta=1;
+		}
+
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['FactCont']))
 			$model->attributes=$_GET['FactCont'];
 
+			Yii::app()->user->setState('SoloConsulta',$SoloConsulta);	
 		$this->render('admin',array(
 			'model'=>$model,
 			'usuarios'=>$usuarios,
 			'areas'=>$areas,
+			'SoloConsulta'=>$SoloConsulta
 		));
 	}
+
+
 
 	public function actionAdmin2()
 	{

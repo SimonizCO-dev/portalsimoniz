@@ -98,6 +98,7 @@ class AnexoContController extends Controller
 
 		if(isset($_POST['AnexoCont']))
 		{
+			
 			if($_FILES['AnexoCont']['name']['sop']  != "") {
 
 		        $documento_subido = CUploadedFile::getInstance($model,'sop');
@@ -110,6 +111,7 @@ class AnexoContController extends Controller
 			$model->Id_Usuario_Actualizacion = Yii::app()->user->getState('id_user');
 			$model->Fecha_Actualizacion = date('Y-m-d H:i:s');
 
+			
 
 			if($model->save()){
 				if($opc == 1){
@@ -124,7 +126,7 @@ class AnexoContController extends Controller
 			}
 
 		}
-
+		
 		$this->render('update',array(
 			'model'=>$model,
 			'c'=>$model->Id_Contrato,
